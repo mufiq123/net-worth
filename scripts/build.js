@@ -325,7 +325,7 @@ const html = `<!DOCTYPE html>
     --warn-ink: #7a5312;
     --warn-border: #f0dcb4;
     --shadow: 0 1px 2px rgba(17,20,24,.04);
-    --c1: #3f7fbf; --c2: #2a9d8f; --c3: #c9a24d;
+    --c1: #2f6db0; --c2: #368727; --c3: #c9a24d;
   }
   /* Dark theme, following the OS / app appearance setting. */
   @media (prefers-color-scheme: dark) {
@@ -346,7 +346,7 @@ const html = `<!DOCTYPE html>
       --warn-ink: #edcd8d;
       --warn-border: #4d3c1d;
       --shadow: none;
-      --c1: #6ea8e0; --c2: #4fbfae; --c3: #d9b26a;
+      --c1: #5c97d6; --c2: #5aa84a; --c3: #d9b26a;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
