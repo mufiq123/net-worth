@@ -285,12 +285,13 @@ for (const inst of fresh) {
 writeFileSync(dataPath('deposits.json'), JSON.stringify(deposits, null, 2));
 
 // ---- history ----
-// Today's point is overwritten on each run rather than kept from the first,
-// so the chart's end label stays in step with the headline total.
+// One point per month. The current month's point is overwritten on every run,
+// so it tracks the headline total until the month ends, and the last run of
+// the month is what stays as that month's value.
 const history = readJSON('history.json', []);
 const by = Object.fromEntries(Object.entries(latest.institutions).map(([id, x]) => [id, x.total]));
 const point = { date: today, value: latest.total, by };
-const existing = history.findIndex((p) => p.date === today);
+const existing = history.findIndex((p) => p.date.slice(0, 7) === today.slice(0, 7));
 if (existing === -1) history.push(point);
 else history[existing] = point;
 history.sort((a, b) => (a.date < b.date ? -1 : 1));

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Net Worth dashboard — rebuilt by GitHub Actions from Plaid and hosted on Cloudflare Pages behind Cloudflare Access.",
+  "description": "Net Worth dashboard — rebuilt by GitHub Actions from Plaid and hosted on GitHub Pages.",
   "engines": { "node": ">=20" },
   "scripts": {
     "fetch": "node scripts/fetch.js",

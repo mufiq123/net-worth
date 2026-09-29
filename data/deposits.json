@@ -1,15 +1,15 @@
 {
   "public": {
     "method": "ledger",
-    "note": "Brokerage + Roth IRA. base = everything deposited minus withdrawn, up to and including base_through.",
-    "base": null,
-    "base_through": "2026-09-28",
+    "note": "Brokerage + Roth IRA. base = ACH deposits + journals in \u2212 disbursements/journals out + Public IRA match, from statements Oct 2025\u2013Aug 2026. Later deposits come from Plaid.",
+    "base": 18062.79,
+    "base_through": "2026-08-31",
     "ledger": []
   },
   "fidelity": {
     "method": "ledger",
-    "note": "401(k). base = all contributions (yours + employer match) minus withdrawals, up to and including base_through.",
-    "base": null,
+    "note": "401(k). base = every 'Contributions' row in NetBenefits history.csv (Jul 2025\u2013Sep 2026, employee + match). Later ones come from Plaid.",
+    "base": 19417.04,
     "base_through": "2026-09-28",
     "ledger": []
   },

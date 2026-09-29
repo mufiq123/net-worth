@@ -1,13 +1,12 @@
 # Net Worth — technical notes
 
-A static dashboard on Cloudflare Pages (`net-worth.pages.dev`), with Cloudflare Access in
-front. No server, no client-side API calls, no runtime secrets. A GitHub Action in a private
-repo pulls from Plaid, rebuilds a single HTML file, commits the data it fetched, and deploys.
+A static dashboard on GitHub Pages (`https://mufiq123.github.io/net-worth/`). No server, no
+client-side API calls, no runtime secrets. A GitHub Action pulls from Plaid, rebuilds a single HTML file, commits the data it fetched, and deploys.
 The pipeline is the O.A. Investments one (`../oa-investments/app.md`), extended from one Plaid
 Item to three.
 
 ```
-cron (6 entries) → gate job → fetch.js → build.js → dist/index.html → wrangler pages deploy
+cron (6 entries) → gate job → fetch.js → build.js → dist/index.html → deploy-pages
                                   ↓
                      data/{latest,history,deposits}.json  (committed back to main)
 ```
@@ -21,7 +20,7 @@ cron (6 entries) → gate job → fetch.js → build.js → dist/index.html → 
 | `scripts/build.js` | `data/*.json` → `dist/index.html`. Pure function of the data; no network. |
 | `scripts/link.js` | Local Plaid Link flow per institution; saves the token as a GitHub secret. |
 | `data/latest.json` | Per-institution snapshot: total, cost basis, accounts, positions. |
-| `data/history.json` | `[{date, value, by: {public, fidelity, merrill}}]`, one point per day. |
+| `data/history.json` | `[{date, value, by: {public, fidelity, merrill}}]`, one point per month. |
 | `data/deposits.json` | Per-institution net-deposit method and ledger. See below. |
 | `.github/workflows/daily.yml` | Schedule, gate, fetch, build, commit, deploy. |
 
@@ -90,18 +89,31 @@ kept instead.
 institution has an invested figure. A total that silently left one out would overstate the
 gain. Per-institution gains show in the Accounts card as soon as each is known.
 
-**Hosting: private repo + Cloudflare.** A personal balance sheet shouldn't live in a public
-repo (the data commits and Actions logs are public there), and GitHub Pages can't put a login
-in front of a site without Enterprise. So the repo is private. Actions still run, using about
-360 of the 2,000 free minutes a month, since a private repo rounds each job up to a whole
-minute. Deploys go through `wrangler pages deploy`, and Cloudflare Access (One-time PIN,
-single allowed email) sits in front of both the production and preview `pages.dev` hosts.
-The deploy step is *skipped* until `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` exist,
-so data can be collected before hosting is ready, and Access goes on before the secrets so no
-deploy is ever public. `noindex` is a second layer, not the protection.
+**Hosting: public repo + GitHub Pages.** GitHub Free only serves Pages from a public repo, and
+the owner chose that over Cloudflare Access. So the page, `data/*.json` and the Actions logs
+are all public, as on O.A. Investments. `fetch.js` logs totals and transaction-kind counts,
+never individual transactions. `noindex` keeps it out of search engines but doesn't protect
+anything.
+
+**Monthly history.** `history.json` holds one point per month. The current month's point is
+overwritten on each run, so it follows the headline total and freezes at the month's last run.
+
+**Backfill (2026-09-28), from statements not kept in the repo.**
+- *Public:* the month-end value is the closing "total priced portfolio" on each Apex statement,
+  brokerage (5OF, opened Oct 2025) plus Roth (5OD, opened Jan 2026). July 2026 has no point,
+  because the brokerage sent one combined Jul–Aug statement. Net deposits of $18,062.79
+  through Aug 31 = ACH deposits + journals in − ACH disbursements − journals out + Public's
+  IRA contribution match, taken from each statement's "Funds Paid and Received". CONTRIBUTION
+  rows repeat their ACH rows and cash-sweep XFERs net to zero, so neither is counted.
+  `base_through` is Aug 31, so Plaid's ledger adds September.
+- *Fidelity:* NetBenefits `history.csv` (Jul 2025 onward) records shares per transaction, and
+  adding them up gives exactly Plaid's current share counts. Month-end value = shares held ×
+  that fund's price at its latest contribution or exchange (amount ÷ shares). That price is
+  up to two weeks old, so these points are close, not exact. Net deposits = the sum of
+  `Contributions` rows, $19,417.04 (employee + match; the one dividend is income).
 
 **Inherited unchanged from O.A. Investments:** DST-correct six-cron + gate schedule, history
-upsert, `continue-on-error` on fetch, themed custom properties (the gold ramp renamed
+`continue-on-error` on fetch, themed custom properties (the gold ramp renamed
 `--accent-*` and moved to blue: `#3f82c4` accent, `#4a8cc9` hero), the privacy blur, and the
 snapping chart scrubber. The x-axis reads in days ("Sep 28") until the history spans about 300
 days, then switches to months.
@@ -109,8 +121,7 @@ days, then switches to months.
 ## Secrets
 
 `PLAID_CLIENT_ID`, `PLAID_SECRET`, `PLAID_ENV`, `PLAID_TOKEN_PUBLIC`,
-`PLAID_TOKEN_FIDELITY`, `PLAID_TOKEN_MERRILL`, `CLOUDFLARE_API_TOKEN`,
-`CLOUDFLARE_ACCOUNT_ID`. `link.js` writes the Plaid ones through `gh secret set`. Plaid access
+`PLAID_TOKEN_FIDELITY`, `PLAID_TOKEN_MERRILL`. `link.js` writes the Plaid ones through `gh secret set`. Plaid access
 is read-only and cannot move money.
 
 ## Known limitations
