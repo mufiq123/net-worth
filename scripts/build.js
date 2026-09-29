@@ -164,7 +164,15 @@ if (allKnown) {
 const COLORS = ['var(--c1)', 'var(--c2)', 'var(--c3)'];
 const CHEVRON = `<svg class="chev" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 // Plaid names accounts "Brokerage Account", "Roth IRA"; the suffix is noise.
-const acctName = (a) => (a.name || a.type).replace(/\s+account$/i, '');
+const cleanAcct = (name) => String(name).replace(/\s+account$/i, '');
+const acctName = (a) => cleanAcct(a.name || a.type);
+// Account types get their own colours, distinct from the institutions'.
+const ACCOUNT_COLORS = { 'Roth IRA': 'var(--a1)', Brokerage: 'var(--a2)' };
+const acctColor = (name) => ACCOUNT_COLORS[name] || 'var(--ink-muted)';
+const instColor = Object.fromEntries(insts.map((i, n) => [i.name, COLORS[n % COLORS.length]]));
+// Only institutions with more than one funded account get account chips; a
+// lone 401(k) chip would repeat what the institution chip already says.
+const multiAcct = new Set(insts.filter((i) => (i.accounts || []).filter((a) => a.value > 0).length > 1).map((i) => i.name));
 let allocBar = '';
 let instRows = '';
 if (insts.length && total > 0) {
@@ -198,7 +206,7 @@ if (insts.length && total > 0) {
     // <details> opens and closes without any script, and the balances inside
     // carry .money so the privacy toggle still covers them.
     const subs = accts.map((a) => `
-        <div class="acct-line"><span>${esc(acctName(a))}</span><span class="money">${money(a.value)}</span></div>`).join('');
+        <div class="acct-line"><span><i style="background:${acctColor(acctName(a))}"></i>${esc(acctName(a))}</span><span class="money">${money(a.value)}</span></div>`).join('');
     return `
     <details class="acct">
       <summary class="row">${row}
@@ -217,12 +225,15 @@ const merged = new Map();
 for (const i of insts) {
   for (const p of i.positions) {
     const key = p.cash ? 'CASH' : p.ticker || `name:${p.name}`;
-    const m = merged.get(key) || { ...p, value: 0, quantity: p.quantity == null ? null : 0, from: [] };
+    const m = merged.get(key) || { ...p, value: 0, quantity: p.quantity == null ? null : 0, from: [], accts: [] };
     m.value = round2(m.value + p.value);
     if (m.quantity != null && p.quantity != null) m.quantity += p.quantity;
     // Public reports a price of 0 alongside correct values and share counts.
     if (!m.price) m.price = p.price || (p.quantity ? p.value / p.quantity : null);
     if (!m.from.includes(i.name)) m.from.push(i.name);
+    if (multiAcct.has(i.name)) {
+      for (const a of p.accounts || []) if (!m.accts.includes(cleanAcct(a))) m.accts.push(cleanAcct(a));
+    }
     merged.set(key, m);
   }
 }
@@ -267,7 +278,11 @@ if (positions.length) {
       ? ''
       : [p.quantity != null ? `${Number(p.quantity).toFixed(p.quantity % 1 ? 3 : 0)} sh` : '', p.price != null ? `@ ${money(p.price)}` : '']
           .filter(Boolean).join(' ');
-    const tags = p.from.map((f) => `<span class="tag">${esc(f)}</span>`).join('');
+    // The tag colour is passed as --t; the tag derives its tint from it.
+    const tags = [
+      ...p.from.map((f) => `<span class="tag" style="--t:${instColor[f]}">${esc(f)}</span>`),
+      ...p.accts.sort().reverse().map((a) => `<span class="tag" style="--t:${acctColor(a)}">${esc(a)}</span>`),
+    ].join('');
     return `
     <div class="row">
       <div class="chip"${chip.length > 3 ? ' style="font-size:10px"' : ''}>${esc(chip)}</div>
@@ -325,7 +340,8 @@ const html = `<!DOCTYPE html>
     --warn-ink: #7a5312;
     --warn-border: #f0dcb4;
     --shadow: 0 1px 2px rgba(17,20,24,.04);
-    --c1: #2f6db0; --c2: #368727; --c3: #c9a24d;
+    --c1: #235d9c; --c2: #368727; --c3: #c9a24d;
+    --a1: #6a4fc4; --a2: #b0407e;
   }
   /* Dark theme, following the OS / app appearance setting. */
   @media (prefers-color-scheme: dark) {
@@ -346,7 +362,8 @@ const html = `<!DOCTYPE html>
       --warn-ink: #edcd8d;
       --warn-border: #4d3c1d;
       --shadow: none;
-      --c1: #5c97d6; --c2: #5aa84a; --c3: #d9b26a;
+      --c1: #4a86c6; --c2: #5aa84a; --c3: #d9b26a;
+      --a1: #a08ce6; --a2: #de7fb8;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -366,14 +383,15 @@ const html = `<!DOCTYPE html>
   .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--ink-muted); }
   .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 6px; }
   .legend b { color: var(--ink-soft); font-weight: 700; margin-left: 2px; }
-  /* Equal columns, and each cell is a flex column whose label absorbs the
-     spare height. A label that wraps to two lines therefore pushes nothing
-     around: all three values still sit on one baseline. */
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 16px; border-top: 1px solid var(--rule); padding-top: 14px; }
-  .stats > div { display: flex; flex-direction: column; min-width: 0; padding-right: 10px; }
-  .stats > div + div { border-left: 1px solid var(--rule); padding-left: 12px; }
-  .stats .label { flex: 1; font-size: 12.5px; line-height: 1.35; }
-  .stats .v { font-weight: 800; font-size: 16px; margin-top: 5px; white-space: nowrap; }
+  /* Three figures spread edge to edge: left, centre, right. Columns size to
+     their content rather than splitting the width evenly, so a long gains
+     figure on a phone can't run into its neighbour. */
+  .stats { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; border-top: 1px solid var(--rule); padding-top: 14px; }
+  .stats > div { display: flex; flex-direction: column; min-width: 0; }
+  .stats > div:nth-child(2) { align-items: center; text-align: center; }
+  .stats > div:nth-child(3) { align-items: flex-end; text-align: right; }
+  .stats .label { font-size: 12.5px; line-height: 1.35; white-space: nowrap; }
+  .stats .v { font-weight: 800; font-size: clamp(14px, 4.2vw, 16px); margin-top: 5px; white-space: nowrap; }
   .up { color: var(--gain); }
   .down { color: var(--loss); }
   .sect { display: flex; align-items: baseline; justify-content: space-between; margin: 24px 4px 10px; }
@@ -392,7 +410,7 @@ const html = `<!DOCTYPE html>
   .r-right { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; align-self: stretch; flex: none; gap: 2px; }
   .r-val { font-weight: 750; font-size: 15px; }
   .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
-  .tag { font-size: 10.5px; font-weight: 600; color: var(--ink-muted); background: var(--chip-bg); border-radius: 99px; padding: 2px 7px; }
+  .tag { --t: var(--ink-muted); font-size: 10.5px; font-weight: 650; color: var(--t); background: var(--chip-bg); background: color-mix(in srgb, var(--t) 14%, transparent); border-radius: 99px; padding: 2px 7px; }
   .acct summary { list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .acct summary::-webkit-details-marker { display: none; }
   .chev { color: var(--ink-muted); margin-left: 6px; transition: transform .15s; }
@@ -400,6 +418,7 @@ const html = `<!DOCTYPE html>
   .subs { margin: -4px 0 12px 54px; border-left: 2px solid var(--rule); }
   .acct-line { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0 7px 12px; font-size: 13.5px; color: var(--ink-soft); }
   .acct-line .money { font-weight: 650; color: var(--ink); }
+  .acct-line i { display: inline-block; width: 7px; height: 7px; border-radius: 99px; margin-right: 8px; vertical-align: 1px; }
   .fine { color: var(--ink-muted); font-size: 11.5px; text-align: center; margin-top: 18px; line-height: 1.6; }
   .chart { touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; cursor: crosshair; }
   /* blur scales with font size so a 12px share count is hidden as well as the 44px total */

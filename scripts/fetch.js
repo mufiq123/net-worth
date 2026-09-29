@@ -104,6 +104,10 @@ async function fetchHoldings(inst) {
   let cashBasis = 0;
   let basisKnown = true;
   const positions = [];
+  // Which account each holding sits in, so the page can tag it (Roth IRA,
+  // Brokerage). Cash is pooled, so it lists every account it came from.
+  const acctNames = Object.fromEntries(accounts.map((a) => [a.account_id, a.name]));
+  const cashAccts = new Set();
   for (const h of holdings) {
     const sec = secById[h.security_id] || {};
     const value = round2(h.institution_value ?? (h.quantity ?? 0) * (h.institution_price ?? 0));
@@ -111,6 +115,7 @@ async function fetchHoldings(inst) {
     if (isCash(sec)) {
       cash += value;
       cashBasis += value; // cash has no gain of its own
+      if (acctNames[h.account_id]) cashAccts.add(acctNames[h.account_id]);
       continue;
     }
     if (!Number.isFinite(h.cost_basis)) basisKnown = false;
@@ -122,6 +127,7 @@ async function fetchHoldings(inst) {
       // Public reports 0 here alongside a correct value and quantity.
       price: h.institution_price || (h.quantity ? round2(value / h.quantity) : null),
       cost_basis: Number.isFinite(h.cost_basis) ? round2(h.cost_basis) : null,
+      accounts: acctNames[h.account_id] ? [acctNames[h.account_id]] : [],
     });
   }
   // Some institutions (Public) report part of an account's uninvested cash only
@@ -138,11 +144,12 @@ async function fetchHoldings(inst) {
     if (gap > 0.5) {
       cash += gap;
       cashBasis += gap;
+      cashAccts.add(a.name);
       console.log(`${inst.name}: $${gap.toLocaleString('en-US')} of "${a.name}" balance not in holdings — counted as cash.`);
     }
   }
   if (cash > 0) {
-    positions.push({ ticker: 'CASH', name: 'Cash', value: round2(cash), quantity: null, price: null, cost_basis: round2(cashBasis), cash: true });
+    positions.push({ ticker: 'CASH', name: 'Cash', value: round2(cash), quantity: null, price: null, cost_basis: round2(cashBasis), cash: true, accounts: [...cashAccts] });
   }
   positions.sort((a, b) => b.value - a.value);
 
