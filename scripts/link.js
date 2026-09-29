@@ -118,11 +118,39 @@ const h = Plaid.create({ token: ${JSON.stringify(linkToken)}, onSuccess: async (
   const r = await fetch('/exchange', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ public_token: pt }) });
   const j = await r.json();
   s.textContent = j.ok ? 'Done — check your terminal. You can close this tab.' : ('Error: ' + (j.error || 'unknown'));
-}, onExit: (e) => { if (e) s.textContent = 'Closed: ' + (e.error_message || e.display_message || ''); } });
+}, onEvent: (name, meta) => {
+  // Plaid's error screen gives no reason; the event stream carries the code.
+  if (name === 'ERROR' || name === 'FAIL_OAUTH' || name === 'HANDOFF' || name === 'SELECT_INSTITUTION' || name === 'OPEN_OAUTH')
+    fetch('/log', { method: 'POST', body: JSON.stringify({ event: name, meta }) });
+}, onExit: (e, meta) => {
+  fetch('/log', { method: 'POST', body: JSON.stringify({ event: 'EXIT', error: e, meta }) });
+  s.textContent = e ? 'Closed: ' + (e.error_code || '') + ' ' + (e.error_message || e.display_message || '') + ' — details are in your terminal.' : 'Closed.';
+} });
 document.getElementById('b').onclick = () => h.open();
 </script></body></html>`;
 
 const server = http.createServer(async (req, res) => {
+  if (req.method === 'POST' && req.url === '/log') {
+    let body = '';
+    req.on('data', (c) => (body += c));
+    req.on('end', () => {
+      try {
+        const { event, meta = {}, error } = JSON.parse(body);
+        const inst = meta.institution_name || meta.institution?.name || '';
+        const code = error?.error_code || meta.error_code;
+        const msg = error?.error_message || meta.error_message;
+        console.log(
+          `[link] ${event}${inst ? ` · ${inst}` : ''}${code ? ` · ${error?.error_type || meta.error_type || ''} ${code}` : ''}${msg ? ` · ${msg}` : ''}` +
+            (meta.link_session_id ? ` · session ${meta.link_session_id}` : '') +
+            (meta.request_id ? ` · request ${meta.request_id}` : '') +
+            (event === 'EXIT' && meta.status ? ` · status ${meta.status}` : '')
+        );
+      } catch {}
+      res.writeHead(204);
+      res.end();
+    });
+    return;
+  }
   if (req.method === 'POST' && req.url === '/exchange') {
     let body = '';
     req.on('data', (c) => (body += c));
