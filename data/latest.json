@@ -2,7 +2,7 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-09-28",
+      "date": "2026-09-29",
       "total": 22326.23,
       "cost_basis": null,
       "accounts": [
@@ -175,7 +175,7 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-09-28",
+      "date": "2026-09-29",
       "total": 21291.67,
       "cost_basis": null,
       "accounts": [
@@ -211,6 +211,6 @@
       ]
     }
   },
-  "date": "2026-09-28",
+  "date": "2026-09-29",
   "total": 43617.9
 }
