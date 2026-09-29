@@ -343,7 +343,7 @@ const html = `<!DOCTYPE html>
     --c1: #4338ca; --c2: #368727; --c3: #c9a24d;
     --a1: #c23dff; --a2: #ffa13d;
     /* Headline card: filled with the chart-line colour. */
-    --hero-bg: linear-gradient(135deg, #3b4fc9 0%, #2a3a96 55%, #1f2d6e 100%);
+    --hero-bg: linear-gradient(135deg, #5a68e0 0%, #4555cc 55%, #3846b3 100%);
     --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.74);
     /* Institution colours as they appear on the headline card: lifted a
        little so each one stays distinct against the indigo. */
@@ -371,7 +371,8 @@ const html = `<!DOCTYPE html>
       --c1: #2664fc; --c2: #5aa84a; --c3: #d9b26a;
       --a1: #c23dff; --a2: #ffa13d;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
-      --hero-bg: linear-gradient(135deg, #2c3490 0%, #1f2566 55%, #171b45 100%);
+      /* A lighter indigo, close to the chart line, still deep enough for white text. */
+      --hero-bg: linear-gradient(135deg, #7079f2 0%, #5c64dc 55%, #4a51c2 100%);
       --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
       /* Public's slice uses its chip colour exactly. */
       --hc1: #2664fc; --hc2: #6fd35c; --hc3: #f0c46a;
@@ -399,7 +400,10 @@ const html = `<!DOCTYPE html>
      stay distinct on the indigo card, without touching the markup. */
   .hero-card { background: var(--hero-bg); border-color: transparent; color: var(--hero-ink);
     --c1: var(--hc1); --c2: var(--hc2); --c3: var(--hc3); }
-  .hero-card .alloc { background: rgba(255,255,255,.12); border-radius: 99px; padding: 2px; height: 12px; }
+  /* A dark inset track, so each slice reads against it rather than against
+     the card's own blue-violet. */
+  .hero-card .alloc { background: rgba(10,12,40,.35); border-radius: 99px; padding: 2px; height: 12px; }
+  .hero-card .legend i { width: 9px; height: 9px; box-shadow: 0 0 0 1px rgba(255,255,255,.55); }
   .hero-card .label, .hero-card .hero-sub, .hero-card .legend { color: var(--hero-label); }
   .hero-card .legend b { color: var(--hero-ink); }
   /* Three figures spread edge to edge: left, centre, right. Columns size to
