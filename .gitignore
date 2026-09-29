@@ -1,0 +1,9 @@
+node_modules/
+dist/
+
+# Never commit credentials. Plaid keys belong in GitHub Actions secrets only.
+.env
+.env.*
+*.pem
+*.key
+secrets.json

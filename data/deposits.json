@@ -1,0 +1,20 @@
+{
+  "public": {
+    "method": "ledger",
+    "note": "Brokerage + Roth IRA. base = everything deposited minus withdrawn, up to and including base_through.",
+    "base": null,
+    "base_through": null,
+    "ledger": []
+  },
+  "fidelity": {
+    "method": "ledger",
+    "note": "401(k). base = all contributions (yours + employer match) minus withdrawals, up to and including base_through.",
+    "base": null,
+    "base_through": null,
+    "ledger": []
+  },
+  "merrill": {
+    "method": "cost_basis",
+    "note": "ESPP + Visa equity plan. Uses the holdings' cost basis (ESPP purchase price, RSU value at vest), so no base is needed."
+  }
+}
