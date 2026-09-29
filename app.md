@@ -55,6 +55,11 @@ merges that across institutions like any other holding. `fetch.js` logs whenever
 balances and holdings disagree by more than $1, which is the sign that cash is being reported
 outside the holdings.
 
+**Account dropdown.** An institution with more than one funded account (Public: Roth IRA and
+Brokerage) renders as a `<details>` element, so it opens and closes without script. Empty
+sub-accounts that Plaid lists (Treasury, Bond, …) are left out, and the balances inside carry
+`.money` so the privacy toggle covers them.
+
 **Holdings merge in build, not fetch.** `latest.json` keeps positions per institution, and
 the combined list is derived at build time, keyed by ticker, or by name when there is none
 (401(k) collective trusts often have no ticker). Each row carries tags for the institutions
@@ -113,8 +118,9 @@ overwritten on each run, so it follows the headline total and freezes at the mon
   `Contributions` rows, $19,417.04 (employee + match; the one dividend is income).
 
 **Inherited unchanged from O.A. Investments:** DST-correct six-cron + gate schedule, history
-`continue-on-error` on fetch, themed custom properties (the gold ramp renamed
-`--accent-*` and moved to blue: `#3f82c4` accent, `#4a8cc9` hero), the privacy blur, and the
+`continue-on-error` on fetch, themed custom properties (a neutral palette: blue `--accent` only for the chart line, green and
+red for gains and losses, and one colour per institution, `--c1..3`, for the allocation bar,
+legend and badge letter), the privacy blur, and the
 snapping chart scrubber. The x-axis reads in days ("Sep 28") until the history spans about 300
 days, then switches to months.
 

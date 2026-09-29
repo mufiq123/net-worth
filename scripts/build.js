@@ -159,36 +159,53 @@ if (allKnown) {
 }
 
 // ---- institutions ----
-const SHADES = ['var(--accent-1)', 'var(--accent-3)', 'var(--accent-5)'];
-// Institution badges sit on white, so they use a solid ramp; the bar above
-// sits on the blue banner and uses the translucent one.
-const SOLIDS = ['var(--solid-1)', 'var(--solid-3)', 'var(--solid-5)'];
+// Each institution has one colour, used for its slice of the allocation bar,
+// its legend dot and the letter in its badge. Everything else stays neutral.
+const COLORS = ['var(--c1)', 'var(--c2)', 'var(--c3)'];
+const CHEVRON = `<svg class="chev" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+// Plaid names accounts "Brokerage Account", "Roth IRA"; the suffix is noise.
+const acctName = (a) => (a.name || a.type).replace(/\s+account$/i, '');
 let allocBar = '';
 let instRows = '';
 if (insts.length && total > 0) {
-  allocBar = `<div style="display:flex;height:8px;border-radius:99px;overflow:hidden;margin-top:14px;gap:2px">` +
-    insts.map((i, n) => `<div style="width:${(i.total / total * 100).toFixed(2)}%;background:${SHADES[n % SHADES.length]}"></div>`).join('') +
+  allocBar = `<div class="alloc">` +
+    insts.map((i, n) => `<div style="width:${(i.total / total * 100).toFixed(2)}%;background:${COLORS[n % COLORS.length]}"></div>`).join('') +
     `</div><div class="legend">` +
-    insts.map((i, n) => `<span><i style="background:${SHADES[n % SHADES.length]}"></i>${esc(i.name)} <b class="money">${(i.total / total * 100).toFixed(0)}%</b></span>`).join('') +
+    insts.map((i, n) => `<span><i style="background:${COLORS[n % COLORS.length]}"></i>${esc(i.name)} <b class="money">${(i.total / total * 100).toFixed(0)}%</b></span>`).join('') +
     `</div>`;
   instRows = insts.map((i, n) => {
-    const types = [...new Set((i.accounts || []).filter((a) => a.value > 0).map((a) => a.type))].join(' · ');
+    // Plaid lists empty sub-accounts too (Public's Treasury, Bond, …).
+    const accts = (i.accounts || []).filter((a) => a.value > 0).sort((a, b) => b.value - a.value);
+    const types = [...new Set(accts.map((a) => a.type))].join(' · ');
     const gain = i.invested != null ? round2(i.total - i.invested) : null;
     const gainLine = gain == null
       ? `<span style="color:var(--ink-muted)">—</span>`
       : `<span class="${gain >= 0 ? 'up' : 'down'} money">${signed(gain)}</span>`;
-    return `
-    <div class="row">
-      <div class="dot" style="background:${SOLIDS[n % SOLIDS.length]}">${esc(i.name[0])}</div>
+    const multi = accts.length > 1;
+    const row = `
+      <div class="badge" style="color:${COLORS[n % COLORS.length]}">${esc(i.name[0])}</div>
       <div style="flex:1;min-width:0">
-        <div class="r-name">${esc(i.name)}</div>
+        <div class="r-name">${esc(i.name)}${multi ? CHEVRON : ''}</div>
         <div class="r-sub">${esc(types)}</div>
       </div>
       <div class="r-right">
-        <div class="money" style="font-weight:800;font-size:15.5px">${money(i.total)}</div>
+        <div class="money r-val">${money(i.total)}</div>
         <div style="font-size:12.5px">${gainLine}</div>
-      </div>
+      </div>`;
+    if (!multi) return `
+    <div class="row">${row}
     </div>`;
+    // <details> opens and closes without any script, and the balances inside
+    // carry .money so the privacy toggle still covers them.
+    const subs = accts.map((a) => `
+        <div class="acct-line"><span>${esc(acctName(a))}</span><span class="money">${money(a.value)}</span></div>`).join('');
+    return `
+    <details class="acct">
+      <summary class="row">${row}
+      </summary>
+      <div class="subs">${subs}
+      </div>
+    </details>`;
   }).join('');
 }
 
@@ -253,14 +270,14 @@ if (positions.length) {
     const tags = p.from.map((f) => `<span class="tag">${esc(f)}</span>`).join('');
     return `
     <div class="row">
-      <div class="chip">${esc(chip)}</div>
+      <div class="chip"${chip.length > 3 ? ' style="font-size:10px"' : ''}>${esc(chip)}</div>
       <div style="flex:1;min-width:0">
         <div class="r-name">${esc(name)}</div>
         ${detail ? `<div class="r-sub money">${detail}</div>` : ''}
         <div class="tags">${tags}</div>
       </div>
       <div class="r-right">
-        <div class="money" style="font-weight:800;font-size:15.5px">${money(p.value)}</div>
+        <div class="money r-val">${money(p.value)}</div>
         <div class="money" style="color:var(--ink-muted);font-size:12.5px">${pct.toFixed(1)}%</div>
       </div>
     </div>`;
@@ -282,8 +299,8 @@ const html = `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#f3f6fa" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#10151c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1013" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="noindex, nofollow">
 <link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" type="image/png" href="icon-192.png"><link rel="manifest" href="site.webmanifest">
 <title>Net Worth</title>
@@ -292,50 +309,44 @@ const html = `<!DOCTYPE html>
      also reaches colors used inside inline style attributes and the SVG —
      inline styles outrank a media query, but var() lookups still resolve. */
   :root {
-    --bg: #f3f6fa;
+    --bg: #f6f7f9;
     --surface: #ffffff;
-    --ink: #16202c;
-    --ink-soft: #3d4a5a;
-    --ink-muted: #8e9aa8;
-    --rule: #e9eef4;
-    --rule-strong: #dce3eb;
-    --accent: #3f82c4;
-    --loss: #b4442e;
-    --chip-bg: #e3eef9;
-    --chip-ink: #2f679f;
+    --ink: #111418;
+    --ink-soft: #3b424c;
+    --ink-muted: #8a919c;
+    --rule: #eceef1;
+    --rule-strong: #e1e4e8;
+    --accent: #3f7fbf;
+    --gain: #1f8a4c;
+    --loss: #c0392b;
+    --chip-bg: #f1f3f5;
+    --chip-ink: #3b424c;
     --warn-bg: #fdf4e3;
     --warn-ink: #7a5312;
     --warn-border: #f0dcb4;
-    --hero-bg: #4a8cc9;
-    --hero-ink: #ffffff;
-    --hero-label: rgba(255,255,255,.80);
-    --shadow: 0 1px 2px rgba(22,32,44,.05);
-    --accent-1: #3f82c4; --accent-3: #6ca3d5; --accent-5: #a3c7e7;
-    --solid-1: #3f82c4; --solid-3: #6ca3d5; --solid-5: #9dbfdf;
+    --shadow: 0 1px 2px rgba(17,20,24,.04);
+    --c1: #3f7fbf; --c2: #2a9d8f; --c3: #c9a24d;
   }
   /* Dark theme, following the OS / app appearance setting. */
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #10151c;
-      --surface: #19212b;
-      --ink: #eef3f8;
-      --ink-soft: #c9d3de;
-      --ink-muted: #8894a3;
-      --rule: #232d39;
-      --rule-strong: #2a3542;
-      --accent: #6aa8e6;
-      --loss: #e2806a;
-      --chip-bg: #1d3148;
-      --chip-ink: #9cc6ef;
+      --bg: #0e1013;
+      --surface: #16191e;
+      --ink: #f2f4f7;
+      --ink-soft: #c7ccd4;
+      --ink-muted: #858c97;
+      --rule: #23272e;
+      --rule-strong: #2b3038;
+      --accent: #6ea8e0;
+      --gain: #4cc37e;
+      --loss: #ef7a6a;
+      --chip-bg: #1f2329;
+      --chip-ink: #c7ccd4;
       --warn-bg: #2e2413;
       --warn-ink: #edcd8d;
       --warn-border: #4d3c1d;
-      --hero-bg: #2f6499;
-      --hero-ink: #ffffff;
-      --hero-label: rgba(255,255,255,.78);
-      --shadow: 0 1px 2px rgba(0,0,0,.4);
-      --accent-1: #6aa8e6; --accent-3: #4b86c1; --accent-5: #33618d;
-      --solid-1: #4b86c1; --solid-3: #3f74a8; --solid-5: #33618d;
+      --shadow: none;
+      --c1: #6ea8e0; --c2: #4fbfae; --c3: #d9b26a;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -346,20 +357,15 @@ const html = `<!DOCTYPE html>
   .topbar .name { font-weight: 800; font-size: 18px; }
   .topbar .sub { color: var(--ink-muted); font-size: 12.5px; margin-top: 1px; }
   .eye { margin-left: auto; width: 40px; height: 40px; border-radius: 99px; border: 1px solid var(--rule-strong); background: var(--surface); color: inherit; cursor: pointer; font-size: 18px; }
-  .card { background: var(--surface); border-radius: 20px; padding: 22px 20px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 18px; padding: 20px; margin-bottom: 12px; box-shadow: var(--shadow); }
   .label { color: var(--ink-muted); font-size: 13px; font-weight: 600; }
-  .hero { font-size: 44px; font-weight: 800; letter-spacing: -1px; margin-top: 6px; }
+  .hero { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-top: 4px; }
   .hero-sub { color: var(--ink-muted); font-size: 13px; margin-top: 6px; }
-  /* Filled blue banner. Redefining the accent ramp here rather than restyling
-     the bar directly is what lets it work: the segments carry their colour in
-     an inline style as var(--accent-N), which a class rule could not
-     override, but a custom property redefined on the ancestor resolves through. */
-  .hero-card { background: var(--hero-bg); color: var(--hero-ink);
-    --accent-1: rgba(255,255,255,.98); --accent-3: rgba(255,255,255,.64); --accent-5: rgba(255,255,255,.36); }
-  .hero-card .label, .hero-card .hero-sub { color: var(--hero-label); }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--hero-label); }
-  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 6px; vertical-align: 1px; }
-  .legend b { color: var(--hero-ink); font-weight: 700; margin-left: 2px; }
+  .alloc { display: flex; gap: 3px; height: 6px; margin-top: 18px; }
+  .alloc > div { border-radius: 99px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--ink-muted); }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 6px; }
+  .legend b { color: var(--ink-soft); font-weight: 700; margin-left: 2px; }
   /* Equal columns, and each cell is a flex column whose label absorbs the
      spare height. A label that wraps to two lines therefore pushes nothing
      around: all three values still sit on one baseline. */
@@ -368,21 +374,32 @@ const html = `<!DOCTYPE html>
   .stats > div + div { border-left: 1px solid var(--rule); padding-left: 12px; }
   .stats .label { flex: 1; font-size: 12.5px; line-height: 1.35; }
   .stats .v { font-weight: 800; font-size: 16px; margin-top: 5px; white-space: nowrap; }
-  .up { color: var(--accent); }
+  .up { color: var(--gain); }
   .down { color: var(--loss); }
-  .sect { display: flex; align-items: baseline; justify-content: space-between; margin: 22px 4px 10px; }
-  .sect h2 { font-size: 19px; font-weight: 800; }
+  .sect { display: flex; align-items: baseline; justify-content: space-between; margin: 24px 4px 10px; }
+  .sect h2 { font-size: 17px; font-weight: 750; }
   .sect span { color: var(--ink-muted); font-size: 12.5px; }
-  .row { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-top: 1px solid var(--rule); }
-  .row:first-child { border-top: 0; }
-  .chip, .dot { width: 46px; height: 46px; border-radius: 12px; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; flex: none; }
-  .chip { background: var(--chip-bg); color: var(--chip-ink); }
-  .dot { color: #fff; font-size: 17px; }
-  .r-name { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* Rows are separated by their container, so a row wrapped in <details>
+     gets the same divider as a plain one. */
+  .list { padding-top: 4px; padding-bottom: 4px; }
+  .list > * + * { border-top: 1px solid var(--rule); }
+  .row { display: flex; align-items: center; gap: 12px; padding: 14px 0; }
+  .chip, .badge { width: 42px; height: 42px; border-radius: 12px; background: var(--chip-bg); font-weight: 800; display: flex; align-items: center; justify-content: center; flex: none; }
+  .chip { color: var(--chip-ink); font-size: 11.5px; }
+  .badge { font-size: 17px; }
+  .r-name { font-weight: 650; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .r-sub { color: var(--ink-muted); font-size: 12.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .r-right { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; align-self: stretch; flex: none; gap: 2px; }
+  .r-val { font-weight: 750; font-size: 15px; }
   .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
-  .tag { font-size: 10.5px; font-weight: 700; color: var(--chip-ink); background: var(--chip-bg); border-radius: 99px; padding: 2px 7px; }
+  .tag { font-size: 10.5px; font-weight: 600; color: var(--ink-muted); background: var(--chip-bg); border-radius: 99px; padding: 2px 7px; }
+  .acct summary { list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .acct summary::-webkit-details-marker { display: none; }
+  .chev { color: var(--ink-muted); margin-left: 6px; transition: transform .15s; }
+  .acct[open] .chev { transform: rotate(180deg); }
+  .subs { margin: -4px 0 12px 54px; border-left: 2px solid var(--rule); }
+  .acct-line { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0 7px 12px; font-size: 13.5px; color: var(--ink-soft); }
+  .acct-line .money { font-weight: 650; color: var(--ink); }
   .fine { color: var(--ink-muted); font-size: 11.5px; text-align: center; margin-top: 18px; line-height: 1.6; }
   .chart { touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; cursor: crosshair; }
   /* blur scales with font size so a 12px share count is hidden as well as the 44px total */
@@ -406,7 +423,7 @@ const html = `<!DOCTYPE html>
 
   <div class="stale" id="stale" hidden><span aria-hidden="true">⚠️</span><span><b>Some figures may be out of date.</b> <span id="stale-msg"></span></span></div>
 
-  <div class="card hero-card">
+  <div class="card">
     <div class="label">Total net worth</div>
     <div class="hero money">${money(total)}</div>
     <div class="hero-sub">${asOf ? `Snapshot · ${prettyDate(asOf)}` : 'Waiting for the first refresh'}</div>
@@ -419,10 +436,10 @@ const html = `<!DOCTYPE html>
   </div>
 
   ${instRows ? `<div class="sect"><h2>Accounts</h2><span>${insts.length} institutions</span></div>
-  <div class="card" style="padding-top:6px;padding-bottom:6px">${instRows}</div>` : ''}
+  <div class="card list">${instRows}</div>` : ''}
 
   <div class="sect"><h2>Holdings</h2><span>${positions.length} positions</span></div>
-  <div class="card" style="padding-top:6px;padding-bottom:6px">${rows}</div>
+  <div class="card list">${rows}</div>
 
   <div class="fine">${asOf ? `Updated ${prettyDate(asOf)}` : ''}</div>
 </div>
