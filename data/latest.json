@@ -127,8 +127,39 @@
           "cost_basis": null
         }
       ]
+    },
+    "fidelity": {
+      "name": "Fidelity",
+      "date": "2026-09-28",
+      "total": 21291.67,
+      "cost_basis": null,
+      "accounts": [
+        {
+          "name": "VISA 401K PLAN",
+          "type": "401(k)",
+          "value": 21291.67
+        }
+      ],
+      "positions": [
+        {
+          "ticker": "TRP.LRG.CAP.GR.TR.D",
+          "name": "Trp Lrg Cap Gr Tr D",
+          "value": 10773.77,
+          "quantity": 369.471,
+          "price": 29.16,
+          "cost_basis": null
+        },
+        {
+          "ticker": "SP.500.INDEX.PL.CL.D",
+          "name": "SP 500 INDEX PL CL D - contribution",
+          "value": 10517.9,
+          "quantity": 28.37,
+          "price": 370.74,
+          "cost_basis": null
+        }
+      ]
     }
   },
   "date": "2026-09-28",
-  "total": 22313.42
+  "total": 43605.09
 }

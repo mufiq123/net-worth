@@ -10,7 +10,7 @@
     "method": "ledger",
     "note": "401(k). base = all contributions (yours + employer match) minus withdrawals, up to and including base_through.",
     "base": null,
-    "base_through": null,
+    "base_through": "2026-09-28",
     "ledger": []
   },
   "merrill": {
