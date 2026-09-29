@@ -60,6 +60,11 @@ Brokerage) renders as a `<details>` element, so it opens and closes without scri
 sub-accounts that Plaid lists (Treasury, Bond, …) are left out, and the balances inside carry
 `.money` so the privacy toggle covers them.
 
+**Holding chips.** Each holding is tagged with its institution in that institution's colour.
+Positions from an institution with more than one funded account also get an account chip
+(`--a1` Roth IRA violet, `--a2` Brokerage pink); `fetch.js` records each position's
+`accounts` for this. A tag's tint is derived from its colour with `color-mix()`.
+
 **Holdings merge in build, not fetch.** `latest.json` keeps positions per institution, and
 the combined list is derived at build time, keyed by ticker, or by name when there is none
 (401(k) collective trusts often have no ticker). Each row carries tags for the institutions
