@@ -103,8 +103,8 @@ function chartSVG(points) {
        data-points='${JSON.stringify(scrubData)}' data-w="${W}" data-pl="${PL}" data-pr="${PR}" data-top="${VT + 14}">
     <defs>
       <linearGradient id="gg" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.25"/>
-        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.02"/>
+        <stop offset="0%" stop-color="var(--chart-fill-top)"/>
+        <stop offset="100%" stop-color="var(--chart-fill-bottom)"/>
       </linearGradient>
     </defs>
     ${grid}
@@ -331,7 +331,7 @@ const html = `<!DOCTYPE html>
     --ink-muted: #8a919c;
     --rule: #eceef1;
     --rule-strong: #e1e4e8;
-    --accent: #4a5cd0;
+    --accent: #4a5cd0; --chart-fill-top: rgba(74,92,208,.25); --chart-fill-bottom: rgba(74,92,208,.02);
     --gain: #1f8a4c;
     --loss: #c0392b;
     --chip-bg: #f1f3f5;
@@ -359,7 +359,7 @@ const html = `<!DOCTYPE html>
       --ink-muted: #858c97;
       --rule: #222634;
       --rule-strong: #2a2f3f;
-      --accent: #9aa2ff;
+      --accent: #a878f6; --chart-fill-top: rgba(168,120,246,.30); --chart-fill-bottom: rgba(168,120,246,0);
       --gain: #4cc37e;
       --loss: #ef7a6a;
       --chip-bg: #1d2130;
@@ -372,7 +372,7 @@ const html = `<!DOCTYPE html>
       --a1: #c23dff; --a2: #ffa13d;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
       /* A lighter indigo, close to the chart line, still deep enough for white text. */
-      --hero-bg:     radial-gradient(120% 90% at 15% 0%, rgba(168,120,246,.30) 0%, rgba(168,120,246,0) 55%),     linear-gradient(135deg, #352a55 0%, #221a40 55%, #151823 100%);   --hero-glow: 0 12px 44px rgba(168,120,246,.28);
+      --hero-bg:     radial-gradient(120% 90% at 15% 0%, rgba(168,120,246,.16) 0%, rgba(168,120,246,0) 55%),     linear-gradient(135deg, #352a55 0%, #221a40 55%, #151823 100%);   --hero-glow: 0 8px 28px rgba(168,120,246,.16);
       --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
       /* Public's slice uses its chip colour exactly. */
       --hc1: #2c58ff; --hc2: #6fd35c; --hc3: #f0c46a;
