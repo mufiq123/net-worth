@@ -359,7 +359,7 @@ const html = `<!DOCTYPE html>
       --ink-muted: #858c97;
       --rule: #222634;
       --rule-strong: #2a2f3f;
-      --accent: #7fa3ff;
+      --accent: #8a93ff;
       --gain: #4cc37e;
       --loss: #ef7a6a;
       --chip-bg: #1d2130;
@@ -371,9 +371,10 @@ const html = `<!DOCTYPE html>
       --c1: #2664fc; --c2: #5aa84a; --c3: #d9b26a;
       --a1: #c23dff; --a2: #ffa13d;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
-      --hero-bg: linear-gradient(135deg, #2046a8 0%, #183377 55%, #12224d 100%);
+      --hero-bg: linear-gradient(135deg, #2c3490 0%, #1f2566 55%, #171b45 100%);
       --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
-      --hc1: #8fb0ff; --hc2: #6fd35c; --hc3: #f0c46a;
+      /* Public's slice uses its chip colour exactly. */
+      --hc1: #2664fc; --hc2: #6fd35c; --hc3: #f0c46a;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
