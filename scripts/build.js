@@ -331,7 +331,7 @@ const html = `<!DOCTYPE html>
     --ink-muted: #8a919c;
     --rule: #eceef1;
     --rule-strong: #e1e4e8;
-    --accent: #3d4fc4;
+    --accent: #4a5cd0;
     --gain: #1f8a4c;
     --loss: #c0392b;
     --chip-bg: #f1f3f5;
@@ -343,7 +343,7 @@ const html = `<!DOCTYPE html>
     --c1: #4338ca; --c2: #368727; --c3: #c9a24d;
     --a1: #c23dff; --a2: #ffa13d;
     /* Headline card: filled with the chart-line colour. */
-    --hero-bg: linear-gradient(135deg, #5a68e0 0%, #4555cc 55%, #3846b3 100%);
+    --hero-bg: linear-gradient(135deg, #6674e6 0%, #5262d6 55%, #4452c0 100%);
     --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.74);
     /* Institution colours as they appear on the headline card: lifted a
        little so each one stays distinct against the indigo. */
@@ -359,7 +359,7 @@ const html = `<!DOCTYPE html>
       --ink-muted: #858c97;
       --rule: #222634;
       --rule-strong: #2a2f3f;
-      --accent: #8a93ff;
+      --accent: #9aa2ff;
       --gain: #4cc37e;
       --loss: #ef7a6a;
       --chip-bg: #1d2130;
@@ -372,7 +372,7 @@ const html = `<!DOCTYPE html>
       --a1: #c23dff; --a2: #ffa13d;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
       /* A lighter indigo, close to the chart line, still deep enough for white text. */
-      --hero-bg: linear-gradient(135deg, #7079f2 0%, #5c64dc 55%, #4a51c2 100%);
+      --hero-bg: linear-gradient(135deg, #7c85f6 0%, #6a72e6 55%, #5760cf 100%);
       --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
       /* Public's slice uses its chip colour exactly. */
       --hc1: #2c58ff; --hc2: #6fd35c; --hc3: #f0c46a;
