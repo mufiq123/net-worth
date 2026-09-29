@@ -1,14 +1,60 @@
 {
   "public": {
     "method": "ledger",
-    "note": "Brokerage + Roth IRA. base = ACH deposits + journals in \u2212 disbursements/journals out + Public IRA match, from statements Oct 2025\u2013Aug 2026. Later deposits come from Plaid.",
+    "note": "Brokerage + Roth IRA. base = ACH deposits + journals in − disbursements/journals out + Public IRA match, from statements Oct 2025–Aug 2026. Later deposits come from Plaid.",
     "base": 18062.79,
     "base_through": "2026-08-31",
-    "ledger": []
+    "ledger": [
+      {
+        "id": "Mg9oj3oxR9tRXRQ03bBaCgY5KRrDwOF0Manwj",
+        "date": "2026-09-02",
+        "amount": 0.1
+      },
+      {
+        "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6Dtdpb0Nm",
+        "date": "2026-09-02",
+        "amount": 19
+      },
+      {
+        "id": "5dqxgax6LqIx3x1O5z0mU0QyanM1DPCNBxPQk",
+        "date": "2026-09-14",
+        "amount": 750
+      },
+      {
+        "id": "Xg7DkxDwa7tLqLAxQgkViYeQNkXwqDhz4L1xm",
+        "date": "2026-09-17",
+        "amount": -0.04
+      },
+      {
+        "id": "Nm4gZygMR4f8x8X6y9JesPyR6bD7e0FyR7MOZ",
+        "date": "2026-09-17",
+        "amount": 0.04
+      },
+      {
+        "id": "ePrVoEV3arHRORj49Ex1CYvXMRrbOxh4dgqXp",
+        "date": "2026-09-17",
+        "amount": 0.04
+      },
+      {
+        "id": "D05qDdqmR5CX7XDjdEOytNK3JdV5YqtXZLj4a",
+        "date": "2026-09-17",
+        "amount": 0.04
+      },
+      {
+        "id": "1rLkx0kgJLIReR14rwKXCKEoZQ9abnhYm7Myk",
+        "date": "2026-09-17",
+        "amount": -0.04
+      },
+      {
+        "id": "PgEOqkOXREtgxgB1kjn8skVmqOM7xXcOmNvRy",
+        "date": "2026-09-17",
+        "amount": -0.04
+      }
+    ]
   },
   "fidelity": {
     "method": "ledger",
-    "note": "401(k). base = every 'Contributions' row in NetBenefits history.csv (Jul 2025\u2013Sep 2026, employee + match). Later ones come from Plaid.",
+    "note": "401(k). base = every 'Contributions' row in NetBenefits history.csv (Jul 2025–Sep 2026, employee + match). Later ones come from Plaid.",
     "base": 19417.04,
     "base_through": "2026-09-28",
     "ledger": []
