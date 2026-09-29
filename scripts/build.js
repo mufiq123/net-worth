@@ -341,7 +341,10 @@ const html = `<!DOCTYPE html>
     --warn-border: #f0dcb4;
     --shadow: 0 1px 2px rgba(17,20,24,.04);
     --c1: #235d9c; --c2: #368727; --c3: #c9a24d;
-    --a1: #6a4fc4; --a2: #b0407e;
+    --a1: #c23dff; --a2: #ffa13d;
+    /* Headline card: filled with the chart-line colour. */
+    --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.80);
+    --hs1: rgba(255,255,255,.95); --hs2: rgba(255,255,255,.62); --hs3: rgba(255,255,255,.36);
   }
   /* Dark theme, following the OS / app appearance setting. */
   @media (prefers-color-scheme: dark) {
@@ -362,8 +365,11 @@ const html = `<!DOCTYPE html>
       --warn-ink: #edcd8d;
       --warn-border: #4d3c1d;
       --shadow: none;
-      --c1: #4a86c6; --c2: #5aa84a; --c3: #d9b26a;
-      --a1: #a08ce6; --a2: #de7fb8;
+      --c1: #3300ff; --c2: #5aa84a; --c3: #d9b26a;
+      --a1: #c23dff; --a2: #ffa13d;
+      /* The dark-mode line colour is light, so the headline card flips to dark text. */
+      --hero-ink: #0e1013; --hero-label: rgba(14,16,19,.70);
+      --hs1: rgba(14,16,19,.85); --hs2: rgba(14,16,19,.50); --hs3: rgba(14,16,19,.28);
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -383,6 +389,13 @@ const html = `<!DOCTYPE html>
   .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--ink-muted); }
   .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 6px; }
   .legend b { color: var(--ink-soft); font-weight: 700; margin-left: 2px; }
+  /* The allocation bar and legend carry institution colours inline as
+     var(--cN); redefining those here swaps them for a tonal ramp that reads
+     on the filled card, without touching the markup. */
+  .hero-card { background: var(--accent); border-color: transparent; color: var(--hero-ink);
+    --c1: var(--hs1); --c2: var(--hs2); --c3: var(--hs3); }
+  .hero-card .label, .hero-card .hero-sub, .hero-card .legend { color: var(--hero-label); }
+  .hero-card .legend b { color: var(--hero-ink); }
   /* Three figures spread edge to edge: left, centre, right. Columns size to
      their content rather than splitting the width evenly, so a long gains
      figure on a phone can't run into its neighbour. */
@@ -442,7 +455,7 @@ const html = `<!DOCTYPE html>
 
   <div class="stale" id="stale" hidden><span aria-hidden="true">⚠️</span><span><b>Some figures may be out of date.</b> <span id="stale-msg"></span></span></div>
 
-  <div class="card">
+  <div class="card hero-card">
     <div class="label">Total net worth</div>
     <div class="hero money">${money(total)}</div>
     <div class="hero-sub">${asOf ? `Snapshot · ${prettyDate(asOf)}` : 'Waiting for the first refresh'}</div>
