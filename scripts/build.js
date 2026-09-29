@@ -368,14 +368,14 @@ const html = `<!DOCTYPE html>
       --warn-ink: #edcd8d;
       --warn-border: #4d3c1d;
       --shadow: none;
-      --c1: #2664fc; --c2: #5aa84a; --c3: #d9b26a;
+      --c1: #2c58ff; --c2: #5aa84a; --c3: #d9b26a;
       --a1: #c23dff; --a2: #ffa13d;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
       /* A lighter indigo, close to the chart line, still deep enough for white text. */
       --hero-bg: linear-gradient(135deg, #7079f2 0%, #5c64dc 55%, #4a51c2 100%);
       --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
       /* Public's slice uses its chip colour exactly. */
-      --hc1: #2664fc; --hc2: #6fd35c; --hc3: #f0c46a;
+      --hc1: #2c58ff; --hc2: #6fd35c; --hc3: #f0c46a;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -403,7 +403,6 @@ const html = `<!DOCTYPE html>
   /* A dark inset track, so each slice reads against it rather than against
      the card's own blue-violet. */
   .hero-card .alloc { background: rgba(10,12,40,.35); border-radius: 99px; padding: 2px; height: 12px; }
-  .hero-card .legend i { width: 9px; height: 9px; box-shadow: 0 0 0 1px rgba(255,255,255,.55); }
   .hero-card .label, .hero-card .hero-sub, .hero-card .legend { color: var(--hero-label); }
   .hero-card .legend b { color: var(--hero-ink); }
   /* Three figures spread edge to edge: left, centre, right. Columns size to
