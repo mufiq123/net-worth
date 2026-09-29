@@ -324,14 +324,14 @@ const html = `<!DOCTYPE html>
      also reaches colors used inside inline style attributes and the SVG —
      inline styles outrank a media query, but var() lookups still resolve. */
   :root {
-    --bg: #f6f7f9;
+    --bg: #f4f5f9;
     --surface: #ffffff;
     --ink: #111418;
     --ink-soft: #3b424c;
     --ink-muted: #8a919c;
     --rule: #eceef1;
     --rule-strong: #e1e4e8;
-    --accent: #3f7fbf;
+    --accent: #3d4fc4;
     --gain: #1f8a4c;
     --loss: #c0392b;
     --chip-bg: #f1f3f5;
@@ -340,36 +340,40 @@ const html = `<!DOCTYPE html>
     --warn-ink: #7a5312;
     --warn-border: #f0dcb4;
     --shadow: 0 1px 2px rgba(17,20,24,.04);
-    --c1: #235d9c; --c2: #368727; --c3: #c9a24d;
+    --c1: #4338ca; --c2: #368727; --c3: #c9a24d;
     --a1: #c23dff; --a2: #ffa13d;
     /* Headline card: filled with the chart-line colour. */
-    --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.80);
-    --hs1: rgba(255,255,255,.95); --hs2: rgba(255,255,255,.62); --hs3: rgba(255,255,255,.36);
+    --hero-bg: linear-gradient(135deg, #3b4fc9 0%, #2a3a96 55%, #1f2d6e 100%);
+    --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.74);
+    /* Institution colours as they appear on the headline card: lifted a
+       little so each one stays distinct against the indigo. */
+    --hc1: #8f86ff; --hc2: #6fd35c; --hc3: #f0c46a;
   }
   /* Dark theme, following the OS / app appearance setting. */
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0e1013;
-      --surface: #16191e;
+      --bg: #0c0e14;
+      --surface: #151823;
       --ink: #f2f4f7;
       --ink-soft: #c7ccd4;
       --ink-muted: #858c97;
-      --rule: #23272e;
-      --rule-strong: #2b3038;
-      --accent: #6ea8e0;
+      --rule: #222634;
+      --rule-strong: #2a2f3f;
+      --accent: #8a93ff;
       --gain: #4cc37e;
       --loss: #ef7a6a;
-      --chip-bg: #1f2329;
+      --chip-bg: #1d2130;
       --chip-ink: #c7ccd4;
       --warn-bg: #2e2413;
       --warn-ink: #edcd8d;
       --warn-border: #4d3c1d;
       --shadow: none;
-      --c1: #3300ff; --c2: #5aa84a; --c3: #d9b26a;
+      --c1: #6458ed; --c2: #5aa84a; --c3: #d9b26a;
       --a1: #c23dff; --a2: #ffa13d;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
-      --hero-ink: #0e1013; --hero-label: rgba(14,16,19,.70);
-      --hs1: rgba(14,16,19,.85); --hs2: rgba(14,16,19,.50); --hs3: rgba(14,16,19,.28);
+      --hero-bg: linear-gradient(135deg, #2c3490 0%, #1f2566 55%, #171b45 100%);
+      --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
+      --hc1: #8f86ff; --hc2: #6fd35c; --hc3: #f0c46a;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -384,16 +388,17 @@ const html = `<!DOCTYPE html>
   .label { color: var(--ink-muted); font-size: 13px; font-weight: 600; }
   .hero { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-top: 4px; }
   .hero-sub { color: var(--ink-muted); font-size: 13px; margin-top: 6px; }
-  .alloc { display: flex; gap: 3px; height: 6px; margin-top: 18px; }
+  .alloc { display: flex; gap: 3px; height: 8px; margin-top: 18px; }
   .alloc > div { border-radius: 99px; }
   .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--ink-muted); }
   .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 6px; }
   .legend b { color: var(--ink-soft); font-weight: 700; margin-left: 2px; }
   /* The allocation bar and legend carry institution colours inline as
-     var(--cN); redefining those here swaps them for a tonal ramp that reads
-     on the filled card, without touching the markup. */
-  .hero-card { background: var(--accent); border-color: transparent; color: var(--hero-ink);
-    --c1: var(--hs1); --c2: var(--hs2); --c3: var(--hs3); }
+     var(--cN); redefining those here swaps in lifted versions (--hcN) that
+     stay distinct on the indigo card, without touching the markup. */
+  .hero-card { background: var(--hero-bg); border-color: transparent; color: var(--hero-ink);
+    --c1: var(--hc1); --c2: var(--hc2); --c3: var(--hc3); }
+  .hero-card .alloc { background: rgba(255,255,255,.12); border-radius: 99px; padding: 2px; height: 12px; }
   .hero-card .label, .hero-card .hero-sub, .hero-card .legend { color: var(--hero-label); }
   .hero-card .legend b { color: var(--hero-ink); }
   /* Three figures spread edge to edge: left, centre, right. Columns size to
