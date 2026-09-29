@@ -119,9 +119,27 @@ async function fetchHoldings(inst) {
       name: sec.name || 'Unknown holding',
       value,
       quantity: h.quantity ?? null,
-      price: h.institution_price ?? null,
+      // Public reports 0 here alongside a correct value and quantity.
+      price: h.institution_price || (h.quantity ? round2(value / h.quantity) : null),
       cost_basis: Number.isFinite(h.cost_basis) ? round2(h.cost_basis) : null,
     });
+  }
+  // Some institutions (Public) report part of an account's uninvested cash only
+  // in its balance, not as a holding. Per account, anything the balance holds
+  // beyond its holdings is counted as cash. Only a positive gap is added: a
+  // balance below its holdings is more likely a stale balance than debt.
+  const heldByAccount = {};
+  for (const h of holdings) {
+    const v = h.institution_value ?? (h.quantity ?? 0) * (h.institution_price ?? 0);
+    heldByAccount[h.account_id] = (heldByAccount[h.account_id] || 0) + (v > 0 ? v : 0);
+  }
+  for (const a of accounts) {
+    const gap = round2((a.balances?.current ?? 0) - (heldByAccount[a.account_id] || 0));
+    if (gap > 0.5) {
+      cash += gap;
+      cashBasis += gap;
+      console.log(`${inst.name}: $${gap.toLocaleString('en-US')} of "${a.name}" balance not in holdings — counted as cash.`);
+    }
   }
   if (cash > 0) {
     positions.push({ ticker: 'CASH', name: 'Cash', value: round2(cash), quantity: null, price: null, cost_basis: round2(cashBasis), cash: true });

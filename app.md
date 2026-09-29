@@ -61,6 +61,15 @@ the combined list is derived at build time, keyed by ticker, or by name when the
 (401(k) collective trusts often have no ticker). Each row carries tags for the institutions
 it came from. Keeping the raw split means the merge rule can change without re-fetching.
 
+**Data quirks handled.** Public reports `institution_price: 0` next to correct values and
+quantities, so price falls back to value ÷ quantity. Public also keeps some uninvested cash
+only in an account's balance, so per account, any positive balance-minus-holdings gap is
+counted as cash. Fidelity's 401(k) trusts have no real tickers; Plaid invents ones like
+`TRP.LRG.CAP.GR.TR.D`, and `DISPLAY` in `build.js` maps known ones to readable names. Names are
+"Issuer - Fund" and usually shortened to the fund. When the suffix is a label rather than a
+name (lowercase like "contribution", or "…shares of beneficial interest"), the issuer part is
+kept instead.
+
 **Two ways to measure what went in.**
 - *Ledger* (Public, Fidelity): `base` + id-keyed ledger, as on O.A. Investments. The
   difference is that `base_through` is set automatically, on the first successful run after
@@ -106,6 +115,10 @@ is read-only and cannot move money.
 
 ## Known limitations
 
+- **Merrill isn't linked yet.** "Merrill Lynch - Benefits" goes through Merrill Lynch's
+  own connection. The first attempt (2026-09-28) failed with `INSTITUTION_NOT_RESPONDING`, and
+  Plaid lists a 45% success rate for it. Retry `link.js merrill` later; no code change is
+  needed when it works.
 - **Merrill Benefits OnLine may not be supported by Plaid.** Equity-plan portals are
   often not reachable by aggregators. If it isn't in Plaid Link, the fallback is a hand-kept
   share count for Visa (`V`), priced from a market feed. Not built.

@@ -111,7 +111,7 @@ function chartSVG(points) {
     <polygon points="${area}" fill="url(#gg)"/>
     <polyline points="${line}" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
     <circle id="endDot" cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="7" fill="var(--surface)" stroke="var(--accent)" stroke-width="3.5"/>
-    <text id="endLabel" class="money" x="${(lx - 12).toFixed(1)}" y="${(ly - 14).toFixed(1)}" text-anchor="end" font-size="16" font-weight="700" fill="var(--ink-soft)">${money(last.value)}</text>
+    <text id="endLabel" class="money" x="${(lx < W / 2 ? lx + 12 : lx - 12).toFixed(1)}" y="${(ly - 14).toFixed(1)}" text-anchor="${lx < W / 2 ? 'start' : 'end'}" font-size="16" font-weight="700" fill="var(--ink-soft)">${money(last.value)}</text>
     <g id="xticks">${xticks}
     </g>
     <g id="scrub" opacity="0" pointer-events="none">
@@ -172,7 +172,7 @@ if (insts.length && total > 0) {
     insts.map((i, n) => `<span><i style="background:${SHADES[n % SHADES.length]}"></i>${esc(i.name)} <b class="money">${(i.total / total * 100).toFixed(0)}%</b></span>`).join('') +
     `</div>`;
   instRows = insts.map((i, n) => {
-    const types = [...new Set((i.accounts || []).map((a) => a.type))].join(' · ');
+    const types = [...new Set((i.accounts || []).filter((a) => a.value > 0).map((a) => a.type))].join(' · ');
     const gain = i.invested != null ? round2(i.total - i.invested) : null;
     const gainLine = gain == null
       ? `<span style="color:var(--ink-muted)">—</span>`
@@ -203,12 +203,38 @@ for (const i of insts) {
     const m = merged.get(key) || { ...p, value: 0, quantity: p.quantity == null ? null : 0, from: [] };
     m.value = round2(m.value + p.value);
     if (m.quantity != null && p.quantity != null) m.quantity += p.quantity;
-    if (m.price == null) m.price = p.price;
+    // Public reports a price of 0 alongside correct values and share counts.
+    if (!m.price) m.price = p.price || (p.quantity ? p.value / p.quantity : null);
     if (!m.from.includes(i.name)) m.from.push(i.name);
     merged.set(key, m);
   }
 }
 const positions = [...merged.values()].sort((a, b) => b.value - a.value);
+
+// 401(k) collective trusts have no real ticker; Plaid invents one from the
+// abbreviated fund name. Known ones get a readable name and chip here.
+const DISPLAY = {
+  'TRP.LRG.CAP.GR.TR.D': { name: 'T. Rowe Price Large Cap Growth Trust', chip: 'TRP' },
+  'SP.500.INDEX.PL.CL.D': { name: 'S&P 500 Index Pool', chip: 'S&P' },
+};
+const realTicker = (t) => (t && /^[A-Z]{1,5}(\.[A-Z])?$/.test(t) ? t : null);
+function displayName(p) {
+  if (DISPLAY[p.ticker]) return DISPLAY[p.ticker];
+  // Plaid reports full legal names, "Issuer - Fund". Usually the fund is the
+  // part after the first " - " ("Vanguard World Fund - Vanguard Information
+  // Technology ETF"). When that part is a share-class or source label instead
+  // ("… - Common shares of beneficial interest", "… - contribution"), the
+  // part before it is the name.
+  const cut = p.name.indexOf(' - ');
+  let name = p.name;
+  if (cut !== -1) {
+    const before = p.name.slice(0, cut).trim();
+    const after = p.name.slice(cut + 3).trim();
+    name = !after || /^[a-z]/.test(after) || /\bshares\b/i.test(after) ? before : after;
+  }
+  const initials = name.replace(/[^A-Za-z ]/g, '').split(/\s+/).filter(Boolean).slice(0, 3).map((w) => w[0]).join('');
+  return { name, chip: (realTicker(p.ticker) || initials).slice(0, 5).toUpperCase() };
+}
 
 let rows = '';
 if (positions.length) {
@@ -217,9 +243,9 @@ if (positions.length) {
     // Plaid reports full legal names ("Vanguard World Fund - Vanguard
     // Information Technology ETF"). Show whatever follows the first " - ",
     // falling back to the whole name when there is no prefix to strip.
-    const cut = p.name.indexOf(' - ');
-    const name = (cut === -1 ? '' : p.name.slice(cut + 3).trim()) || p.name;
-    const chip = p.cash ? '$' : (p.ticker || name.replace(/[^A-Za-z ]/g, '').split(/\s+/).filter(Boolean).slice(0, 3).map((w) => w[0]).join('')).slice(0, 5).toUpperCase();
+    const d = displayName(p);
+    const name = d.name;
+    const chip = p.cash ? '$' : d.chip;
     const detail = p.cash
       ? ''
       : [p.quantity != null ? `${Number(p.quantity).toFixed(p.quantity % 1 ? 3 : 0)} sh` : '', p.price != null ? `@ ${money(p.price)}` : '']
