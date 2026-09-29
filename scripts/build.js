@@ -353,7 +353,7 @@ const html = `<!DOCTYPE html>
   body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
   .wrap { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
   .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-  .topbar img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; }
+  .topbar img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; border: 1px solid var(--rule); }
   .topbar .name { font-weight: 800; font-size: 18px; }
   .topbar .sub { color: var(--ink-muted); font-size: 12.5px; margin-top: 1px; }
   .eye { margin-left: auto; width: 40px; height: 40px; border-radius: 99px; border: 1px solid var(--rule-strong); background: var(--surface); color: inherit; cursor: pointer; font-size: 18px; }
