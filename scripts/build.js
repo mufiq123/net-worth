@@ -372,7 +372,7 @@ const html = `<!DOCTYPE html>
       --a1: #c23dff; --a2: #ffa13d;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
       /* A lighter indigo, close to the chart line, still deep enough for white text. */
-      --hero-bg: linear-gradient(135deg, #7c85f6 0%, #6a72e6 55%, #5760cf 100%);
+      --hero-bg:     radial-gradient(120% 90% at 15% 0%, rgba(168,120,246,.30) 0%, rgba(168,120,246,0) 55%),     linear-gradient(135deg, #352a55 0%, #221a40 55%, #151823 100%);   --hero-glow: 0 12px 44px rgba(168,120,246,.28);
       --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
       /* Public's slice uses its chip colour exactly. */
       --hc1: #2c58ff; --hc2: #6fd35c; --hc3: #f0c46a;
@@ -398,7 +398,7 @@ const html = `<!DOCTYPE html>
   /* The allocation bar and legend carry institution colours inline as
      var(--cN); redefining those here swaps in lifted versions (--hcN) that
      stay distinct on the indigo card, without touching the markup. */
-  .hero-card { background: var(--hero-bg); border-color: transparent; color: var(--hero-ink);
+  .hero-card { background: var(--hero-bg); box-shadow: var(--hero-glow, var(--shadow)); border-color: transparent; color: var(--hero-ink);
     --c1: var(--hc1); --c2: var(--hc2); --c3: var(--hc3); }
   /* A dark inset track, so each slice reads against it rather than against
      the card's own blue-violet. */
