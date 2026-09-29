@@ -3,7 +3,7 @@
     "method": "ledger",
     "note": "Brokerage + Roth IRA. base = everything deposited minus withdrawn, up to and including base_through.",
     "base": null,
-    "base_through": null,
+    "base_through": "2026-09-28",
     "ledger": []
   },
   "fidelity": {
