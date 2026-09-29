@@ -276,7 +276,7 @@ if (positions.length) {
     const chip = p.cash ? '$' : d.chip;
     const detail = p.cash
       ? ''
-      : [p.quantity != null ? `${Number(p.quantity).toFixed(p.quantity % 1 ? 3 : 0)} sh` : '', p.price != null ? `@ ${money(p.price)}` : '']
+      : [p.quantity != null ? `${Number(p.quantity).toFixed(2)} shares` : '', p.price != null ? `@ ${money(p.price)}` : '']
           .filter(Boolean).join(' ');
     // The tag colour is passed as --t; the tag derives its tint from it.
     const tags = [
