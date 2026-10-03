@@ -30,7 +30,7 @@ cron (6 entries) → gate job → fetch.js → build.js → dist/index.html → 
 |---|---|---|---|
 | `public` | Brokerage, Roth IRA | `PLAID_TOKEN_PUBLIC` | ledger |
 | `fidelity` | 401(k) | `PLAID_TOKEN_FIDELITY` | ledger |
-| `merrill` | ESPP, Visa equity plan | `PLAID_TOKEN_MERRILL` | cost basis |
+| `merrill` | ESPP, Equity (Visa grant) | none: hand-kept `data/merrill.json` | cost basis (ESPP only) |
 
 An institution whose secret isn't set is skipped, so the page works with any subset linked.
 One login is one Plaid Item, and Items aren't refunded on delete, so broken connections are
@@ -90,10 +90,11 @@ kept instead.
   transfer is valued at quantity × price. Every run logs the transaction kinds it saw for each
   institution, so a 401(k) that reports payroll contributions as, say, `buy/contribution` shows
   up in the log and can be added to `count`.
-- *Cost basis* (Merrill): RSU vests never arrive as cash deposits, so a ledger would count every
-  vested share as pure gain. Summing holdings' `cost_basis` (ESPP purchase price, RSU value at
-  vest) is the right "invested" figure for equity compensation. Cash counts at face value. If
-  any holding lacks a cost basis, the figure is `null` rather than understated.
+- *Cost basis* (Merrill): the ESPP's `cost_basis` in `data/merrill.json` (total purchase cost,
+  from Merrill's lot table) is its "invested" figure. The Equity grant cost nothing, so it has
+  `exclude_from_gains`: it counts in the total, chart, bar and holdings, but its value is taken
+  out before gains are measured (a $0 basis would count it all as gain). The page notes the
+  excluded amount under the stats, computed from the current shares × price.
 
 **Combined gains need every institution.** The stats row appears only when every linked
 institution has an invested figure. A total that silently left one out would overstate the
@@ -137,15 +138,15 @@ is read-only and cannot move money.
 
 ## Known limitations
 
-- **Merrill isn't linked yet.** "Merrill Lynch - Benefits" goes through Merrill Lynch's
-  own connection. The first attempt (2026-09-28) failed with `INSTITUTION_NOT_RESPONDING`, and
-  Plaid lists a 45% success rate for it. Retry `link.js merrill` later; no code change is
-  needed when it works.
-- **Merrill Benefits OnLine may not be supported by Plaid.** Equity-plan portals are
-  often not reachable by aggregators. If it isn't in Plaid Link, the fallback is a hand-kept
-  share count for Visa (`V`), priced from a market feed. Not built.
-- **Unvested RSUs aren't counted.** Plaid reports what's in the account, so only vested
-  shares appear.
+- **Merrill is hand-kept.** Plaid's Merrill Benefits connection failed
+  (`INSTITUTION_NOT_RESPONDING`), so `data/merrill.json` holds the share counts per account
+  and `fetch.js` prices them with Visa's quote from Yahoo Finance's chart endpoint (no key;
+  query1 then query2; on failure the last price is reused). Stooq was tried first but now
+  answers scripts with a browser check. **Update the share counts after every ESPP purchase
+  (month-end) and add the purchase cost to `cost_basis`.**
+- **Merrill history backfill:** ESPP shares per month from the lot table (first purchase
+  2025-10-31), plus all 69 Equity shares from 2025-08-31 (grant date), valued at Visa's
+  month-end close.
 - **Prices are end-of-day** (Plaid investments update about once a day after close).
 - **Ledger kinds for the 401(k) are unconfirmed** until the first run's log shows what
   Fidelity reports.

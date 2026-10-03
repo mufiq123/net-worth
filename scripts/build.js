@@ -138,6 +138,10 @@ function invested(inst) {
   return round2(dep.base + ledger.reduce((s, e) => s + (Number(e.amount) || 0), 0));
 }
 insts.forEach((i) => { i.invested = invested(i); });
+// Holdings with no cost basis by design (the Merrill equity grant) count in
+// the total and the chart but stay out of invested, gains and return.
+const excludedOf = (i) => round2((i.excluded || []).reduce((s, e) => s + e.value, 0));
+const excluded = insts.flatMap((i) => (i.excluded || []).filter((e) => e.value > 0));
 
 // The combined stats row needs every institution's figure: a total that
 // silently left one out would overstate the gain.
@@ -145,14 +149,15 @@ let statsHTML = '';
 const allKnown = insts.length && insts.every((i) => i.invested != null && i.invested > 0);
 if (allKnown) {
   const inv = round2(insts.reduce((s, i) => s + i.invested, 0));
-  const gains = round2(total - inv);
+  const gains = round2(total - insts.reduce((s, i) => s + excludedOf(i), 0) - inv);
   const cls = gains >= 0 ? 'up' : 'down';
   statsHTML = `
     <div class="stats">
       <div><div class="label">Net invested</div><div class="v money">${money(inv)}</div></div>
       <div><div class="label">Total gains</div><div class="v ${cls} money">${signed(gains)}</div></div>
       <div><div class="label">Return</div><div class="v ${cls} money">${gains >= 0 ? '+' : '−'}${Math.abs((gains / inv) * 100).toFixed(1)}%</div></div>
-    </div>`;
+    </div>` + (excluded.length ? `
+    <div class="excl">Gains exclude the ${excluded.map((e) => `<span class="money">${money(e.value)}</span> ${esc(e.name.toLowerCase())} grant`).join(' and ')}.</div>` : '');
 } else if (insts.length) {
   const missing = insts.filter((i) => i.invested == null).map((i) => i.name);
   statsHTML = `<div class="fine" style="text-align:left;margin-top:14px">Gains appear once net deposits are set for ${missing.join(', ')}.</div>`;
@@ -185,7 +190,7 @@ if (insts.length && total > 0) {
     // Plaid lists empty sub-accounts too (Public's Treasury, Bond, …).
     const accts = (i.accounts || []).filter((a) => a.value > 0).sort((a, b) => b.value - a.value);
     const types = [...new Set(accts.map((a) => a.type))].join(' · ');
-    const gain = i.invested != null ? round2(i.total - i.invested) : null;
+    const gain = i.invested != null ? round2(i.total - excludedOf(i) - i.invested) : null;
     const gainLine = gain == null
       ? `<span style="color:var(--ink-muted)">—</span>`
       : `<span class="${gain >= 0 ? 'up' : 'down'} money">${signed(gain)}</span>`;
@@ -414,6 +419,7 @@ const html = `<!DOCTYPE html>
   .stats > div:nth-child(3) { align-items: flex-end; text-align: right; }
   .stats .label { font-size: 12.5px; line-height: 1.35; white-space: nowrap; }
   .stats .v { font-weight: 800; font-size: clamp(14px, 4.2vw, 16px); margin-top: 5px; white-space: nowrap; }
+  .excl { font-size: 12px; color: var(--ink-muted); margin-top: 12px; }
   .up { color: var(--gain); }
   .down { color: var(--loss); }
   .sect { display: flex; align-items: baseline; justify-content: space-between; margin: 24px 4px 10px; }

@@ -151,7 +151,9 @@ async function manualHoldings(inst) {
   }
 
   const accts = (cfg.accounts || []).filter((a) => Number(a.shares) > 0);
-  const basisKnown = accts.every((a) => Number.isFinite(a.cost_basis));
+  // Excluded accounts (the equity grant) have no basis by design.
+  const counted = accts.filter((a) => !a.exclude_from_gains);
+  const basisKnown = counted.every((a) => Number.isFinite(a.cost_basis));
   const positions = accts.map((a) => ({
     ticker: cfg.ticker,
     name: cfg.name || cfg.ticker,
@@ -160,6 +162,7 @@ async function manualHoldings(inst) {
     price,
     cost_basis: Number.isFinite(a.cost_basis) ? round2(a.cost_basis) : null,
     accounts: [a.name],
+    ...(a.exclude_from_gains ? { exclude_from_gains: true } : {}),
   }));
   const total = round2(positions.reduce((s, p) => s + p.value, 0));
   console.log(`${inst.name}: ${positions.length} positions, $${total.toLocaleString('en-US')}.`);
@@ -168,7 +171,10 @@ async function manualHoldings(inst) {
     name: inst.name,
     date: today,
     total,
-    cost_basis: basisKnown ? round2(accts.reduce((s, a) => s + a.cost_basis, 0)) : null,
+    cost_basis: basisKnown ? round2(counted.reduce((s, a) => s + a.cost_basis, 0)) : null,
+    // Value build.js leaves out of gains, so total − excluded is what the
+    // cost basis is measured against.
+    excluded: positions.filter((p) => p.exclude_from_gains).map((p) => ({ name: p.accounts[0], value: p.value })),
     accounts: positions.map((p) => ({ name: p.accounts[0], type: p.accounts[0], value: p.value })),
     positions,
   };
