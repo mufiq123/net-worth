@@ -1,6 +1,7 @@
 // scripts/fetch.js
-// Pulls current holdings for every connected institution from Plaid (read-only)
-// and writes data/latest.json, the deposits ledgers and today's history point.
+// Pulls current holdings for every connected institution from Plaid (read-only),
+// values the hand-kept Merrill share counts at the day's market price, and
+// writes data/latest.json, the deposits ledgers and today's history point.
 // Credentials come from environment variables (GitHub Actions secrets in
 // production). Never commit real credentials.
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
@@ -15,16 +16,25 @@ const readJSON = (f, fallback) => (existsSync(dataPath(f)) ? JSON.parse(readFile
 
 const { PLAID_CLIENT_ID, PLAID_SECRET, PLAID_ENV = 'production' } = process.env;
 
+// A manual institution counts once its file lists at least one share.
+const manualConfig = (inst) => {
+  const cfg = readJSON(inst.config, null);
+  return cfg && (cfg.accounts || []).some((a) => Number(a.shares) > 0) ? cfg : null;
+};
+
 // Checked before credentials, so the scheduled runs are a quiet no-op until
 // the first account is linked.
-const connected = INSTITUTIONS.map((inst) => ({ ...inst, token: process.env[inst.secret] })).filter((i) => i.token);
+const connected = INSTITUTIONS.map((inst) =>
+  inst.source === 'manual' ? { ...inst, cfg: manualConfig(inst) } : { ...inst, token: process.env[inst.secret] }
+).filter((i) => i.token || i.cfg);
+const viaPlaid = connected.filter((i) => i.token);
 if (!connected.length) {
-  console.log(`No institutions linked yet (none of ${INSTITUTIONS.map((i) => i.secret).join(', ')} is set). Nothing to fetch.`);
+  console.log('No institutions linked yet. Nothing to fetch.');
   process.exit(0);
 }
 console.log(`Linked: ${connected.map((i) => i.name).join(', ')}.`);
 
-if (!PLAID_CLIENT_ID || !PLAID_SECRET) {
+if (viaPlaid.length && (!PLAID_CLIENT_ID || !PLAID_SECRET)) {
   console.error('Missing PLAID_CLIENT_ID or PLAID_SECRET.');
   process.exit(1);
 }
@@ -72,9 +82,9 @@ const today = chicagoDate();
 const REFRESH = (process.env.PLAID_REFRESH ?? 'true') !== 'false';
 const REFRESH_WAIT_MS = Number(process.env.PLAID_REFRESH_WAIT_MS ?? 30000);
 
-if (REFRESH) {
+if (REFRESH && viaPlaid.length) {
   await Promise.all(
-    connected.map((inst) =>
+    viaPlaid.map((inst) =>
       plaid.investmentsRefresh({ access_token: inst.token }).catch((err) => {
         // Not fatal: the holdings read below falls back to Plaid's cache.
         console.warn(`${inst.name}: refresh request failed (${errCode(err)}) — using Plaid's cached holdings.`);
@@ -96,6 +106,75 @@ const SUBTYPE_LABELS = {
 };
 
 async function fetchHoldings(inst) {
+  return inst.source === 'manual' ? manualHoldings(inst) : plaidHoldings(inst);
+}
+
+// ---- market prices (manual institutions) ----
+// Yahoo Finance's chart endpoint needs no key. (Stooq's CSV quotes, the usual
+// alternative, now sit behind a browser check and return a page instead.)
+// Two hosts serve it, so the second is tried when the first fails.
+async function quote(ticker) {
+  let lastErr;
+  for (const host of ['query1', 'query2']) {
+    try {
+      const res = await fetch(`https://${host}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1d&interval=1d`, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (net-worth dashboard)' },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const meta = (await res.json())?.chart?.result?.[0]?.meta;
+      const price = meta?.regularMarketPrice;
+      if (!(price > 0)) throw new Error('no price in response');
+      return { price, asOf: meta.regularMarketTime ? new Date(meta.regularMarketTime * 1000).toISOString() : null };
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw new Error(`no quote for ${ticker} (${lastErr?.message})`);
+}
+
+// Merrill: one holding (Visa) split across the ESPP and equity-plan accounts.
+// If no quote can be had, the previous snapshot's price is reused with the
+// current share counts, so a share-count edit still shows up.
+async function manualHoldings(inst) {
+  const { cfg } = inst;
+  const prev = latest.institutions[inst.id];
+  let price;
+  try {
+    const q = await quote(cfg.ticker);
+    price = q.price;
+    console.log(`${inst.name}: ${cfg.ticker} $${price} (as of ${q.asOf || 'unreported'}).`);
+  } catch (err) {
+    price = prev?.positions?.find((p) => p.ticker === cfg.ticker)?.price;
+    if (!price) throw err;
+    console.warn(`${inst.name}: ${err.message} — reusing the last price, $${price}.`);
+  }
+
+  const accts = (cfg.accounts || []).filter((a) => Number(a.shares) > 0);
+  const basisKnown = accts.every((a) => Number.isFinite(a.cost_basis));
+  const positions = accts.map((a) => ({
+    ticker: cfg.ticker,
+    name: cfg.name || cfg.ticker,
+    value: round2(a.shares * price),
+    quantity: Number(a.shares),
+    price,
+    cost_basis: Number.isFinite(a.cost_basis) ? round2(a.cost_basis) : null,
+    accounts: [a.name],
+  }));
+  const total = round2(positions.reduce((s, p) => s + p.value, 0));
+  console.log(`${inst.name}: ${positions.length} positions, $${total.toLocaleString('en-US')}.`);
+  if (!basisKnown) console.warn(`${inst.name}: cost_basis missing in data/${inst.config}.`);
+  return {
+    name: inst.name,
+    date: today,
+    total,
+    cost_basis: basisKnown ? round2(accts.reduce((s, a) => s + a.cost_basis, 0)) : null,
+    accounts: positions.map((p) => ({ name: p.accounts[0], type: p.accounts[0], value: p.value })),
+    positions,
+  };
+}
+
+async function plaidHoldings(inst) {
   const resp = await plaid.investmentsHoldingsGet({ access_token: inst.token });
   const { holdings = [], securities = [], accounts = [] } = resp.data;
   const secById = Object.fromEntries(securities.map((s) => [s.security_id, s]));
@@ -230,7 +309,7 @@ const day = 86400000;
 const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
 const DEFAULT_COUNT = ['cash/deposit', 'cash/contribution', 'cash/withdrawal'];
 
-for (const inst of fresh) {
+for (const inst of fresh.filter((i) => i.token)) {
   const dep = (deposits[inst.id] = deposits[inst.id] || { method: 'ledger', base: null, base_through: null, ledger: [] });
   if (dep.method === 'cost_basis') continue;
 

@@ -167,7 +167,7 @@ const CHEVRON = `<svg class="chev" viewBox="0 0 12 12" width="12" height="12" ar
 const cleanAcct = (name) => String(name).replace(/\s+account$/i, '');
 const acctName = (a) => cleanAcct(a.name || a.type);
 // Account types get their own colours, distinct from the institutions'.
-const ACCOUNT_COLORS = { 'Roth IRA': 'var(--a1)', Brokerage: 'var(--a2)' };
+const ACCOUNT_COLORS = { 'Roth IRA': 'var(--a1)', Brokerage: 'var(--a2)', ESPP: 'var(--a3)', Equity: 'var(--a4)' };
 const acctColor = (name) => ACCOUNT_COLORS[name] || 'var(--ink-muted)';
 const instColor = Object.fromEntries(insts.map((i, n) => [i.name, COLORS[n % COLORS.length]]));
 // Only institutions with more than one funded account get account chips; a
@@ -340,14 +340,14 @@ const html = `<!DOCTYPE html>
     --warn-ink: #7a5312;
     --warn-border: #f0dcb4;
     --shadow: 0 1px 2px rgba(17,20,24,.04);
-    --c1: #4338ca; --c2: #368727; --c3: #c9a24d;
-    --a1: #c23dff; --a2: #ffa13d;
+    --c1: #4338ca; --c2: #368727; --c3: #d4a855;
+    --a1: #c23dff; --a2: #ffa13d; --a3: #14b8a6; --a4: #f0457a;
     /* Headline card: filled with the chart-line colour. */
     --hero-bg: linear-gradient(135deg, #6674e6 0%, #5262d6 55%, #4452c0 100%);
     --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.74);
     /* Institution colours as they appear on the headline card: lifted a
        little so each one stays distinct against the indigo. */
-    --hc1: #8f86ff; --hc2: #6fd35c; --hc3: #f0c46a;
+    --hc1: #8f86ff; --hc2: #6fd35c; --hc3: #d4a855;
   }
   /* Dark theme, following the OS / app appearance setting. */
   @media (prefers-color-scheme: dark) {
@@ -368,14 +368,14 @@ const html = `<!DOCTYPE html>
       --warn-ink: #edcd8d;
       --warn-border: #4d3c1d;
       --shadow: none;
-      --c1: #2c58ff; --c2: #5aa84a; --c3: #d9b26a;
-      --a1: #c23dff; --a2: #ffa13d;
+      --c1: #2c58ff; --c2: #5aa84a; --c3: #d4a855;
+      --a1: #c23dff; --a2: #ffa13d; --a3: #2dd4bf; --a4: #ff5c8a;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
       /* A lighter indigo, close to the chart line, still deep enough for white text. */
       --hero-bg:     radial-gradient(120% 90% at 15% 0%, rgba(168,120,246,.16) 0%, rgba(168,120,246,0) 55%),     linear-gradient(135deg, #352a55 0%, #221a40 55%, #151823 100%);   --hero-glow: 0 8px 28px rgba(168,120,246,.16);
       --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
       /* Public's slice uses its chip colour exactly. */
-      --hc1: #2c58ff; --hc2: #6fd35c; --hc3: #f0c46a;
+      --hc1: #2c58ff; --hc2: #6fd35c; --hc3: #d4a855;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }

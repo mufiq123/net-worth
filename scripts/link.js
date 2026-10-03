@@ -22,10 +22,15 @@ import http from 'http';
 import readline from 'readline/promises';
 import { byId, INSTITUTIONS } from './institutions.js';
 
+const PLAID = INSTITUTIONS.filter((i) => i.secret);
 const inst = byId[(process.argv[2] || '').toLowerCase()];
 const update = process.argv.includes('--update');
+if (inst && !inst.secret) {
+  console.error(`${inst.name} isn't linked through Plaid: edit data/${inst.config} instead.`);
+  process.exit(1);
+}
 if (!inst) {
-  console.error(`Usage: node scripts/link.js <${INSTITUTIONS.map((i) => i.id).join('|')}> [--update]`);
+  console.error(`Usage: node scripts/link.js <${PLAID.map((i) => i.id).join('|')}> [--update]`);
   process.exit(1);
 }
 

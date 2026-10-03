@@ -1,0 +1,9 @@
+{
+  "note": "Entered by hand: Merrill can't be linked through Plaid. Update shares (and cost_basis) after each ESPP purchase or RSU vest. cost_basis is what the shares count as invested: the ESPP purchase cost, and the value at vest for RSUs.",
+  "ticker": "V",
+  "name": "Visa Inc.",
+  "accounts": [
+    { "name": "ESPP", "shares": 0, "cost_basis": null },
+    { "name": "Equity", "shares": 0, "cost_basis": null }
+  ]
+}
