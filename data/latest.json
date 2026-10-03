@@ -2,7 +2,7 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-10-02",
+      "date": "2026-10-03",
       "total": 22754.02,
       "cost_basis": null,
       "accounts": [
@@ -174,23 +174,23 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-10-02",
-      "total": 21092.62,
+      "date": "2026-10-03",
+      "total": 21284.32,
       "cost_basis": null,
       "accounts": [
         {
           "name": "VISA 401K PLAN",
           "type": "401(k)",
-          "value": 21092.62
+          "value": 21284.32
         }
       ],
       "positions": [
         {
           "ticker": "TRP.LRG.CAP.GR.TR.D",
           "name": "Trp Lrg Cap Gr Tr D",
-          "value": 10677.71,
+          "value": 10792.25,
           "quantity": 369.471,
-          "price": 28.9,
+          "price": 29.21,
           "cost_basis": null,
           "accounts": [
             "VISA 401K PLAN"
@@ -199,9 +199,9 @@
         {
           "ticker": "SP.500.INDEX.PL.CL.D",
           "name": "SP 500 INDEX PL CL D - contribution",
-          "value": 10414.91,
+          "value": 10492.07,
           "quantity": 28.37,
-          "price": 367.11,
+          "price": 369.83,
           "cost_basis": null,
           "accounts": [
             "VISA 401K PLAN"
@@ -211,7 +211,7 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-10-02",
+      "date": "2026-10-03",
       "total": 38590.62,
       "cost_basis": 10893.57,
       "excluded": [
@@ -259,6 +259,6 @@
       ]
     }
   },
-  "date": "2026-10-02",
-  "total": 82437.26
+  "date": "2026-10-03",
+  "total": 82628.96
 }
