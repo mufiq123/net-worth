@@ -67,7 +67,18 @@
     "note": "401(k). base = every 'Contributions' row in NetBenefits history.csv (Jul 2025–Sep 2026, employee + match). Later ones come from Plaid.",
     "base": 19417.04,
     "base_through": "2026-09-28",
-    "ledger": []
+    "ledger": [
+      {
+        "id": "ePO9EV5dYJtEJvY966PBTB8L9oJ7Nvt48LwwA",
+        "date": "2026-10-05",
+        "amount": 121.15
+      },
+      {
+        "id": "YgeZJPk0YvHeqk8VrrX0imevbKB0aVUzKn00k",
+        "date": "2026-10-05",
+        "amount": 484.61
+      }
+    ]
   },
   "merrill": {
     "method": "cost_basis",
