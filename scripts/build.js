@@ -76,13 +76,17 @@ function chartSVG(points) {
       <text class="money" x="${PL - 10}" y="${(Y(v) + 4).toFixed(1)}" text-anchor="end" font-size="13" fill="var(--ink-muted)">${short$(v)}</text>`).join('');
 
   const n = points.length;
-  const tickIdx = [...new Set([0, Math.floor(n * 0.25), Math.floor(n * 0.5), Math.floor(n * 0.75), n - 1])];
-  // The first and last points sit on the plot edges, so a centred label there
-  // would overflow the viewBox and get clipped. Anchor those two inward.
-  const xticks = (n > 1 ? tickIdx : [0]).map((i) => {
-    const anchor = i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle';
+    // Ticks sit at fractions of the full date range, so labels stay evenly spaced
+  // no matter how unevenly the history points themselves are distributed.
+  const xticks = (n > 1 ? [0, 0.25, 0.5, 0.75, 1] : [0]).map((f, fi) => {
+    const tt = t0 + f * (t1 - t0);
+    const d = new Date(tt);
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    // The first and last ticks sit on the plot edges, so a centred label there
+    // would overflow the viewBox and get clipped. Anchor those two inward.
+    const anchor = fi === 0 ? 'start' : fi === 4 ? 'end' : 'middle';
     return `
-      <text x="${X(t(points[i].date)).toFixed(1)}" y="${H - 12}" text-anchor="${anchor}" font-size="13" fill="var(--ink-muted)">${tickLabel(points[i].date)}</text>`;
+      <text x="${X(tt).toFixed(1)}" y="${H - 12}" text-anchor="${anchor}" font-size="13" fill="var(--ink-muted)">${tickLabel(iso)}</text>`;
   }).join('');
 
   const last = points[n - 1];
