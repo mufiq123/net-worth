@@ -185,9 +185,9 @@ const multiAcct = new Set(insts.filter((i) => (i.accounts || []).filter((a) => a
 let allocBar = '';
 let instRows = '';
 if (insts.length && total > 0) {
-  allocBar = `<div class="alloc">` +
+  allocBar = `<div class="alloc" id="alloc">` +
     insts.map((i, n) => `<div style="width:${(i.total / total * 100).toFixed(2)}%;background:${COLORS[n % COLORS.length]}"></div>`).join('') +
-    `</div><div class="legend">` +
+    `</div><div class="legend" id="legend">` +
     insts.map((i, n) => `<span><i style="background:${COLORS[n % COLORS.length]}"></i>${esc(i.name)} <b class="money">${(i.total / total * 100).toFixed(0)}%</b></span>`).join('') +
     `</div>`;
   instRows = insts.map((i, n) => {
@@ -394,7 +394,7 @@ const html = `<!DOCTYPE html>
   .topbar img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; border: 1px solid var(--rule); }
   .topbar .name { font-weight: 800; font-size: 18px; }
   .topbar .sub { color: var(--ink-muted); font-size: 12.5px; margin-top: 1px; }
-  .eye { margin-left: auto; width: 40px; height: 40px; border-radius: 99px; border: 1px solid var(--rule-strong); background: var(--surface); color: inherit; cursor: pointer; font-size: 18px; }
+  .eye { margin-left: 8px; width: 40px; height: 40px; border-radius: 99px; border: 1px solid var(--rule-strong); background: var(--surface); color: inherit; cursor: pointer; font-size: 18px; } .taxbtn { margin-left: auto; width: 40px; height: 40px; border-radius: 99px; border: 1px solid var(--rule-strong); background: var(--surface); color: inherit; cursor: pointer; font-size: 18px; display: inline-flex; align-items: center; justify-content: center; } .eye.active, .taxbtn.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
   .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 18px; padding: 20px; margin-bottom: 12px; box-shadow: var(--shadow); }
   .label { color: var(--ink-muted); font-size: 13px; font-weight: 600; }
   .hero { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-top: 4px; }
@@ -475,8 +475,8 @@ const html = `<!DOCTYPE html>
   <div class="stale" id="stale" hidden><span aria-hidden="true">⚠️</span><span><b>Some figures may be out of date.</b> <span id="stale-msg"></span></span></div>
 
   <div class="card hero-card">
-    <div class="label">Total net worth</div>
-    <div class="hero money">${money(total)}</div>
+    <div class="label" id="hero-label">Total net worth</div>
+    <div class="hero money" id="hero-value">${money(total)}</div>
     <div class="hero-sub">${asOf ? `Snapshot · ${prettyDate(asOf)}` : 'Waiting for the first refresh'}</div>
     ${allocBar}
   </div>
@@ -495,7 +495,7 @@ const html = `<!DOCTYPE html>
   <div class="fine">${asOf ? `Updated ${prettyDate(asOf)}` : ''}</div>
 </div>
 <script>
-  document.getElementById('eye').addEventListener('click', () => document.body.classList.toggle('hide-values'));
+  var INST_TOTALS = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, round2(i.total)])))}; var INST_COLORS = ${JSON.stringify(COLORS)}; document.getElementById('eye').addEventListener('click', function () { var hidden = document.body.classList.toggle('hide-values'); this.classList.toggle('active', hidden); }); /* After-tax hero toggle: 70% of Public, 70% of Merrill, 60% of Fidelity. */ (function () { var btn = document.getElementById('taxbtn'); var alloc = document.getElementById('alloc'); var legend = document.getElementById('legend'); if (!btn || !alloc || !legend) return; var label = document.getElementById('hero-label'); var value = document.getElementById('hero-value'); var origLabel = label.textContent; var origValue = value.textContent; var origAlloc = alloc.innerHTML; var origLegend = legend.innerHTML; var rates = { public: 0.70, merrill: 0.70, fidelity: 0.60 }; function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); } function money(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); } var afterTax = false; btn.addEventListener('click', function () { afterTax = !afterTax; btn.classList.toggle('active', afterTax); btn.setAttribute('aria-label', afterTax ? 'Show pre-tax values' : 'Show after-tax values'); if (!afterTax) { label.textContent = origLabel; value.textContent = origValue; alloc.innerHTML = origAlloc; legend.innerHTML = origLegend; return; } var names = Object.keys(INST_TOTALS); var adj = names.map(function (n) { var r = rates[n.toLowerCase()]; return INST_TOTALS[n] * (r == null ? 1 : r); }); var t = adj.reduce(function (a, b) { return a + b; }, 0); if (!t) return; label.textContent = 'Total value after taxes'; value.textContent = money(t); alloc.innerHTML = names.map(function (n, i) { return '<div style="width:' + (adj[i] / t * 100).toFixed(2) + '%;background:' + INST_COLORS[i % INST_COLORS.length] + '"></div>'; }).join(''); legend.innerHTML = names.map(function (n, i) { return '<span><i style="background:' + INST_COLORS[i % INST_COLORS.length] + '"></i>' + esc(n) + ' <b class="money">' + (adj[i] / t * 100).toFixed(0) + '%</b></span>'; }).join(''); }); })();
 
   // Staleness is worked out in the browser, not at build time, so the warning
   // still appears if the daily workflow stops running and this page is never
