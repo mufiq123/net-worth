@@ -469,7 +469,7 @@ const html = `<!DOCTYPE html>
   <div class="topbar">
     <img src="assets/logo.png" alt="Net Worth logo">
     <div><div class="name">Net Worth</div><div class="sub">${esc(insts.map((i) => i.name).join(' · ') || 'No accounts linked yet')}</div></div>
-    <button class="eye" id="eye" aria-label="Hide or show dollar amounts">\u{1F441}</button>
+    <button class="taxbtn" id="taxbtn" aria-label="Show after-tax values" title="After-tax values"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><text x="12" y="19.7" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="800" style="fill:var(--gain)">$</text><line x1="4.5" y1="19.5" x2="19.5" y2="4.5" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round"/></svg></button> <button class="eye" id="eye" aria-label="Hide or show dollar amounts">\u{1F441}</button>
   </div>
 
   <div class="stale" id="stale" hidden><span aria-hidden="true">⚠️</span><span><b>Some figures may be out of date.</b> <span id="stale-msg"></span></span></div>
