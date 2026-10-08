@@ -3,13 +3,13 @@
     "public": {
       "name": "Public",
       "date": "2026-10-07",
-      "total": 22801.39,
+      "total": 22816.54,
       "cost_basis": null,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 11548.78
+          "value": 11550.46
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 11253.08
+          "value": 11266.55
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 8109.54,
+          "value": 8123.01,
           "quantity": 62.57362,
-          "price": 129.6,
+          "price": 129.82,
           "cost_basis": null,
           "accounts": [
             "Brokerage Account"
@@ -85,9 +85,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 1006.94,
+          "value": 1008.62,
           "quantity": 7.76962,
-          "price": 129.6,
+          "price": 129.82,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -271,5 +271,5 @@
     }
   },
   "date": "2026-10-07",
-  "total": 84863.04
+  "total": 84878.19
 }
