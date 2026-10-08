@@ -3,13 +3,13 @@
     "public": {
       "name": "Public",
       "date": "2026-10-07",
-      "total": 22775.34,
+      "total": 22801.39,
       "cost_basis": null,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 11562.12
+          "value": 11548.78
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 11213.69
+          "value": 11253.08
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 8100.78,
+          "value": 8109.54,
           "quantity": 62.57362,
-          "price": 129.46,
+          "price": 129.6,
           "cost_basis": null,
           "accounts": [
             "Brokerage Account"
@@ -52,9 +52,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 4801.19,
+          "value": 4801.67,
           "quantity": 6.72108,
-          "price": 714.35,
+          "price": 714.42,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2839.7,
+          "value": 2841.62,
           "quantity": 9.09694,
-          "price": 312.16,
+          "price": 312.37,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -74,9 +74,9 @@
         {
           "ticker": "QQI",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco Nasdaq International Innovators 100 ETF",
-          "value": 1477.72,
+          "value": 1525.09,
           "quantity": 58.72506,
-          "price": 25.16,
+          "price": 25.97,
           "cost_basis": null,
           "accounts": [
             "Brokerage Account"
@@ -85,9 +85,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 1005.86,
+          "value": 1006.94,
           "quantity": 7.76962,
-          "price": 129.46,
+          "price": 129.6,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -96,9 +96,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 972.23,
+          "value": 975.12,
           "quantity": 19.40539,
-          "price": 50.1,
+          "price": 50.25,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -107,9 +107,9 @@
         {
           "ticker": "LAZR",
           "name": "Tema ETF Trust - Tema Photonics & Optical ETF",
-          "value": 878.47,
+          "value": 856.51,
           "quantity": 18.00504,
-          "price": 48.79,
+          "price": 47.57,
           "cost_basis": null,
           "accounts": [
             "Brokerage Account"
@@ -118,9 +118,9 @@
         {
           "ticker": "LAZR",
           "name": "Tema ETF Trust - Tema Photonics & Optical ETF",
-          "value": 795.85,
+          "value": 775.96,
           "quantity": 16.31177,
-          "price": 48.79,
+          "price": 47.57,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -129,9 +129,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 743.29,
+          "value": 748.51,
           "quantity": 2.35515,
-          "price": 315.6,
+          "price": 317.82,
           "cost_basis": null,
           "accounts": [
             "Brokerage Account"
@@ -151,9 +151,9 @@
         {
           "ticker": "UBER",
           "name": "Uber Technologies Inc",
-          "value": 410.76,
+          "value": 410.94,
           "quantity": 6,
-          "price": 68.46,
+          "price": 68.49,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -271,5 +271,5 @@
     }
   },
   "date": "2026-10-07",
-  "total": 84836.99
+  "total": 84863.04
 }
