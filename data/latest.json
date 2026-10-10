@@ -2,14 +2,14 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-10-09",
-      "total": 22539.97,
+      "date": "2026-10-10",
+      "total": 22557.15,
       "cost_basis": null,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 11510.26
+          "value": 11521.62
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 11030.18
+          "value": 11036
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 8010.05,
+          "value": 8015.87,
           "quantity": 62.57362,
-          "price": 128.01,
+          "price": 128.1,
           "cost_basis": null,
           "accounts": [
             "Brokerage Account"
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2817.23,
+          "value": 2818.32,
           "quantity": 9.10898,
-          "price": 309.28,
+          "price": 309.4,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -85,9 +85,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 999.07,
+          "value": 999.38,
           "quantity": 19.40539,
-          "price": 51.48,
+          "price": 51.5,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -96,9 +96,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 994.59,
+          "value": 995.31,
           "quantity": 7.76962,
-          "price": 128.01,
+          "price": 128.1,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -140,9 +140,9 @@
         {
           "ticker": "RVI",
           "name": "Robinhood Ventures Fund I - Common shares of beneficial interest",
-          "value": 724.02,
+          "value": 733.75,
           "quantity": 27.79362,
-          "price": 26.05,
+          "price": 26.4,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -151,9 +151,9 @@
         {
           "ticker": "UBER",
           "name": "Uber Technologies Inc",
-          "value": 428.7,
+          "value": 428.21,
           "quantity": 6,
-          "price": 71.45,
+          "price": 71.37,
           "cost_basis": null,
           "accounts": [
             "Roth IRA"
@@ -174,23 +174,23 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-10-09",
-      "total": 21989.3,
+      "date": "2026-10-10",
+      "total": 22134.41,
       "cost_basis": null,
       "accounts": [
         {
           "name": "VISA 401K PLAN",
           "type": "401(k)",
-          "value": 21989.3
+          "value": 22134.41
         }
       ],
       "positions": [
         {
           "ticker": "SP.500.INDEX.PL.CL.D",
           "name": "SP 500 INDEX PL CL D - contribution",
-          "value": 11035.61,
+          "value": 11102.37,
           "quantity": 29.672,
-          "price": 371.92,
+          "price": 374.17,
           "cost_basis": null,
           "accounts": [
             "VISA 401K PLAN"
@@ -199,9 +199,9 @@
         {
           "ticker": "TRP.LRG.CAP.GR.TR.D",
           "name": "Trp Lrg Cap Gr Tr D",
-          "value": 10832.89,
+          "value": 10910.48,
           "quantity": 369.471,
-          "price": 29.32,
+          "price": 29.53,
           "cost_basis": null,
           "accounts": [
             "VISA 401K PLAN"
@@ -210,9 +210,9 @@
         {
           "ticker": "VG.TOT.STK.MKT.IDX.C",
           "name": "Vg Tot Stk Mkt Idx C",
-          "value": 120.8,
+          "value": 121.56,
           "quantity": 0.765,
-          "price": 157.91,
+          "price": 158.9,
           "cost_basis": null,
           "accounts": [
             "VISA 401K PLAN"
@@ -222,7 +222,7 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-10-09",
+      "date": "2026-10-10",
       "total": 41243.15,
       "cost_basis": 10893.57,
       "excluded": [
@@ -270,6 +270,6 @@
       ]
     }
   },
-  "date": "2026-10-09",
-  "total": 85772.42
+  "date": "2026-10-10",
+  "total": 85934.71
 }
