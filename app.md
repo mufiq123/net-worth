@@ -80,16 +80,21 @@ name (lowercase like "contribution", or "…shares of beneficial interest"), the
 kept instead.
 
 **Two ways to measure what went in.**
-- *Ledger* (Public, Fidelity): `base` + id-keyed ledger, as on O.A. Investments. The
-  difference is that `base_through` is set automatically, on the first successful run after
-  linking. `base` is then whatever you deposited up to that date, so there's no seam to work
-  out by hand. Counted kinds default to `cash/deposit`, `cash/contribution` and
-  `cash/withdrawal`, and can be overridden per institution with a `count` array in
-  `deposits.json`. Amounts are signed by meaning (withdrawal negative) rather than by Plaid's
-  sign, because Plaid's convention differs between cash rows and buy rows. A zero-amount share
-  transfer is valued at quantity × price. Every run logs the transaction kinds it saw for each
-  institution, so a 401(k) that reports payroll contributions as, say, `buy/contribution` shows
-  up in the log and can be added to `count`.
+- *Ledger* (Public, Fidelity): `base` + id-keyed ledger, as on O.A. Investments.
+  `base` covers history Plaid can't see; Public's is 0 because Plaid has its whole history
+  (first deposit 2025-10-20). For a newly linked institution, `base_through` is set
+  automatically on its first successful run. What counts, checked against every real Plaid
+  row on 2026-10-11:
+  - `cash/deposit`, `cash/contribution`, `cash/withdrawal` and `transfer` rows count as
+    `-amount` (Plaid signs money leaving positive). A move between two Public accounts shows
+    as "Deposit" into one and "Disbursement - XFER" out of the other, so both legs count and
+    net to zero; a disbursement to a bank is a withdrawal.
+  - Excluded: "Cash adjusted" (Public's internal cash, interest and dividend shuffles),
+    "realizedGainLoss" (Fidelity's gain or loss on a fund exchange), sweeps and money market
+    legs, and zero-amount rows (position changes such as the NFLX and VGT splits).
+  - Every transaction Plaid still shows is re-judged on each run, so an entry recorded under an
+    older rule corrects itself. Entries that have aged out of Plaid's window are kept.
+  - The log reports counts only (counted, internal, position changes, added/removed/changed).
 - *Cost basis* (Merrill): the ESPP's `cost_basis` in `data/merrill.json` (total purchase cost,
   from Merrill's lot table) is its "invested" figure. The Equity grant cost nothing, so it has
   `exclude_from_gains`: it counts in the total, chart, bar and holdings, but its value is taken
@@ -117,6 +122,11 @@ overwritten on each run, so it follows the headline total and freezes at the mon
   IRA contribution match, taken from each statement's "Funds Paid and Received". CONTRIBUTION
   rows repeat their ACH rows and cash-sweep XFERs net to zero, so neither is counted.
   `base_through` is Aug 31, so Plaid's ledger adds September.
+  *Replaced 2026-10-11:* Plaid turned out to hold Public's full history, which gives $17,749.25
+  through Aug 31 rather than $18,062.79. The statement figure counted the $2,575.33 moved in
+  from the RIA (managed index) account as new money, but only $2,250 was ever deposited there;
+  the other $325.33 was gains. A further $11.79 difference is unexplained. Public's net
+  deposits now come entirely from Plaid.
 - *Fidelity:* NetBenefits `history.csv` (Jul 2025 onward) records shares per transaction, and
   adding them up gives exactly Plaid's current share counts. Month-end value = shares held ×
   that fund's price at its latest contribution or exchange (amount ÷ shares). That price is
@@ -148,7 +158,5 @@ is read-only and cannot move money.
   2025-10-31), plus all 69 Equity shares from 2025-08-31 (grant date), valued at Visa's
   month-end close.
 - **Prices are end-of-day** (Plaid investments update about once a day after close).
-- **Ledger kinds for the 401(k) are unconfirmed** until the first run's log shows what
-  Fidelity reports.
 - **History starts at the first link.** Plaid provides no past balances, so the chart begins
   on day one.

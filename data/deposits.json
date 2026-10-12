@@ -1,10 +1,215 @@
 {
   "public": {
     "method": "ledger",
-    "note": "Brokerage + Roth IRA. base = ACH deposits + journals in − disbursements/journals out + Public IRA match, from statements Oct 2025–Aug 2026. Later deposits come from Plaid.",
-    "base": 18062.79,
-    "base_through": "2026-08-31",
+    "note": "Brokerage, Roth IRA, High Yield Cash and RIA accounts. Plaid has the full history (first deposit 2025-10-20), so base is 0 and every deposit, IRA match and withdrawal is in the ledger; transfers between Public accounts net to zero. Replaced the statement-derived base of $18,062.79 through 2026-08-31 on 2026-10-11.",
+    "base": 0,
+    "base_through": "2025-10-19",
     "ledger": [
+      {
+        "id": "JM7aZPaLR7SJEJwQPAxjhODbpPdeZ9h0bDZ51",
+        "date": "2025-10-20",
+        "amount": 500
+      },
+      {
+        "id": "Xg7DkxDwa7tLqLAxQgkViYeQNkXwqDhz4L1k3",
+        "date": "2025-10-21",
+        "amount": 545
+      },
+      {
+        "id": "y15gVag0p5Iymyjgr8Bwuz91K3awLJUROBj7Y",
+        "date": "2025-11-21",
+        "amount": 2000
+      },
+      {
+        "id": "JM7aZPaLR7SJEJwQPAxjhODbpPdeZ9h0bDZEv",
+        "date": "2025-11-21",
+        "amount": 1000
+      },
+      {
+        "id": "KgMJKqJxNMt3B35xnMLrhPXz5nDeV8FyQox57",
+        "date": "2025-11-26",
+        "amount": -922.15
+      },
+      {
+        "id": "jKReaDeMpRFJ1JMO6dpkhEML79Qng8fvR7PM8",
+        "date": "2025-12-12",
+        "amount": 1000
+      },
+      {
+        "id": "VgRdP4dr8Rtwvw8Qpo57uP8rM96OvEFnr3AD3",
+        "date": "2026-01-09",
+        "amount": 500
+      },
+      {
+        "id": "n051qB19p5CEJE5mPZN0ixqr87p6JbCjAvOnx",
+        "date": "2026-01-09",
+        "amount": 500
+      },
+      {
+        "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6Dtdpb07M",
+        "date": "2026-01-14",
+        "amount": 1000
+      },
+      {
+        "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6Dtdpb075",
+        "date": "2026-01-20",
+        "amount": 40
+      },
+      {
+        "id": "QgyErAExRytpQp5eAkRZS8VEPK1rQnf9EqBRM",
+        "date": "2026-01-26",
+        "amount": 200
+      },
+      {
+        "id": "Nm4gZygMR4f8x8X6y9JesPyR6bD7e0FyR7Mnn",
+        "date": "2026-01-27",
+        "amount": 220
+      },
+      {
+        "id": "OEZ97K9PXZhD7DmxRqAJH6j8OR1573Fp8vBeJ",
+        "date": "2026-01-28",
+        "amount": 10
+      },
+      {
+        "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6Dtdpb08m",
+        "date": "2026-02-04",
+        "amount": 0.1
+      },
+      {
+        "id": "Rg7Q3vQOR7to6oAQvJ85iPVKZN796mF9ymER1",
+        "date": "2026-02-04",
+        "amount": 1500
+      },
+      {
+        "id": "Zg4Br8BLa4t171ONp5v9hepRgomE7AH8RaNJE",
+        "date": "2026-02-04",
+        "amount": 750
+      },
+      {
+        "id": "Nm4gZygMR4f8x8X6y9JesPyR6bD7e0FyR7MQa",
+        "date": "2026-02-05",
+        "amount": 3000
+      },
+      {
+        "id": "mvRLmqL9pRC5Q5rX1jvocmryVOAPQat8MnwRD",
+        "date": "2026-02-05",
+        "amount": 250
+      },
+      {
+        "id": "ePrVoEV3arHRORj49Ex1CYvXMRrbOxh4dgqYw",
+        "date": "2026-02-10",
+        "amount": 30
+      },
+      {
+        "id": "zPy9gx9mdyHKoKqegd36sYDb1mA64PhMODXRe",
+        "date": "2026-02-11",
+        "amount": 30
+      },
+      {
+        "id": "wLmZ5rZgpmIBJB8Y0dnQc6yvD7XOZNFRLznO9",
+        "date": "2026-02-11",
+        "amount": -400
+      },
+      {
+        "id": "mvRLmqL9pRC5Q5rX1jvocmryVOAPQat8MnwQP",
+        "date": "2026-02-18",
+        "amount": 0.3
+      },
+      {
+        "id": "Aknw9OwJ0nUDMDe8NzmqHQLmper1NYUw641Q6",
+        "date": "2026-04-06",
+        "amount": 1000
+      },
+      {
+        "id": "0j6yNvygO6IDyDneJOmjHY9EzdvNeKh9rqno9",
+        "date": "2026-04-28",
+        "amount": 10
+      },
+      {
+        "id": "JM7aZPaLR7SJEJwQPAxjhODbpPdeZ9h0bDZqq",
+        "date": "2026-05-05",
+        "amount": 2000
+      },
+      {
+        "id": "8Lgbz8bQPgIVPVenOb4qU43oak8g1DIYy4eBV",
+        "date": "2026-05-12",
+        "amount": 20
+      },
+      {
+        "id": "5dqxgax6LqIx3x1O5z0mU0QyanM1DPCNBxPy7",
+        "date": "2026-06-04",
+        "amount": 2574.03
+      },
+      {
+        "id": "5dqxgax6LqIx3x1O5z0mU0QyanM1DPCNBxejL",
+        "date": "2026-06-04",
+        "amount": -2574.03
+      },
+      {
+        "id": "xD5oZ4ogX5C3Z3X4pPqdh6E159adLvFmMx0Yy",
+        "date": "2026-06-11",
+        "amount": 0.29
+      },
+      {
+        "id": "7635EJ5913tXkX69RYrAtpDbdAznwNI8QJ7V8",
+        "date": "2026-06-11",
+        "amount": -0.29
+      },
+      {
+        "id": "JM7aZPaLR7SJEJwQPAxjhODbpPdeZ9h0bDZ6v",
+        "date": "2026-06-12",
+        "amount": 0.48
+      },
+      {
+        "id": "VgRdP4dr8Rtwvw8Qpo57uP8rM96OvEFnr3Z1X",
+        "date": "2026-06-12",
+        "amount": -0.48
+      },
+      {
+        "id": "8Lgbz8bQPgIVPVenOb4qU43oak8g1DIYy4epA",
+        "date": "2026-06-13",
+        "amount": 0.53
+      },
+      {
+        "id": "OEZ97K9PXZhD7DmxRqAJH6j8OR1573Fp8vLdZ",
+        "date": "2026-06-13",
+        "amount": -0.53
+      },
+      {
+        "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6DtdpbjmE",
+        "date": "2026-06-29",
+        "amount": 450
+      },
+      {
+        "id": "ra5ABkAEp5CLvLg7yRnNi9Ev7g0AJDfrBD4ga",
+        "date": "2026-07-18",
+        "amount": 450
+      },
+      {
+        "id": "Yg4PAJP674tDoDgBVe3AHNVQM3pYoqtzQXAkD",
+        "date": "2026-07-18",
+        "amount": -450
+      },
+      {
+        "id": "Zg4Br8BLa4t171ONp5v9hepRgomE7AH8RaBLr",
+        "date": "2026-08-18",
+        "amount": 600
+      },
+      {
+        "id": "9DQ7EZ7PqQCo3oOEzMariagxNknoXJh6dqjoD",
+        "date": "2026-08-20",
+        "amount": 1900
+      },
+      {
+        "id": "VgRdP4dr8Rtwvw8Qpo57uP8rM96OvEFnr3AKJ",
+        "date": "2026-08-20",
+        "amount": 10
+      },
+      {
+        "id": "OEZ97K9PXZhD7DmxRqAJH6j8OR1573Fp8vB9J",
+        "date": "2026-08-25",
+        "amount": 6
+      },
       {
         "id": "Mg9oj3oxR9tRXRQ03bBaCgY5KRrDwOF0Manwj",
         "date": "2026-09-02",
@@ -19,46 +224,6 @@
         "id": "5dqxgax6LqIx3x1O5z0mU0QyanM1DPCNBxPQk",
         "date": "2026-09-14",
         "amount": 750
-      },
-      {
-        "id": "Xg7DkxDwa7tLqLAxQgkViYeQNkXwqDhz4L1xm",
-        "date": "2026-09-17",
-        "amount": -0.04
-      },
-      {
-        "id": "Nm4gZygMR4f8x8X6y9JesPyR6bD7e0FyR7MOZ",
-        "date": "2026-09-17",
-        "amount": 0.04
-      },
-      {
-        "id": "ePrVoEV3arHRORj49Ex1CYvXMRrbOxh4dgqXp",
-        "date": "2026-09-17",
-        "amount": 0.04
-      },
-      {
-        "id": "D05qDdqmR5CX7XDjdEOytNK3JdV5YqtXZLj4a",
-        "date": "2026-09-17",
-        "amount": 0.04
-      },
-      {
-        "id": "1rLkx0kgJLIReR14rwKXCKEoZQ9abnhYm7Myk",
-        "date": "2026-09-17",
-        "amount": -0.04
-      },
-      {
-        "id": "PgEOqkOXREtgxgB1kjn8skVmqOM7xXcOmNvRy",
-        "date": "2026-09-17",
-        "amount": -0.04
-      },
-      {
-        "id": "PgEOqkOXREtgxgB1kjnwHvkz1w9r4zHo1VAV4",
-        "date": "2026-09-29",
-        "amount": 5.46
-      },
-      {
-        "id": "q4OK9mKqpOI6m6KB3ydwFgERKqeBdRsDBQEQy",
-        "date": "2026-09-29",
-        "amount": -5.46
       }
     ]
   },

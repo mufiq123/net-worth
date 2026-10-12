@@ -305,15 +305,41 @@ writeFileSync(dataPath('latest.json'), JSON.stringify(latest, null, 2));
 
 // ---- net deposits ledgers ----
 // Each institution has its own entry in deposits.json. method "ledger": a
-// one-time `base` (everything deposited up to `base_through`) plus every
-// deposit/withdrawal Plaid reports after that, keyed by transaction id so the
-// ledger never double-counts or loses an entry as Plaid's window slides.
+// fixed `base` (everything deposited up to `base_through`, for history Plaid
+// cannot see; 0 when Plaid has the account's whole history) plus every money
+// movement Plaid reports after that, keyed by transaction id so the ledger
+// never double-counts or loses an entry as Plaid's window slides.
 // method "cost_basis" (the equity plan) uses the holdings' cost basis instead
-// and needs no ledger — RSU vests never arrive as cash deposits.
+// and needs no ledger.
 const deposits = readJSON('deposits.json', {});
 const day = 86400000;
 const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
-const DEFAULT_COUNT = ['cash/deposit', 'cash/contribution', 'cash/withdrawal'];
+
+// What counts as money in or out, checked against every transaction Plaid
+// returned for Public and Fidelity (2026-10-11):
+// - cash deposit/contribution/withdrawal rows and transfer rows count. Plaid
+//   signs money leaving the account positive, so -amount is the inflow. A
+//   transfer between two accounts of the same institution (Public's
+//   "Disbursement - XFER" from one account and "Deposit" into another on the
+//   same day) is counted on both legs and nets to zero; a disbursement to a
+//   bank counts as a withdrawal.
+// - Excluded, though Plaid files them as deposit/withdrawal:
+//   "Cash adjusted"   Public's internal cash, interest and dividend shuffles;
+//   "realizedGainLoss" Fidelity's gain or loss on a fund exchange;
+//   "sweep" / money market legs, moves into a settlement fund;
+//   zero-amount rows, which are position changes such as stock splits
+//   ("Position adjusted" on the NFLX and VGT splits).
+const MONEY_KINDS = new Set(['cash/deposit', 'cash/contribution', 'cash/withdrawal']);
+const NOT_MONEY = /cash adjusted|position adjusted|realizedgainloss|sweep/i;
+function classify(tx, secById) {
+  const kind = `${tx.type || ''}/${(tx.subtype || '').toLowerCase()}`;
+  if (!MONEY_KINDS.has(kind) && tx.type !== 'transfer') return null; // buys, sells, dividends, fees
+  const sec = secById[tx.security_id];
+  if (NOT_MONEY.test(tx.name || '')) return { counted: false, why: 'internal' };
+  if (sec && sec.is_cash_equivalent && sec.type !== 'cash') return { counted: false, why: 'internal' };
+  if (!round2(tx.amount || 0)) return { counted: false, why: 'position' };
+  return { counted: true, amount: round2(-tx.amount) };
+}
 
 for (const inst of fresh.filter((i) => i.token)) {
   const dep = (deposits[inst.id] = deposits[inst.id] || { method: 'ledger', base: null, base_through: null, ledger: [] });
@@ -328,47 +354,54 @@ for (const inst of fresh.filter((i) => i.token)) {
 
   try {
     let txns = [];
+    const secById = {};
     for (let offset = 0; ; ) {
       const r = await plaid.investmentsTransactionsGet({
         access_token: inst.token,
-        start_date: isoDay(Date.now() - 120 * day),
+        // 730 days is Plaid's maximum.
+        start_date: isoDay(Date.now() - 730 * day),
         end_date: isoDay(Date.now() + day),
         options: { count: 500, offset },
       });
+      for (const s of r.data.securities || []) secById[s.security_id] = s;
       const batch = r.data.investment_transactions || [];
       txns = txns.concat(batch);
       if (!batch.length || txns.length >= (r.data.total_investment_transactions ?? txns.length)) break;
       offset = txns.length;
     }
 
-    const count = new Set(dep.count || DEFAULT_COUNT);
+    // Every transaction Plaid still shows is re-judged on every run, so an
+    // entry recorded under an older rule corrects itself; only entries that
+    // have aged out of Plaid's window are kept as recorded.
     dep.ledger = Array.isArray(dep.ledger) ? dep.ledger : [];
-    const seen = new Set(dep.ledger.map((e) => e.id));
-    let added = 0;
-    const kinds = {};
-
+    const tally = { counted: 0, internal: 0, position: 0, added: 0, removed: 0, changed: 0 };
     for (const tx of txns) {
-      const kind = `${tx.type || ''}/${(tx.subtype || '').toLowerCase()}`;
-      kinds[kind] = (kinds[kind] || 0) + 1;
-      if (!count.has(kind)) continue;
       if (tx.date <= dep.base_through) continue; // already inside base
-      if (seen.has(tx.investment_transaction_id)) continue;
-      // Sign by meaning rather than Plaid's convention, which differs between
-      // cash rows and buy rows. A zero-amount share transfer is valued at
-      // quantity × price.
-      let amt = Math.abs(tx.amount || 0) || Math.abs((tx.quantity || 0) * (tx.price || 0));
-      if (kind.endsWith('/withdrawal')) amt = -amt;
-      dep.ledger.push({ id: tx.investment_transaction_id, date: tx.date, amount: round2(amt) });
-      seen.add(tx.investment_transaction_id);
-      added += 1;
+      const c = classify(tx, secById);
+      if (!c) continue;
+      const id = tx.investment_transaction_id;
+      const at = dep.ledger.findIndex((e) => e.id === id);
+      if (!c.counted) {
+        tally[c.why] += 1;
+        if (at !== -1) { dep.ledger.splice(at, 1); tally.removed += 1; }
+        continue;
+      }
+      tally.counted += 1;
+      if (at === -1) { dep.ledger.push({ id, date: tx.date, amount: c.amount }); tally.added += 1; }
+      else if (dep.ledger[at].amount !== c.amount) { dep.ledger[at].amount = c.amount; tally.changed += 1; }
     }
     dep.ledger.sort((a, b) => (a.date < b.date ? -1 : 1));
 
+    // Aggregates only: this repository's Actions logs are public.
     const sum = round2(dep.ledger.reduce((s, e) => s + (Number(e.amount) || 0), 0));
+    const dates = txns.map((tx) => tx.date).sort();
     console.log(
-      `${inst.name}: ledger $${sum.toLocaleString('en-US')} (${added} new); base ` +
-        (Number.isFinite(dep.base) ? `$${dep.base.toLocaleString('en-US')}` : 'not set yet') +
-        `. Transaction kinds seen: ${Object.entries(kinds).map(([k, n]) => `${k}×${n}`).join(', ') || 'none'}.`
+      `${inst.name}: net deposits = base ` +
+        (Number.isFinite(dep.base) ? `$${dep.base.toLocaleString('en-US')}` : '(not set yet)') +
+        ` + ledger $${sum.toLocaleString('en-US')}. Since ${dep.base_through}: ${tally.counted} money movements counted,` +
+        ` ${tally.internal} internal moves and ${tally.position} position changes left out;` +
+        ` ${tally.added} added, ${tally.removed} removed, ${tally.changed} changed.` +
+        ` Plaid history ${dates[0] || '-'} to ${dates[dates.length - 1] || '-'}.`
     );
   } catch (err) {
     console.warn(`${inst.name}: could not update the deposits ledger (${errCode(err)}) — leaving it unchanged.`);
