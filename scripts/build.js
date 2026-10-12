@@ -253,7 +253,11 @@ for (const i of insts) {
     merged.set(key, m);
   }
 }
-const positions = [...merged.values()].sort((a, b) => b.value - a.value);
+// Sorted by gain, best first. Rows with no gain (cash, or a cost that could
+// not be rebuilt) go last, largest first.
+const positions = [...merged.values()]
+  .map((p) => ({ ...p, gain: !p.cash && !p.basisGap && p.gainCost > 0 ? (p.gainValue / p.gainCost - 1) * 100 : null }))
+  .sort((a, b) => (a.gain == null) - (b.gain == null) || (b.gain ?? 0) - (a.gain ?? 0) || b.value - a.value);
 
 // 401(k) collective trusts have no real ticker; Plaid invents one from the
 // abbreviated fund name. Known ones get a readable name and chip here.
@@ -290,7 +294,7 @@ if (positions.length) {
     const d = displayName(p);
     const name = d.name;
     const chip = p.cash ? '$' : d.chip;
-    const gain = !p.cash && !p.basisGap && p.gainCost > 0 ? (p.gainValue / p.gainCost - 1) * 100 : null;
+    const { gain } = p;
     const gainLine = gain == null ? '' : `<span class="${gain >= 0 ? 'up' : 'down'}">${gain >= 0 ? '+' : '−'}${Math.abs(gain).toFixed(1)}%</span>`;
     const detail = p.cash
       ? ''
