@@ -234,8 +234,15 @@ const merged = new Map();
 for (const i of insts) {
   for (const p of i.positions) {
     const key = p.cash ? 'CASH' : p.ticker || `name:${p.name}`;
-    const m = merged.get(key) || { ...p, value: 0, quantity: p.quantity == null ? null : 0, from: [], accts: [] };
+    const m = merged.get(key) || { ...p, value: 0, quantity: p.quantity == null ? null : 0, from: [], accts: [], gainValue: 0, gainCost: 0, basisGap: false };
     m.value = round2(m.value + p.value);
+    // A row's gain covers every part that has a cost, across accounts and
+    // institutions. Parts left out of gains by design (the equity grant) are
+    // skipped; any other part without a cost blanks the row's gain rather
+    // than letting it describe only some of the shares.
+    if (!p.cash && !p.exclude_from_gains) {
+      if (p.cost_basis > 0) { m.gainValue += p.value; m.gainCost += p.cost_basis; } else m.basisGap = true;
+    }
     if (m.quantity != null && p.quantity != null) m.quantity += p.quantity;
     // Public reports a price of 0 alongside correct values and share counts.
     if (!m.price) m.price = p.price || (p.quantity ? p.value / p.quantity : null);
@@ -283,6 +290,8 @@ if (positions.length) {
     const d = displayName(p);
     const name = d.name;
     const chip = p.cash ? '$' : d.chip;
+    const gain = !p.cash && !p.basisGap && p.gainCost > 0 ? (p.gainValue / p.gainCost - 1) * 100 : null;
+    const gainLine = gain == null ? '' : `<span class="${gain >= 0 ? 'up' : 'down'}">${gain >= 0 ? '+' : '−'}${Math.abs(gain).toFixed(1)}%</span>`;
     const detail = p.cash
       ? ''
       : [p.quantity != null ? `${Number(p.quantity).toFixed(2)} shares` : '', p.price != null ? `@ ${money(p.price)}` : '']
@@ -302,6 +311,7 @@ if (positions.length) {
       </div>
       <div class="r-right">
         <div class="money r-val">${money(p.value)}</div>
+        <div class="money r-gain">${gainLine}</div>
         <div class="money" style="color:var(--ink-muted);font-size:12.5px">${pct.toFixed(1)}%</div>
       </div>
     </div>`;
@@ -441,6 +451,7 @@ const html = `<!DOCTYPE html>
   .r-sub { color: var(--ink-muted); font-size: 12.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .r-right { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; align-self: stretch; flex: none; gap: 2px; }
   .r-val { font-weight: 750; font-size: 15px; }
+  .r-gain { font-size: 12.5px; font-weight: 700; }
   .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
   .tag { --t: var(--ink-muted); font-size: 10.5px; font-weight: 650; color: var(--t); background: var(--chip-bg); background: color-mix(in srgb, var(--t) 14%, transparent); border-radius: 99px; padding: 2px 7px; }
   .acct summary { list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }

@@ -101,6 +101,21 @@ kept instead.
   out before gains are measured (a $0 basis would count it all as gain). The page notes the
   excluded amount under the stats, computed from the current shares × price.
 
+**Per-holding gains.** Each holdings row shows value ÷ cost − 1, green or red. Plaid sends no
+cost basis for Public or Fidelity, so `fetch.js` rebuilds it per account and security from buys,
+sells, 401(k) contributions and splits, at average cost (what Public's app shows). Within a day
+sells go first, because the Roth's QQQM sells and rebuys most days with the proceeds; a sell
+larger than the shares held waits for that day's buys. A holding is matched to its rebuilt
+position by account and security, or else by a unique exact share count in the same account
+(Plaid files Fidelity's Vanguard trust under different securities in holdings and transactions).
+A holding whose share count doesn't reconcile gets no cost, so its row shows no gain rather than
+a wrong one. On 2026-10-11 all 15 Public and Fidelity holdings reconciled exactly.
+`data/costbasis.json` holds each position's shares and cost as of `as_of` (rolled forward to six
+months ago once it is a year old), so history that ages out of Plaid's two-year window isn't
+lost. Plaid's own `cost_basis` wins when present. Rows combined across accounts or
+institutions use the summed cost; the equity grant is left out, so the Visa row's gain is the
+ESPP's, and any other part without a cost blanks the row.
+
 **Combined gains need every institution.** The stats row appears only when every linked
 institution has an invested figure. A total that silently left one out would overstate the
 gain. Per-institution gains show in the Accounts card as soon as each is known.

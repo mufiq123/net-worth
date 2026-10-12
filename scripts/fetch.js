@@ -105,6 +105,119 @@ const SUBTYPE_LABELS = {
   'stock plan': 'Stock plan', 'non-taxable brokerage account': 'Brokerage', hsa: 'HSA',
 };
 
+// ---- transactions ----
+// Fetched once per institution and shared by the cost-basis rebuild and the
+// deposits ledger. 730 days is Plaid's maximum.
+const day = 86400000;
+const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
+function fetchTxns(inst) {
+  inst.txnsPromise ??= (async () => {
+    let txns = [];
+    const secById = {};
+    for (let offset = 0; ; ) {
+      const r = await plaid.investmentsTransactionsGet({
+        access_token: inst.token,
+        start_date: isoDay(Date.now() - 730 * day),
+        end_date: isoDay(Date.now() + day),
+        options: { count: 500, offset },
+      });
+      for (const s of r.data.securities || []) secById[s.security_id] = s;
+      const batch = r.data.investment_transactions || [];
+      txns = txns.concat(batch);
+      if (!batch.length || txns.length >= (r.data.total_investment_transactions ?? txns.length)) break;
+      offset = txns.length;
+    }
+    return { txns, secById };
+  })();
+  return inst.txnsPromise;
+}
+
+// ---- cost basis, rebuilt from transactions ----
+// Plaid reports no cost basis for Public or Fidelity holdings, so it is
+// rebuilt per account and security from buys, sells, contributions and
+// splits, at average cost (what Public's app shows). Checked 2026-10-11: the
+// rebuilt share counts matched every Public and Fidelity holding exactly.
+//
+// Plaid keeps two years of transactions, so data/costbasis.json carries a
+// base: each position's shares and cost as of `as_of`, rolled forward once it
+// is a year old. Each run replays everything after `as_of` on top of it. A
+// holding whose rebuilt share count does not match gets no cost basis (and so
+// no gain on the page) rather than a wrong one.
+const costbasis = readJSON('costbasis.json', {});
+const SHARES_EPS = 0.0005;
+function applyTrade(book, tx) {
+  if (!tx.security_id) return;
+  const qty = Number(tx.quantity) || 0;
+  const amount = round2(Math.abs(tx.amount || 0));
+  const kind = `${tx.type || ''}/${(tx.subtype || '').toLowerCase()}`;
+  const key = `${tx.account_id}|${tx.security_id}`;
+  const pos = (book[key] ??= { shares: 0, cost: 0 });
+  const remove = (n) => {
+    if (pos.shares > SHARES_EPS) pos.cost -= pos.cost * Math.min(n, pos.shares) / pos.shares;
+    pos.shares -= n;
+    if (pos.shares <= SHARES_EPS) { pos.shares = 0; pos.cost = 0; } // sold out (or history began mid-position)
+  };
+  if (tx.type === 'buy' || (kind === 'cash/contribution' && qty > 0)) {
+    pos.shares += Math.abs(qty);
+    pos.cost += amount;
+  } else if (tx.type === 'sell') {
+    remove(Math.abs(qty));
+  } else if (qty && !amount) {
+    // A zero-amount change in shares: a split ("Position adjusted"), or a
+    // transfer of shares. Cost is unchanged by a split.
+    if (qty > 0) pos.shares += qty;
+    else remove(-qty);
+  }
+}
+// Plaid gives dates, not times. Within a day sells go first: Public's Roth
+// QQQM sells and rebuys most days, the buy spending the sell's proceeds, and
+// sells-first reproduces the average cost Public shows. A sell larger than the
+// shares held (a same-day round trip on a new position) waits for the day's buys.
+function replay(book, rows) {
+  const days = new Map();
+  for (const tx of rows) (days.get(tx.date) || days.set(tx.date, []).get(tx.date)).push(tx);
+  for (const date of [...days.keys()].sort()) {
+    const rowsOfDay = days.get(date);
+    const deferred = [];
+    for (const tx of rowsOfDay.filter((t) => t.type === 'sell')) {
+      const held = book[`${tx.account_id}|${tx.security_id}`]?.shares || 0;
+      if (held + SHARES_EPS >= Math.abs(Number(tx.quantity) || 0)) applyTrade(book, tx);
+      else deferred.push(tx);
+    }
+    for (const tx of rowsOfDay.filter((t) => t.type !== 'sell')) applyTrade(book, tx);
+    for (const tx of deferred) applyTrade(book, tx);
+  }
+}
+async function rebuildCosts(inst) {
+  const { txns } = await fetchTxns(inst);
+  const state = (costbasis[inst.id] ??= { as_of: null, positions: {} });
+  if (!state.as_of || state.as_of < isoDay(Date.now() - 365 * day)) {
+    const rollTo = isoDay(Date.now() - 180 * day);
+    replay(state.positions, txns.filter((tx) => (!state.as_of || tx.date > state.as_of) && tx.date <= rollTo));
+    for (const [k, v] of Object.entries(state.positions)) {
+      if (v.shares === 0) delete state.positions[k];
+      else state.positions[k] = { shares: Math.round(v.shares * 1e6) / 1e6, cost: round2(v.cost) };
+    }
+    state.as_of = rollTo;
+  }
+  const book = JSON.parse(JSON.stringify(state.positions));
+  replay(book, txns.filter((tx) => tx.date > state.as_of));
+  return book;
+}
+// The rebuilt position for a holding: same account and security, or failing
+// that the one position in the same account with exactly the same share count
+// (Plaid files Fidelity's Vanguard total market trust under one security in
+// holdings and another in transactions).
+function rebuiltFor(book, h, used) {
+  const shares = Number(h.quantity) || 0;
+  const fits = (v) => v && v.shares > SHARES_EPS && Math.abs(v.shares - shares) <= SHARES_EPS;
+  const key = `${h.account_id}|${h.security_id}`;
+  if (fits(book[key])) return used.add(key), book[key];
+  const alt = Object.entries(book).filter(([k, v]) => k.startsWith(`${h.account_id}|`) && !used.has(k) && fits(v));
+  if (alt.length === 1) return used.add(alt[0][0]), alt[0][1];
+  return null;
+}
+
 async function fetchHoldings(inst) {
   return inst.source === 'manual' ? manualHoldings(inst) : plaidHoldings(inst);
 }
@@ -184,6 +297,14 @@ async function plaidHoldings(inst) {
   const resp = await plaid.investmentsHoldingsGet({ access_token: inst.token });
   const { holdings = [], securities = [], accounts = [] } = resp.data;
   const secById = Object.fromEntries(securities.map((s) => [s.security_id, s]));
+  let book = null;
+  try {
+    book = await rebuildCosts(inst);
+  } catch (err) {
+    console.warn(`${inst.name}: could not rebuild cost basis (${errCode(err)}) — gains per holding left out.`);
+  }
+  const used = new Set();
+  const basisFrom = { plaid: 0, rebuilt: 0, none: 0 };
 
   let cash = 0;
   let cashBasis = 0;
@@ -203,7 +324,10 @@ async function plaidHoldings(inst) {
       if (acctNames[h.account_id]) cashAccts.add(acctNames[h.account_id]);
       continue;
     }
-    if (!Number.isFinite(h.cost_basis)) basisKnown = false;
+    const rebuilt = book && !(h.cost_basis > 0) ? rebuiltFor(book, h, used) : null;
+    const basis = h.cost_basis > 0 ? h.cost_basis : rebuilt && rebuilt.cost > 0 ? rebuilt.cost : null;
+    basisFrom[h.cost_basis > 0 ? 'plaid' : basis != null ? 'rebuilt' : 'none'] += 1;
+    if (basis == null) basisKnown = false;
     positions.push({
       ticker: sec.ticker_symbol || null,
       name: sec.name || 'Unknown holding',
@@ -211,7 +335,7 @@ async function plaidHoldings(inst) {
       quantity: h.quantity ?? null,
       // Public reports 0 here alongside a correct value and quantity.
       price: h.institution_price || (h.quantity ? round2(value / h.quantity) : null),
-      cost_basis: Number.isFinite(h.cost_basis) ? round2(h.cost_basis) : null,
+      cost_basis: basis != null ? round2(basis) : null,
       accounts: acctNames[h.account_id] ? [acctNames[h.account_id]] : [],
     });
   }
@@ -252,7 +376,7 @@ async function plaidHoldings(inst) {
   if (Math.abs(acctTotal - total) > 1) {
     console.warn(`${inst.name}: account balances total $${acctTotal.toLocaleString('en-US')} vs holdings $${total.toLocaleString('en-US')}.`);
   }
-  if (costBasis == null) console.warn(`${inst.name}: cost basis missing on at least one holding.`);
+  console.log(`${inst.name}: cost basis from Plaid for ${basisFrom.plaid}, rebuilt from transactions for ${basisFrom.rebuilt}, missing for ${basisFrom.none}.`);
 
   return {
     name: inst.name,
@@ -312,8 +436,6 @@ writeFileSync(dataPath('latest.json'), JSON.stringify(latest, null, 2));
 // method "cost_basis" (the equity plan) uses the holdings' cost basis instead
 // and needs no ledger.
 const deposits = readJSON('deposits.json', {});
-const day = 86400000;
-const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
 
 // What counts as money in or out, checked against every transaction Plaid
 // returned for Public and Fidelity (2026-10-11):
@@ -353,22 +475,7 @@ for (const inst of fresh.filter((i) => i.token)) {
   }
 
   try {
-    let txns = [];
-    const secById = {};
-    for (let offset = 0; ; ) {
-      const r = await plaid.investmentsTransactionsGet({
-        access_token: inst.token,
-        // 730 days is Plaid's maximum.
-        start_date: isoDay(Date.now() - 730 * day),
-        end_date: isoDay(Date.now() + day),
-        options: { count: 500, offset },
-      });
-      for (const s of r.data.securities || []) secById[s.security_id] = s;
-      const batch = r.data.investment_transactions || [];
-      txns = txns.concat(batch);
-      if (!batch.length || txns.length >= (r.data.total_investment_transactions ?? txns.length)) break;
-      offset = txns.length;
-    }
+    const { txns, secById } = await fetchTxns(inst);
 
     // Every transaction Plaid still shows is re-judged on every run, so an
     // entry recorded under an older rule corrects itself; only entries that
@@ -408,6 +515,7 @@ for (const inst of fresh.filter((i) => i.token)) {
   }
 }
 writeFileSync(dataPath('deposits.json'), JSON.stringify(deposits, null, 2));
+writeFileSync(dataPath('costbasis.json'), JSON.stringify(costbasis, null, 2));
 
 // ---- history ----
 // One point per month. The current month's point is overwritten on every run,
