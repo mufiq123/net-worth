@@ -4,7 +4,7 @@
       "name": "Public",
       "date": "2026-10-11",
       "total": 22557.15,
-      "cost_basis": null,
+      "cost_basis": 19670.11,
       "accounts": [
         {
           "name": "Roth IRA",
@@ -44,7 +44,7 @@
           "value": 8015.87,
           "quantity": 62.57362,
           "price": 128.1,
-          "cost_basis": null,
+          "cost_basis": 5888.29,
           "accounts": [
             "Brokerage Account"
           ]
@@ -55,7 +55,7 @@
           "value": 4812.29,
           "quantity": 6.72108,
           "price": 716,
-          "cost_basis": null,
+          "cost_basis": 4450.88,
           "accounts": [
             "Roth IRA"
           ]
@@ -66,7 +66,7 @@
           "value": 2818.32,
           "quantity": 9.10898,
           "price": 309.4,
-          "cost_basis": null,
+          "cost_basis": 2804.74,
           "accounts": [
             "Roth IRA"
           ]
@@ -77,7 +77,7 @@
           "value": 1450.51,
           "quantity": 58.72506,
           "price": 24.7,
-          "cost_basis": null,
+          "cost_basis": 1498,
           "accounts": [
             "Brokerage Account"
           ]
@@ -88,7 +88,7 @@
           "value": 999.38,
           "quantity": 19.40539,
           "price": 51.5,
-          "cost_basis": null,
+          "cost_basis": 664.91,
           "accounts": [
             "Roth IRA"
           ]
@@ -99,7 +99,7 @@
           "value": 995.31,
           "quantity": 7.76962,
           "price": 128.1,
-          "cost_basis": null,
+          "cost_basis": 923.88,
           "accounts": [
             "Roth IRA"
           ]
@@ -110,7 +110,7 @@
           "value": 810.59,
           "quantity": 18.00504,
           "price": 45.02,
-          "cost_basis": null,
+          "cost_basis": 750,
           "accounts": [
             "Brokerage Account"
           ]
@@ -121,7 +121,7 @@
           "value": 745.57,
           "quantity": 2.35515,
           "price": 316.57,
-          "cost_basis": null,
+          "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
           ]
@@ -132,7 +132,7 @@
           "value": 734.36,
           "quantity": 16.31177,
           "price": 45.02,
-          "cost_basis": null,
+          "cost_basis": 723.78,
           "accounts": [
             "Roth IRA"
           ]
@@ -143,7 +143,7 @@
           "value": 733.75,
           "quantity": 27.79362,
           "price": 26.4,
-          "cost_basis": null,
+          "cost_basis": 789,
           "accounts": [
             "Roth IRA"
           ]
@@ -154,7 +154,7 @@
           "value": 428.21,
           "quantity": 6,
           "price": 71.37,
-          "cost_basis": null,
+          "cost_basis": 417.84,
           "accounts": [
             "Roth IRA"
           ]
@@ -165,7 +165,7 @@
           "value": 12.99,
           "quantity": 0.01814,
           "price": 716.1,
-          "cost_basis": null,
+          "cost_basis": 12.79,
           "accounts": [
             "Brokerage Account"
           ]
@@ -176,7 +176,7 @@
       "name": "Fidelity",
       "date": "2026-10-11",
       "total": 22134.41,
-      "cost_basis": null,
+      "cost_basis": 20277.83,
       "accounts": [
         {
           "name": "VISA 401K PLAN",
@@ -191,7 +191,7 @@
           "value": 11102.37,
           "quantity": 29.672,
           "price": 374.17,
-          "cost_basis": null,
+          "cost_basis": 10053.7,
           "accounts": [
             "VISA 401K PLAN"
           ]
@@ -202,7 +202,7 @@
           "value": 10910.48,
           "quantity": 369.471,
           "price": 29.53,
-          "cost_basis": null,
+          "cost_basis": 10102.98,
           "accounts": [
             "VISA 401K PLAN"
           ]
@@ -213,7 +213,7 @@
           "value": 121.56,
           "quantity": 0.765,
           "price": 158.9,
-          "cost_basis": null,
+          "cost_basis": 121.15,
           "accounts": [
             "VISA 401K PLAN"
           ]

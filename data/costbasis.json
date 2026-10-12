@@ -1,0 +1,140 @@
+{
+  "fidelity": {
+    "as_of": "2026-04-15",
+    "positions": {
+      "d1OnM7ZbYRH0RqNnwwMzsAVqg0MVe1CDkZNo8|dRBp95pEwZfLvXkEJMO3FYr08L09XvsQ4zNq7": {
+        "shares": 238.952,
+        "cost": 6438.14
+      },
+      "d1OnM7ZbYRH0RqNnwwMzsAVqg0MVe1CDkZNo8|Yv3EpQE8BkIXBozpdwLdHm46e56O7MHr1OeBK": {
+        "shares": 18.147,
+        "cost": 5904.24
+      }
+    }
+  },
+  "public": {
+    "as_of": "2026-04-15",
+    "positions": {
+      "a6r8Q98ARrtkRkey9gqrh015eAvnX6C7aan8A|RqmZJoZ0w1cPQyrgLeOKfMzaB8agQZf8Aremm": {
+        "shares": 6.94619,
+        "cost": 5109.29
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|vLRMV3MvY1FqZZ5XLd0LHJD5QN5rw9F77vKJg": {
+        "shares": 0.16817,
+        "cost": 105.21
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|VK0EQ5Ea13uaPNeZKzbrCNz0Jd0ZYMH4Kmq9Y": {
+        "shares": 0.19156,
+        "cost": 41.52
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|NLqaJoaK5wFr68baQZZBhnQpgJpNk6tKzngJr": {
+        "shares": 1.99507,
+        "cost": 353.61
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|Z09ER5EZdAH1RP6aNA8xF8kyOLyDngf95yVw8": {
+        "shares": 0.57317,
+        "cost": 255.1
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|RqmZJoZ0w1cPQVYd6Y3LcMzaB8agQZf8rbzDy": {
+        "shares": 0.22686,
+        "cost": 68.99
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|4r0aBVa85Kt3B1rmnz1ZH5Pwzbwqopt0zQ49L": {
+        "shares": 0.06732,
+        "cost": 69.43
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|nban4wnPKEtnmkeYzo8nuE1oPmowQ8S8X5O3D": {
+        "shares": 0.13582,
+        "cost": 45.37
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|96d5AO5gLjC9B1kk9OX4tB1YdrYymNfapmjE3": {
+        "shares": 0.35602,
+        "cost": 47.89
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|VK0EQ5Ea13u9QjZDY4K4UNz0Jd0ZYMHQJ6QOy": {
+        "shares": 0.03552,
+        "cost": 33.41
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|Lw1rJor3kQsAQgKxNaQgFbry9EyDxKUZ7OQ70": {
+        "shares": 0.80928,
+        "cost": 182.26
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|Yv3EpQE8BkIXBZEeQ1ndum46e56O7MHr1xYb1": {
+        "shares": 0.13938,
+        "cost": 30.16
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|Yv3EpQE8BkIXBKoOaB7xcm46e56O7MHr1xKaR": {
+        "shares": 0.38068,
+        "cost": 125.58
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|oJ9Y46YmgRFjzKRvz0e9CXDdmndVkgCa3ZkPo": {
+        "shares": 0.49072,
+        "cost": 151.94
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|wD7MdyM0NPfBPBKqbM94c4em3wm5jDCMo4Bvp": {
+        "shares": 0.06657,
+        "cost": 33.67
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|EvByboy6Z7I4LvOb8rzzHQ5R4YRjPMf5M4Nkk": {
+        "shares": 0.3859,
+        "cost": 119.8
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|1vAj1Eja5BIPeVaOQrR8IBJ0q30AYZfm5BmNA": {
+        "shares": 0.3618,
+        "cost": 33.02
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|3mg4qV4JZycjeEEnBz8YHbEgn8gLKkUeMBXNp": {
+        "shares": 0.06688,
+        "cost": 36.91
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|M654JE4yQdCA0rMRgVpNtZJ3Lo34kKHQgVqo0": {
+        "shares": 0.23391,
+        "cost": 93.62
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|moPE4dE1yMH5Y7PQX1yKfvbZ1LZ7NVH4eYmZ8": {
+        "shares": 1.18696,
+        "cost": 318.47
+      },
+      "a6r8Q98ARrtkRkey9gqrh015eAvnX6C7aan8A|BK6qVpqnZouJJdmK81K7uXgvqovmnLC3AEgXK": {
+        "shares": 12.11429,
+        "cost": 646
+      },
+      "a6r8Q98ARrtkRkey9gqrh015eAvnX6C7aan8A|XARE85EJqKsLNEQym8ZDsPABJMBv8NfP9bZdL": {
+        "shares": 3,
+        "cost": 175.85
+      },
+      "a6r8Q98ARrtkRkey9gqrh015eAvnX6C7aan8A|NLqaJoaK5wFr6bEAeKpBUnQpgJpNk6tKvZkOr": {
+        "shares": 0.002943,
+        "cost": 210.98
+      },
+      "a6r8Q98ARrtkRkey9gqrh015eAvnX6C7aan8A|bn4Q8gQOBJtJMzZ7LqPaFLYEO5EBD1FAavqNq": {
+        "shares": 1,
+        "cost": 215.51
+      },
+      "4xP4gm4w6PUDnD4BEXvYHY9adRoJnpSREEmX4|96d5AO5gLjC9Ey6n7e0AFB1YdrYymNfaJKNOM": {
+        "shares": 4.03234,
+        "cost": 2499.99
+      },
+      "4xP4gm4w6PUDnD4BEXvYHY9adRoJnpSREEmX4|RqmZJoZ0w1cPQyrgLeOKfMzaB8agQZf8Aremm": {
+        "shares": 0.64249,
+        "cost": 458
+      },
+      "4xP4gm4w6PUDnD4BEXvYHY9adRoJnpSREEmX4|bn4Q8gQOBJt1AbD8B9eDtLYEO5EBD1FqXRpYZ": {
+        "shares": 2.85755,
+        "cost": 950
+      },
+      "4xP4gm4w6PUDnD4BEXvYHY9adRoJnpSREEmX4|XARE85EJqKsLNEQym8ZDsPABJMBv8NfP9bZdL": {
+        "shares": 3,
+        "cost": 169.87
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|96d5AO5gLjC9EAdPyvkYUB1YdrYymNfaJVZ3w": {
+        "shares": 0.0882,
+        "cost": 31.53
+      },
+      "VgRdP4dr8Rtwvw8Qpo57uP8VEqqEajF4aa9RB|Z09ER5EZdAH1OmweLJzaF8kyOLyDngf9vpArn": {
+        "shares": 0.15547,
+        "cost": 30.87
+      }
+    }
+  }
+}
