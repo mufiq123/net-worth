@@ -186,22 +186,22 @@
     "fidelity": {
       "name": "Fidelity",
       "date": "2026-10-17",
-      "total": 21780.02,
+      "total": 21399.83,
       "cost_basis": 20277.83,
       "accounts": [
         {
           "name": "VISA 401K PLAN",
           "type": "401(k)",
-          "value": 21780.02
+          "value": 21399.83
         }
       ],
       "positions": [
         {
           "ticker": "SP.500.INDEX.PL.CL.D",
           "name": "SP 500 INDEX PL CL D - contribution",
-          "value": 11007.72,
+          "value": 10887.55,
           "quantity": 29.672,
-          "price": 370.98,
+          "price": 366.93,
           "cost_basis": 10053.7,
           "accounts": [
             "VISA 401K PLAN"
@@ -210,9 +210,9 @@
         {
           "ticker": "TRP.LRG.CAP.GR.TR.D",
           "name": "Trp Lrg Cap Gr Tr D",
-          "value": 10651.85,
+          "value": 10393.22,
           "quantity": 369.471,
-          "price": 28.83,
+          "price": 28.13,
           "cost_basis": 10102.98,
           "accounts": [
             "VISA 401K PLAN"
@@ -221,9 +221,9 @@
         {
           "ticker": "VG.TOT.STK.MKT.IDX.C",
           "name": "Vg Tot Stk Mkt Idx C",
-          "value": 120.45,
+          "value": 119.06,
           "quantity": 0.765,
-          "price": 157.46,
+          "price": 155.63,
           "cost_basis": 121.15,
           "accounts": [
             "VISA 401K PLAN"
@@ -282,5 +282,5 @@
     }
   },
   "date": "2026-10-17",
-  "total": 86068.56
+  "total": 85688.37
 }
