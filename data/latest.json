@@ -2,7 +2,7 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-10-17",
+      "date": "2026-10-18",
       "total": 21209.27,
       "cost_basis": 19660.27,
       "accounts": [
@@ -185,7 +185,7 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-10-17",
+      "date": "2026-10-18",
       "total": 21399.83,
       "cost_basis": 20277.83,
       "accounts": [
@@ -233,7 +233,7 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-10-17",
+      "date": "2026-10-18",
       "total": 43079.27,
       "cost_basis": 10893.57,
       "excluded": [
@@ -281,6 +281,6 @@
       ]
     }
   },
-  "date": "2026-10-17",
+  "date": "2026-10-18",
   "total": 85688.37
 }
