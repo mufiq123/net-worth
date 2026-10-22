@@ -2,14 +2,14 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-10-21",
-      "total": 21623.34,
+      "date": "2026-10-22",
+      "total": 21091,
       "cost_basis": 19660.27,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 11090.5
+          "value": 10825.22
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 10533.75
+          "value": 10266.69
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 7610.06,
+          "value": 7422.17,
           "quantity": 62.57362,
-          "price": 121.62,
+          "price": 118.62,
           "cost_basis": 5888.29,
           "accounts": [
             "Brokerage Account"
@@ -52,9 +52,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 4760.02,
+          "value": 4712.62,
           "quantity": 6.72108,
-          "price": 708.22,
+          "price": 701.17,
           "cost_basis": 4450.88,
           "accounts": [
             "Roth IRA"
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2279.11,
+          "value": 2228.45,
           "quantity": 7.67637,
-          "price": 296.9,
+          "price": 290.3,
           "cost_basis": 2360.9,
           "accounts": [
             "Roth IRA"
@@ -74,32 +74,32 @@
         {
           "ticker": "QQI",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco Nasdaq International Innovators 100 ETF",
-          "value": 1458.14,
+          "value": 1439.35,
           "quantity": 58.72506,
-          "price": 24.83,
+          "price": 24.51,
           "cost_basis": 1498,
           "accounts": [
             "Brokerage Account"
           ]
         },
         {
-          "ticker": "ARKG",
-          "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 967.36,
-          "quantity": 19.40539,
-          "price": 49.85,
-          "cost_basis": 664.91,
+          "ticker": "VGT",
+          "name": "Vanguard World Fund - Vanguard Information Technology ETF",
+          "value": 921.59,
+          "quantity": 7.76962,
+          "price": 118.61,
+          "cost_basis": 923.88,
           "accounts": [
             "Roth IRA"
           ]
         },
         {
-          "ticker": "VGT",
-          "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 944.92,
-          "quantity": 7.76962,
-          "price": 121.62,
-          "cost_basis": 923.88,
+          "ticker": "ARKG",
+          "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
+          "value": 918.55,
+          "quantity": 19.40539,
+          "price": 47.33,
+          "cost_basis": 664.91,
           "accounts": [
             "Roth IRA"
           ]
@@ -107,9 +107,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 780.1,
+          "value": 789.89,
           "quantity": 2.35515,
-          "price": 331.23,
+          "price": 335.39,
           "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
@@ -118,9 +118,9 @@
         {
           "ticker": "RVI",
           "name": "Robinhood Ventures Fund I - Common shares of beneficial interest",
-          "value": 686.5,
+          "value": 662.32,
           "quantity": 27.79362,
-          "price": 24.7,
+          "price": 23.83,
           "cost_basis": 789,
           "accounts": [
             "Roth IRA"
@@ -129,9 +129,9 @@
         {
           "ticker": "LAZR",
           "name": "Tema ETF Trust - Tema Photonics & Optical ETF",
-          "value": 672.13,
+          "value": 602.09,
           "quantity": 18.00504,
-          "price": 37.33,
+          "price": 33.44,
           "cost_basis": 750,
           "accounts": [
             "Brokerage Account"
@@ -140,9 +140,9 @@
         {
           "ticker": "LAZR",
           "name": "Tema ETF Trust - Tema Photonics & Optical ETF",
-          "value": 608.92,
+          "value": 545.47,
           "quantity": 16.31177,
-          "price": 37.33,
+          "price": 33.44,
           "cost_basis": 723.78,
           "accounts": [
             "Roth IRA"
@@ -151,9 +151,9 @@
         {
           "ticker": "HSBC",
           "name": "HSBC Holdings plc - ADR",
-          "value": 437.33,
+          "value": 427.36,
           "quantity": 4.65637,
-          "price": 93.92,
+          "price": 91.78,
           "cost_basis": 434,
           "accounts": [
             "Roth IRA"
@@ -162,9 +162,9 @@
         {
           "ticker": "UBER",
           "name": "Uber Technologies Inc",
-          "value": 405.9,
+          "value": 408.42,
           "quantity": 6,
-          "price": 67.65,
+          "price": 68.07,
           "cost_basis": 417.84,
           "accounts": [
             "Roth IRA"
@@ -173,9 +173,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 12.85,
+          "value": 12.72,
           "quantity": 0.01814,
-          "price": 708.38,
+          "price": 701.21,
           "cost_basis": 12.79,
           "accounts": [
             "Brokerage Account"
@@ -185,23 +185,23 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-10-21",
-      "total": 22168.81,
+      "date": "2026-10-22",
+      "total": 22321.48,
       "cost_basis": 20883.59,
       "accounts": [
         {
           "name": "VISA 401K PLAN",
           "type": "401(k)",
-          "value": 22168.81
+          "value": 22321.48
         }
       ],
       "positions": [
         {
           "ticker": "SP.500.INDEX.PL.CL.D",
           "name": "SP 500 INDEX PL CL D - contribution",
-          "value": 11449.08,
+          "value": 11515.39,
           "quantity": 30.987,
-          "price": 369.48,
+          "price": 371.62,
           "cost_basis": 10538.31,
           "accounts": [
             "VISA 401K PLAN"
@@ -210,9 +210,9 @@
         {
           "ticker": "TRP.LRG.CAP.GR.TR.D",
           "name": "Trp Lrg Cap Gr Tr D",
-          "value": 10478.2,
+          "value": 10563.17,
           "quantity": 369.471,
-          "price": 28.36,
+          "price": 28.59,
           "cost_basis": 10102.98,
           "accounts": [
             "VISA 401K PLAN"
@@ -221,9 +221,9 @@
         {
           "ticker": "VG.TOT.STK.MKT.IDX.C",
           "name": "Vg Tot Stk Mkt Idx C",
-          "value": 241.53,
+          "value": 242.92,
           "quantity": 1.54,
-          "price": 156.84,
+          "price": 157.74,
           "cost_basis": 242.3,
           "accounts": [
             "VISA 401K PLAN"
@@ -233,34 +233,34 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-10-21",
-      "total": 43639.95,
+      "date": "2026-10-22",
+      "total": 44226.31,
       "cost_basis": 10893.57,
       "excluded": [
         {
           "name": "Equity",
-          "value": 28141.65
+          "value": 28519.77
         }
       ],
       "accounts": [
         {
           "name": "ESPP",
           "type": "ESPP",
-          "value": 15498.3
+          "value": 15706.54
         },
         {
           "name": "Equity",
           "type": "Equity",
-          "value": 28141.65
+          "value": 28519.77
         }
       ],
       "positions": [
         {
           "ticker": "V",
           "name": "Visa Inc.",
-          "value": 15498.3,
+          "value": 15706.54,
           "quantity": 38,
-          "price": 407.85,
+          "price": 413.33,
           "cost_basis": 10893.57,
           "accounts": [
             "ESPP"
@@ -269,9 +269,9 @@
         {
           "ticker": "V",
           "name": "Visa Inc.",
-          "value": 28141.65,
+          "value": 28519.77,
           "quantity": 69,
-          "price": 407.85,
+          "price": 413.33,
           "cost_basis": null,
           "accounts": [
             "Equity"
@@ -281,6 +281,6 @@
       ]
     }
   },
-  "date": "2026-10-21",
-  "total": 87432.1
+  "date": "2026-10-22",
+  "total": 87638.79
 }
