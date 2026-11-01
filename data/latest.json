@@ -2,7 +2,7 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-10-31",
+      "date": "2026-11-01",
       "total": 21828.81,
       "cost_basis": 20318.27,
       "accounts": [
@@ -174,23 +174,23 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-10-31",
-      "total": 22082.62,
+      "date": "2026-11-01",
+      "total": 21549.2,
       "cost_basis": 20883.59,
       "accounts": [
         {
           "name": "VISA 401K PLAN",
           "type": "401(k)",
-          "value": 22082.62
+          "value": 21549.2
         }
       ],
       "positions": [
         {
           "ticker": "SP.500.INDEX.PL.CL.D",
           "name": "SP 500 INDEX PL CL D - contribution",
-          "value": 11461.78,
+          "value": 11254.17,
           "quantity": 30.987,
-          "price": 369.89,
+          "price": 363.19,
           "cost_basis": 10538.31,
           "accounts": [
             "VISA 401K PLAN"
@@ -199,9 +199,9 @@
         {
           "ticker": "TRP.LRG.CAP.GR.TR.D",
           "name": "Trp Lrg Cap Gr Tr D",
-          "value": 10378.44,
+          "value": 10057,
           "quantity": 369.471,
-          "price": 28.09,
+          "price": 27.22,
           "cost_basis": 10102.98,
           "accounts": [
             "VISA 401K PLAN"
@@ -210,9 +210,9 @@
         {
           "ticker": "VG.TOT.STK.MKT.IDX.C",
           "name": "Vg Tot Stk Mkt Idx C",
-          "value": 242.4,
+          "value": 238.03,
           "quantity": 1.54,
-          "price": 157.4,
+          "price": 154.57,
           "cost_basis": 242.3,
           "accounts": [
             "VISA 401K PLAN"
@@ -222,7 +222,7 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-10-31",
+      "date": "2026-11-01",
       "total": 44254.13,
       "cost_basis": 10893.57,
       "excluded": [
@@ -270,6 +270,6 @@
       ]
     }
   },
-  "date": "2026-10-31",
-  "total": 88165.56
+  "date": "2026-11-01",
+  "total": 87632.14
 }
