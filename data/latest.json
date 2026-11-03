@@ -3,13 +3,13 @@
     "public": {
       "name": "Public",
       "date": "2026-11-02",
-      "total": 21299.23,
+      "total": 21346.8,
       "cost_basis": 20318.27,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 11329.39
+          "value": 11349.82
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 9970.66
+          "value": 9997.8
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 7108.31,
+          "value": 7144.11,
           "quantity": 62.57362,
-          "price": 113.59914929006825,
+          "price": 114.17127537131462,
           "cost_basis": 5888.29,
           "accounts": [
             "Brokerage Account"
@@ -52,9 +52,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 4648.7,
+          "value": 4654.92,
           "quantity": 6.72108,
-          "price": 691.6596737429104,
+          "price": 692.5851202485316,
           "cost_basis": 4450.88,
           "accounts": [
             "Roth IRA"
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2154.83,
+          "value": 2159.67,
           "quantity": 7.67637,
-          "price": 280.70950201722945,
+          "price": 281.34000836332797,
           "cost_basis": 2360.9,
           "accounts": [
             "Roth IRA"
@@ -74,9 +74,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 1656.89,
+          "value": 1665.23,
           "quantity": 14.58538,
-          "price": 113.59937142535883,
+          "price": 114.17117689083177,
           "cost_basis": 1713.88,
           "accounts": [
             "Roth IRA"
@@ -96,9 +96,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 941.16,
+          "value": 939.61,
           "quantity": 19.40539,
-          "price": 48.49992708211481,
+          "price": 48.42005236689394,
           "cost_basis": 664.91,
           "accounts": [
             "Roth IRA"
@@ -107,9 +107,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 807.82,
+          "value": 798.33,
           "quantity": 2.35515,
-          "price": 343.0015073349893,
+          "price": 338.9720399974524,
           "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
@@ -118,9 +118,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 623.97,
+          "value": 624.8,
           "quantity": 0.90213,
-          "price": 691.6630640816734,
+          "price": 692.583108864576,
           "cost_basis": 630.79,
           "accounts": [
             "Brokerage Account"
@@ -140,21 +140,10 @@
         {
           "ticker": "LAZR",
           "name": "Tema ETF Trust - Tema Photonics & Optical ETF",
-          "value": 523.61,
+          "value": 526.87,
           "quantity": 16.31177,
-          "price": 32.100133829743804,
+          "price": 32.29998951677225,
           "cost_basis": 723.78,
-          "accounts": [
-            "Roth IRA"
-          ]
-        },
-        {
-          "ticker": "HSBC",
-          "name": "HSBC Holdings plc - ADR",
-          "value": 400.68,
-          "quantity": 4.65637,
-          "price": 86.04986287601716,
-          "cost_basis": 434,
           "accounts": [
             "Roth IRA"
           ]
@@ -162,10 +151,21 @@
         {
           "ticker": "UBER",
           "name": "Uber Technologies Inc",
-          "value": 399.96,
+          "value": 400.32,
           "quantity": 6,
-          "price": 66.66,
+          "price": 66.72,
           "cost_basis": 417.84,
+          "accounts": [
+            "Roth IRA"
+          ]
+        },
+        {
+          "ticker": "HSBC",
+          "name": "HSBC Holdings plc - ADR",
+          "value": 399.64,
+          "quantity": 4.65637,
+          "price": 85.82651292745207,
+          "cost_basis": 434,
           "accounts": [
             "Roth IRA"
           ]
@@ -271,5 +271,5 @@
     }
   },
   "date": "2026-11-02",
-  "total": 87952.49
+  "total": 88000.06
 }
