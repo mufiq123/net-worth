@@ -93,6 +93,7 @@ const SUBTYPE_LABELS = {
   brokerage: 'Brokerage', roth: 'Roth IRA', ira: 'IRA', '401k': '401(k)', '403b': '403(b)',
   'stock plan': 'Stock plan', 'non-taxable brokerage account': 'Brokerage', hsa: 'HSA',
 };
+const acctType = (inst, a) => inst.accountLabels?.[a.name] || SUBTYPE_LABELS[(a.subtype || '').toLowerCase()] || a.subtype || a.type || 'Account';
 
 // ---- transactions ----
 // Fetched once per institution and shared by the cost-basis rebuild and the
@@ -103,6 +104,7 @@ function fetchTxns(inst) {
   inst.txnsPromise ??= (async () => {
     let txns = [];
     const secById = {};
+    const typeByAccount = {};
     for (let offset = 0; ; ) {
       const r = await plaid.investmentsTransactionsGet({
         access_token: inst.token,
@@ -111,12 +113,13 @@ function fetchTxns(inst) {
         options: { count: 500, offset },
       });
       for (const s of r.data.securities || []) secById[s.security_id] = s;
+      for (const a of r.data.accounts || []) typeByAccount[a.account_id] = acctType(inst, a);
       const batch = r.data.investment_transactions || [];
       txns = txns.concat(batch);
       if (!batch.length || txns.length >= (r.data.total_investment_transactions ?? txns.length)) break;
       offset = txns.length;
     }
-    return { txns, secById };
+    return { txns, secById, typeByAccount };
   })();
   return inst.txnsPromise;
 }
@@ -319,7 +322,7 @@ async function plaidHoldings(inst) {
     ...(excluded.length ? { excluded } : {}),
     accounts: accounts.map((a) => ({
       name: label(a.name),
-      type: inst.accountLabels?.[a.name] || SUBTYPE_LABELS[(a.subtype || '').toLowerCase()] || a.subtype || a.type || 'Account',
+      type: acctType(inst, a),
       // A balance would include the cash a shares-only institution leaves out.
       value: round2(inst.sharesOnly ? heldByAccount[a.account_id] || 0 : a.balances?.current || 0),
     })),
@@ -395,7 +398,9 @@ function classify(tx, secById) {
   if (NOT_MONEY.test(tx.name || '')) return { counted: false, why: 'internal' };
   if (sec && sec.is_cash_equivalent && sec.type !== 'cash') return { counted: false, why: 'internal' };
   if (!round2(tx.amount || 0)) return { counted: false, why: 'position' };
-  return { counted: true, amount: round2(-tx.amount) };
+  // Public's cash rewards count as money in here, but the after-tax toggle
+  // treats them as earnings, since the owner didn't deposit them.
+  return { counted: true, amount: round2(-tx.amount), reward: /cash reward/i.test(tx.name || '') };
 }
 
 for (const inst of fresh) {
@@ -410,7 +415,7 @@ for (const inst of fresh) {
   }
 
   try {
-    const { txns, secById } = await fetchTxns(inst);
+    const { txns, secById, typeByAccount } = await fetchTxns(inst);
 
     // Every transaction Plaid still shows is re-judged on every run, so an
     // entry recorded under an older rule corrects itself; only entries that
@@ -429,8 +434,11 @@ for (const inst of fresh) {
         continue;
       }
       tally.counted += 1;
-      if (at === -1) { dep.ledger.push({ id, date: tx.date, amount: c.amount }); tally.added += 1; }
-      else if (dep.ledger[at].amount !== c.amount) { dep.ledger[at].amount = c.amount; tally.changed += 1; }
+      // The account type is what lets the toggle split principal per account.
+      const entry = { id, date: tx.date, amount: c.amount, account: typeByAccount[tx.account_id] || null, ...(c.reward ? { reward: true } : {}) };
+      if (at === -1) { dep.ledger.push(entry); tally.added += 1; }
+      else if (dep.ledger[at].amount !== c.amount) { dep.ledger[at] = entry; tally.changed += 1; }
+      else dep.ledger[at] = entry;
     }
     dep.ledger.sort((a, b) => (a.date < b.date ? -1 : 1));
 
