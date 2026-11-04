@@ -11,7 +11,7 @@ export const INSTITUTIONS = [
     id: 'public',
     name: 'Public',
     secret: 'PLAID_TOKEN_PUBLIC',
-    afterTax: { onGainsByAccount: { 'Roth IRA': 0.4, Brokerage: 0.33 } },
+    afterTax: { onGainsByAccount: { 'Roth IRA': 0.4, Brokerage: 0.27 } },
   },
   { id: 'fidelity', name: 'Fidelity', secret: 'PLAID_TOKEN_FIDELITY', afterTax: { onTotal: 0.4 } },
   {
@@ -27,7 +27,7 @@ export const INSTITUTIONS = [
     // Only shares and their value count. Any cash in these accounts is left out.
     sharesOnly: true,
     // Unvested grants are left out of the after-tax total altogether.
-    afterTax: { onGains: 0.05 },
+    afterTax: { onGains: 0.33 },
   },
 ];
 

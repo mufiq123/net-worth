@@ -127,12 +127,12 @@ ESPP's, and any other part without a cost blanks the row.
 
 **After-tax toggle.** The rates are the owner's, in `afterTax` in `institutions.js`, and
 `build.js` works out each institution's value when it builds the page:
-- *Public brokerage:* 33% on gains only. *Public Roth:* 40% on earnings only. Principal is what
+- *Public brokerage:* 27% on gains only. *Public Roth:* 40% on earnings only. Principal is what
   was deposited to that account type, including transfers. Public's cash rewards are earnings
   here, though "Net invested" still counts them as money in. Each ledger row records its
   `account` type, and rewards are marked `reward`.
 - *Fidelity:* 40% on the whole value.
-- *Merrill:* 5% on ESPP profit. The unvested equity grant is left out of the after-tax total.
+- *Merrill:* 33% on ESPP profit. The unvested equity grant is left out of the after-tax total.
 A loss earns no credit. If principal isn't known, the whole value is treated as gain, so the
 figure errs low.
 
