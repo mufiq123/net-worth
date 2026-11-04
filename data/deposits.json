@@ -8,227 +8,280 @@
       {
         "id": "JM7aZPaLR7SJEJwQPAxjhODbpPdeZ9h0bDZ51",
         "date": "2025-10-20",
-        "amount": 500
+        "amount": 500,
+        "account": "Brokerage"
       },
       {
         "id": "Xg7DkxDwa7tLqLAxQgkViYeQNkXwqDhz4L1k3",
         "date": "2025-10-21",
-        "amount": 545
+        "amount": 545,
+        "account": "Brokerage"
       },
       {
         "id": "y15gVag0p5Iymyjgr8Bwuz91K3awLJUROBj7Y",
         "date": "2025-11-21",
-        "amount": 2000
+        "amount": 2000,
+        "account": "Brokerage"
       },
       {
         "id": "JM7aZPaLR7SJEJwQPAxjhODbpPdeZ9h0bDZEv",
         "date": "2025-11-21",
-        "amount": 1000
+        "amount": 1000,
+        "account": "Brokerage"
       },
       {
         "id": "KgMJKqJxNMt3B35xnMLrhPXz5nDeV8FyQox57",
         "date": "2025-11-26",
-        "amount": -922.15
+        "amount": -922.15,
+        "account": "Brokerage"
       },
       {
         "id": "jKReaDeMpRFJ1JMO6dpkhEML79Qng8fvR7PM8",
         "date": "2025-12-12",
-        "amount": 1000
+        "amount": 1000,
+        "account": "Brokerage"
       },
       {
         "id": "VgRdP4dr8Rtwvw8Qpo57uP8rM96OvEFnr3AD3",
         "date": "2026-01-09",
-        "amount": 500
+        "amount": 500,
+        "account": "Brokerage"
       },
       {
         "id": "n051qB19p5CEJE5mPZN0ixqr87p6JbCjAvOnx",
         "date": "2026-01-09",
-        "amount": 500
+        "amount": 500,
+        "account": "Brokerage"
       },
       {
         "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6Dtdpb07M",
         "date": "2026-01-14",
-        "amount": 1000
+        "amount": 1000,
+        "account": "Brokerage"
       },
       {
         "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6Dtdpb075",
         "date": "2026-01-20",
-        "amount": 40
+        "amount": 40,
+        "account": "Brokerage"
       },
       {
         "id": "QgyErAExRytpQp5eAkRZS8VEPK1rQnf9EqBRM",
         "date": "2026-01-26",
-        "amount": 200
+        "amount": 200,
+        "account": "Brokerage"
       },
       {
         "id": "Nm4gZygMR4f8x8X6y9JesPyR6bD7e0FyR7Mnn",
         "date": "2026-01-27",
-        "amount": 220
+        "amount": 220,
+        "account": "Brokerage"
       },
       {
         "id": "OEZ97K9PXZhD7DmxRqAJH6j8OR1573Fp8vBeJ",
         "date": "2026-01-28",
-        "amount": 10
+        "amount": 10,
+        "account": "Roth IRA"
       },
       {
         "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6Dtdpb08m",
         "date": "2026-02-04",
-        "amount": 0.1
+        "amount": 0.1,
+        "account": "Roth IRA",
+        "reward": true
       },
       {
         "id": "Rg7Q3vQOR7to6oAQvJ85iPVKZN796mF9ymER1",
         "date": "2026-02-04",
-        "amount": 1500
+        "amount": 1500,
+        "account": "Brokerage"
       },
       {
         "id": "Zg4Br8BLa4t171ONp5v9hepRgomE7AH8RaNJE",
         "date": "2026-02-04",
-        "amount": 750
+        "amount": 750,
+        "account": "Brokerage"
       },
       {
         "id": "Nm4gZygMR4f8x8X6y9JesPyR6bD7e0FyR7MQa",
         "date": "2026-02-05",
-        "amount": 3000
+        "amount": 3000,
+        "account": "Roth IRA"
       },
       {
         "id": "mvRLmqL9pRC5Q5rX1jvocmryVOAPQat8MnwRD",
         "date": "2026-02-05",
-        "amount": 250
+        "amount": 250,
+        "account": "Brokerage"
       },
       {
         "id": "ePrVoEV3arHRORj49Ex1CYvXMRrbOxh4dgqYw",
         "date": "2026-02-10",
-        "amount": 30
+        "amount": 30,
+        "account": "Roth IRA",
+        "reward": true
       },
       {
         "id": "zPy9gx9mdyHKoKqegd36sYDb1mA64PhMODXRe",
         "date": "2026-02-11",
-        "amount": 30
+        "amount": 30,
+        "account": "Roth IRA"
       },
       {
         "id": "wLmZ5rZgpmIBJB8Y0dnQc6yvD7XOZNFRLznO9",
         "date": "2026-02-11",
-        "amount": -400
+        "amount": -400,
+        "account": "Brokerage"
       },
       {
         "id": "mvRLmqL9pRC5Q5rX1jvocmryVOAPQat8MnwQP",
         "date": "2026-02-18",
-        "amount": 0.3
+        "amount": 0.3,
+        "account": "Roth IRA",
+        "reward": true
       },
       {
         "id": "Aknw9OwJ0nUDMDe8NzmqHQLmper1NYUw641Q6",
         "date": "2026-04-06",
-        "amount": 1000
+        "amount": 1000,
+        "account": "Roth IRA"
       },
       {
         "id": "0j6yNvygO6IDyDneJOmjHY9EzdvNeKh9rqno9",
         "date": "2026-04-28",
-        "amount": 10
+        "amount": 10,
+        "account": "Roth IRA",
+        "reward": true
       },
       {
         "id": "JM7aZPaLR7SJEJwQPAxjhODbpPdeZ9h0bDZqq",
         "date": "2026-05-05",
-        "amount": 2000
+        "amount": 2000,
+        "account": "Roth IRA"
       },
       {
         "id": "8Lgbz8bQPgIVPVenOb4qU43oak8g1DIYy4eBV",
         "date": "2026-05-12",
-        "amount": 20
+        "amount": 20,
+        "account": "Roth IRA",
+        "reward": true
       },
       {
         "id": "5dqxgax6LqIx3x1O5z0mU0QyanM1DPCNBxPy7",
         "date": "2026-06-04",
-        "amount": 2574.03
+        "amount": 2574.03,
+        "account": "Brokerage"
       },
       {
         "id": "5dqxgax6LqIx3x1O5z0mU0QyanM1DPCNBxejL",
         "date": "2026-06-04",
-        "amount": -2574.03
+        "amount": -2574.03,
+        "account": "Brokerage"
       },
       {
         "id": "xD5oZ4ogX5C3Z3X4pPqdh6E159adLvFmMx0Yy",
         "date": "2026-06-11",
-        "amount": 0.29
+        "amount": 0.29,
+        "account": "Brokerage"
       },
       {
         "id": "7635EJ5913tXkX69RYrAtpDbdAznwNI8QJ7V8",
         "date": "2026-06-11",
-        "amount": -0.29
+        "amount": -0.29,
+        "account": "Brokerage"
       },
       {
         "id": "JM7aZPaLR7SJEJwQPAxjhODbpPdeZ9h0bDZ6v",
         "date": "2026-06-12",
-        "amount": 0.48
+        "amount": 0.48,
+        "account": "Brokerage"
       },
       {
         "id": "VgRdP4dr8Rtwvw8Qpo57uP8rM96OvEFnr3Z1X",
         "date": "2026-06-12",
-        "amount": -0.48
+        "amount": -0.48,
+        "account": "Brokerage"
       },
       {
         "id": "8Lgbz8bQPgIVPVenOb4qU43oak8g1DIYy4epA",
         "date": "2026-06-13",
-        "amount": 0.53
+        "amount": 0.53,
+        "account": "Brokerage"
       },
       {
         "id": "OEZ97K9PXZhD7DmxRqAJH6j8OR1573Fp8vLdZ",
         "date": "2026-06-13",
-        "amount": -0.53
+        "amount": -0.53,
+        "account": "Brokerage"
       },
       {
         "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6DtdpbjmE",
         "date": "2026-06-29",
-        "amount": 450
+        "amount": 450,
+        "account": "Brokerage"
       },
       {
         "id": "ra5ABkAEp5CLvLg7yRnNi9Ev7g0AJDfrBD4ga",
         "date": "2026-07-18",
-        "amount": 450
+        "amount": 450,
+        "account": "Roth IRA"
       },
       {
         "id": "Yg4PAJP674tDoDgBVe3AHNVQM3pYoqtzQXAkD",
         "date": "2026-07-18",
-        "amount": -450
+        "amount": -450,
+        "account": "Brokerage"
       },
       {
         "id": "Zg4Br8BLa4t171ONp5v9hepRgomE7AH8RaBLr",
         "date": "2026-08-18",
-        "amount": 600
+        "amount": 600,
+        "account": "Roth IRA"
       },
       {
         "id": "9DQ7EZ7PqQCo3oOEzMariagxNknoXJh6dqjoD",
         "date": "2026-08-20",
-        "amount": 1900
+        "amount": 1900,
+        "account": "Roth IRA"
       },
       {
         "id": "VgRdP4dr8Rtwvw8Qpo57uP8rM96OvEFnr3AKJ",
         "date": "2026-08-20",
-        "amount": 10
+        "amount": 10,
+        "account": "Roth IRA"
       },
       {
         "id": "OEZ97K9PXZhD7DmxRqAJH6j8OR1573Fp8vB9J",
         "date": "2026-08-25",
-        "amount": 6
+        "amount": 6,
+        "account": "Roth IRA",
+        "reward": true
       },
       {
         "id": "Mg9oj3oxR9tRXRQ03bBaCgY5KRrDwOF0Manwj",
         "date": "2026-09-02",
-        "amount": 0.1
+        "amount": 0.1,
+        "account": "Roth IRA",
+        "reward": true
       },
       {
         "id": "EjX3Qw3kRXI4e4BXwJYKSNqvMw1m6Dtdpb0Nm",
         "date": "2026-09-02",
-        "amount": 19
+        "amount": 19,
+        "account": "Roth IRA",
+        "reward": true
       },
       {
         "id": "5dqxgax6LqIx3x1O5z0mU0QyanM1DPCNBxPQk",
         "date": "2026-09-14",
-        "amount": 750
+        "amount": 750,
+        "account": "Roth IRA"
       },
       {
         "id": "EjX3Qw3kRXI4e4BXwJ4vHdAgyQMzNDtZKOKEV",
         "date": "2026-10-30",
-        "amount": 790
+        "amount": 790,
+        "account": "Roth IRA"
       }
     ]
   },
@@ -241,32 +294,38 @@
       {
         "id": "ePO9EV5dYJtEJvY966PBTB8L9oJ7Nvt48LwwA",
         "date": "2026-10-05",
-        "amount": 121.15
+        "amount": 121.15,
+        "account": "401(k)"
       },
       {
         "id": "YgeZJPk0YvHeqk8VrrX0imevbKB0aVUzKn00k",
         "date": "2026-10-05",
-        "amount": 484.61
+        "amount": 484.61,
+        "account": "401(k)"
       },
       {
         "id": "3aXLrjyeDmIar1vgzzjQs5J9jddvNqH7dXp7O",
         "date": "2026-10-19",
-        "amount": 121.15
+        "amount": 121.15,
+        "account": "401(k)"
       },
       {
         "id": "y1bjagBxyPH8db7r66A0I4wyDNNjr9t3YwN37",
         "date": "2026-10-19",
-        "amount": 484.61
+        "amount": 484.61,
+        "account": "401(k)"
       },
       {
         "id": "a6O798xZYJfgx189nnbQFXX4Mj7Ao6C10oEEa",
         "date": "2026-11-02",
-        "amount": 133.26
+        "amount": 133.26,
+        "account": "401(k)"
       },
       {
         "id": "xDb04oqa31CPOeRpaag7iBBOvrMgX5IK7Znno",
         "date": "2026-11-02",
-        "amount": 533.07
+        "amount": 533.07,
+        "account": "401(k)"
       }
     ]
   },
