@@ -224,18 +224,7 @@
       "positions": [
         {
           "ticker": "V",
-          "name": "Visa Inc.",
-          "value": 15555.54,
-          "quantity": 37,
-          "price": 420.42,
-          "cost_basis": 10789.7,
-          "accounts": [
-            "ESPP"
-          ]
-        },
-        {
-          "ticker": "V",
-          "name": "Visa Inc.",
+          "name": "Visa Inc - Ordinary Shares - Class A",
           "value": 29008.98,
           "quantity": 69,
           "price": 420.42,
@@ -244,6 +233,17 @@
             "Equity"
           ],
           "exclude_from_gains": true
+        },
+        {
+          "ticker": "V",
+          "name": "Visa Inc - Ordinary Shares - Class A",
+          "value": 15555.54,
+          "quantity": 37,
+          "price": 420.42,
+          "cost_basis": 10789.7,
+          "accounts": [
+            "ESPP"
+          ]
         }
       ]
     }
