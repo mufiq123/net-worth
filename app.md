@@ -30,7 +30,7 @@ cron (6 entries) → gate job → fetch.js → build.js → dist/index.html → 
 |---|---|---|---|
 | `public` | Brokerage, Roth IRA | `PLAID_TOKEN_PUBLIC` | ledger |
 | `fidelity` | 401(k) | `PLAID_TOKEN_FIDELITY` | ledger |
-| `merrill` | ESPP, Equity (Visa grant) | none: hand-kept `data/merrill.json` | cost basis (ESPP only) |
+| `merrill` | ESPP, Equity (Visa grant) | `PLAID_TOKEN_MERRILL` | cost basis (ESPP only) |
 
 An institution whose secret isn't set is skipped, so the page works with any subset linked.
 One login is one Plaid Item, and Items aren't refunded on delete, so broken connections are
@@ -48,6 +48,10 @@ inside a fresh-looking total.
 
 **Refresh once, wait once.** `/investments/refresh` goes to all three Items together, then a
 single 30s wait, rather than 90s in sequence.
+
+**Scheduled refreshes, not webhooks.** The page has no server to receive Plaid's webhooks, so
+data updates only when the schedule runs. The owner chose this for all three institutions on
+2026-11-03, knowing Plaid recommends webhooks.
 
 **Cash is one holding.** Securities with `type: cash` or `is_cash_equivalent` (`CUR:USD`,
 SPAXX-style money market funds) become one `Cash` position per institution, and `build.js`
@@ -95,11 +99,16 @@ kept instead.
   - Every transaction Plaid still shows is re-judged on each run, so an entry recorded under an
     older rule corrects itself. Entries that have aged out of Plaid's window are kept.
   - The log reports counts only (counted, internal, position changes, added/removed/changed).
-- *Cost basis* (Merrill): the ESPP's `cost_basis` in `data/merrill.json` (total purchase cost,
-  from Merrill's lot table) is its "invested" figure. The Equity grant cost nothing, so it has
-  `exclude_from_gains`: it counts in the total, chart, bar and holdings, but its value is taken
-  out before gains are measured (a $0 basis would count it all as gain). The page notes the
-  excluded amount under the stats, computed from the current shares × price.
+- *Cost basis* (Merrill): Plaid's `cost_basis` for the ESPP is its "invested" figure, so new
+  purchases update it without a ledger. `sharesOnly` in `institutions.js` is the owner's rule
+  that Merrill counts only shares and their value: cash in those accounts is left out of every
+  total, and account values come from holdings, not balances. Plaid returned no transactions for
+  Merrill and no cost for the Equity grant (2026-11-03), so `fetch.js` doesn't ask for its
+  transactions unless the ESPP's cost goes missing. `grantAccounts` in `institutions.js`
+  marks the grant `exclude_from_gains`: it counts in the total, chart, bar and holdings, but its
+  value is taken out before gains are measured (a $0 basis would count it all as gain). The page
+  notes the excluded amount under the stats. `accountLabels` keeps the page's "ESPP" and
+  "Equity" names, since Plaid calls them "Visa ESPP LIIA" and "Visa Equity Plan".
 
 **Per-holding gains.** Each holdings row shows value ÷ cost − 1, green or red. Plaid sends no
 cost basis for Public or Fidelity, so `fetch.js` rebuilds it per account and security from buys,
@@ -112,7 +121,7 @@ A holding whose share count doesn't reconcile gets no cost, so its row shows no 
 a wrong one. On 2026-10-11 all 15 Public and Fidelity holdings reconciled exactly.
 `data/costbasis.json` holds each position's shares and cost as of `as_of` (rolled forward to six
 months ago once it is a year old), so history that ages out of Plaid's two-year window isn't
-lost. Plaid's own `cost_basis` wins when present. Rows combined across accounts or
+lost. Plaid's own `cost_basis` wins when present, as it does for Merrill's ESPP. Rows combined across accounts or
 institutions use the summed cost; the equity grant is left out, so the Visa row's gain is the
 ESPP's, and any other part without a cost blanks the row.
 
@@ -163,15 +172,10 @@ is read-only and cannot move money.
 
 ## Known limitations
 
-- **Merrill is hand-kept.** Plaid's Merrill Benefits connection failed
-  (`INSTITUTION_NOT_RESPONDING`), so `data/merrill.json` holds the share counts per account
-  and `fetch.js` prices them with Visa's quote from Yahoo Finance's chart endpoint (no key;
-  query1 then query2; on failure the last price is reused). Stooq was tried first but now
-  answers scripts with a browser check. **Update the share counts after every ESPP purchase
-  (month-end) and add the purchase cost to `cost_basis`.**
 - **Merrill history backfill:** ESPP shares per month from the lot table (first purchase
   2025-10-31), plus all 69 Equity shares from 2025-08-31 (grant date), valued at Visa's
-  month-end close.
+  month-end close. Merrill has been live from Plaid since 2026-11-03. Before that its numbers
+  were kept by hand.
 - **Prices are end-of-day** (Plaid investments update about once a day after close).
 - **History starts at the first link.** Plaid provides no past balances, so the chart begins
   on day one.

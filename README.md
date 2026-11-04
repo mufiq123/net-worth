@@ -32,9 +32,10 @@ search, and log in. When it finishes, the script:
 Search tips:
 - **Fidelity 401(k):** if Plaid lists "Fidelity NetBenefits" separately, pick that one. Your
   401(k) lives there, not at fidelity.com.
-- **Merrill equity plan:** pick "Merrill Benefits Online" if it's listed. That's the
-  benefits.ml.com login, not Merrill Edge. If Plaid doesn't list it, stop and don't link a
-  different Merrill login to try it out, because each connection uses up an Item.
+- **Merrill equity plan:** pick "Merrill Lynch - Benefits" (`ins_116278`). That's the
+  benefits.ml.com login, not "Merrill" (`ins_115610`, the regular brokerage login) or
+  "Ascensus - Merrill Lynch". If it isn't listed, stop and don't link a different Merrill login
+  to try it out, because each connection uses up an Item.
 
 ### 2. Net deposits and history (done)
 
@@ -48,9 +49,11 @@ Actions log will show `ITEM_LOGIN_REQUIRED`. Repair the existing connection, whi
 a new Item:
 
 ```powershell
-$env:PLAID_ACCESS_TOKEN="<the token>"; node scripts/link.js fidelity --update
+node scripts/link.js fidelity --update
 ```
 
-GitHub won't show a secret after it's saved, so you need your own copy of the token for this.
-Save the three tokens in a password manager when you link them. If you've lost a token, a
-fresh link works too, but it uses an Item.
+GitHub won't show a secret after it's saved, so `link.js` keeps a private copy of each token it
+creates in `~/.net-worth/plaid-tokens.json`, outside the repo and OneDrive. It's encrypted so only
+your Windows account can read it, and it's never printed.
+Tokens linked before that file existed (Public, Fidelity) aren't in it, so update mode asks for
+those. If you've lost a token, a fresh link works too (`--relink`), but it uses an Item.

@@ -1,7 +1,6 @@
 // scripts/fetch.js
-// Pulls current holdings for every connected institution from Plaid (read-only),
-// values the hand-kept Merrill share counts at the day's market price, and
-// writes data/latest.json, the deposits ledgers and today's history point.
+// Pulls current holdings for every connected institution from Plaid (read-only)
+// and writes data/latest.json, the deposits ledgers and today's history point.
 // Credentials come from environment variables (GitHub Actions secrets in
 // production). Never commit real credentials.
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
@@ -16,37 +15,27 @@ const readJSON = (f, fallback) => (existsSync(dataPath(f)) ? JSON.parse(readFile
 
 const { PLAID_CLIENT_ID, PLAID_SECRET, PLAID_ENV = 'production' } = process.env;
 
-// A manual institution counts once its file lists at least one share.
-const manualConfig = (inst) => {
-  const cfg = readJSON(inst.config, null);
-  return cfg && (cfg.accounts || []).some((a) => Number(a.shares) > 0) ? cfg : null;
-};
-
 // Checked before credentials, so the scheduled runs are a quiet no-op until
 // the first account is linked.
-const connected = INSTITUTIONS.map((inst) =>
-  inst.source === 'manual' ? { ...inst, cfg: manualConfig(inst) } : { ...inst, token: process.env[inst.secret] }
-).filter((i) => i.token || i.cfg);
-const viaPlaid = connected.filter((i) => i.token);
+const connected = INSTITUTIONS.map((inst) => ({ ...inst, token: process.env[inst.secret] })).filter((i) => i.token);
 if (!connected.length) {
   console.log('No institutions linked yet. Nothing to fetch.');
   process.exit(0);
 }
 console.log(`Linked: ${connected.map((i) => i.name).join(', ')}.`);
 
-if (viaPlaid.length && (!PLAID_CLIENT_ID || !PLAID_SECRET)) {
+if (!PLAID_CLIENT_ID || !PLAID_SECRET) {
   console.error('Missing PLAID_CLIENT_ID or PLAID_SECRET.');
   process.exit(1);
 }
 
 const envMap = {
   sandbox: PlaidEnvironments.sandbox,
-  development: PlaidEnvironments.development,
   production: PlaidEnvironments.production,
 };
 const basePath = envMap[PLAID_ENV];
 if (!basePath) {
-  console.error(`Unknown PLAID_ENV "${PLAID_ENV}". Use sandbox, development, or production.`);
+  console.error(`Unknown PLAID_ENV "${PLAID_ENV}". Use sandbox or production.`);
   process.exit(1);
 }
 
@@ -82,9 +71,9 @@ const today = chicagoDate();
 const REFRESH = (process.env.PLAID_REFRESH ?? 'true') !== 'false';
 const REFRESH_WAIT_MS = Number(process.env.PLAID_REFRESH_WAIT_MS ?? 30000);
 
-if (REFRESH && viaPlaid.length) {
+if (REFRESH) {
   await Promise.all(
-    viaPlaid.map((inst) =>
+    connected.map((inst) =>
       plaid.investmentsRefresh({ access_token: inst.token }).catch((err) => {
         // Not fatal: the holdings read below falls back to Plaid's cache.
         console.warn(`${inst.name}: refresh request failed (${errCode(err)}) — using Plaid's cached holdings.`);
@@ -218,90 +207,28 @@ function rebuiltFor(book, h, used) {
   return null;
 }
 
-async function fetchHoldings(inst) {
-  return inst.source === 'manual' ? manualHoldings(inst) : plaidHoldings(inst);
-}
-
-// ---- market prices (manual institutions) ----
-// Yahoo Finance's chart endpoint needs no key. (Stooq's CSV quotes, the usual
-// alternative, now sit behind a browser check and return a page instead.)
-// Two hosts serve it, so the second is tried when the first fails.
-async function quote(ticker) {
-  let lastErr;
-  for (const host of ['query1', 'query2']) {
-    try {
-      const res = await fetch(`https://${host}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1d&interval=1d`, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (net-worth dashboard)' },
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const meta = (await res.json())?.chart?.result?.[0]?.meta;
-      const price = meta?.regularMarketPrice;
-      if (!(price > 0)) throw new Error('no price in response');
-      return { price, asOf: meta.regularMarketTime ? new Date(meta.regularMarketTime * 1000).toISOString() : null };
-    } catch (err) {
-      lastErr = err;
-    }
-  }
-  throw new Error(`no quote for ${ticker} (${lastErr?.message})`);
-}
-
-// Merrill: one holding (Visa) split across the ESPP and equity-plan accounts.
-// If no quote can be had, the previous snapshot's price is reused with the
-// current share counts, so a share-count edit still shows up.
-async function manualHoldings(inst) {
-  const { cfg } = inst;
-  const prev = latest.institutions[inst.id];
-  let price;
-  try {
-    const q = await quote(cfg.ticker);
-    price = q.price;
-    console.log(`${inst.name}: ${cfg.ticker} $${price} (as of ${q.asOf || 'unreported'}).`);
-  } catch (err) {
-    price = prev?.positions?.find((p) => p.ticker === cfg.ticker)?.price;
-    if (!price) throw err;
-    console.warn(`${inst.name}: ${err.message} — reusing the last price, $${price}.`);
-  }
-
-  const accts = (cfg.accounts || []).filter((a) => Number(a.shares) > 0);
-  // Excluded accounts (the equity grant) have no basis by design.
-  const counted = accts.filter((a) => !a.exclude_from_gains);
-  const basisKnown = counted.every((a) => Number.isFinite(a.cost_basis));
-  const positions = accts.map((a) => ({
-    ticker: cfg.ticker,
-    name: cfg.name || cfg.ticker,
-    value: round2(a.shares * price),
-    quantity: Number(a.shares),
-    price,
-    cost_basis: Number.isFinite(a.cost_basis) ? round2(a.cost_basis) : null,
-    accounts: [a.name],
-    ...(a.exclude_from_gains ? { exclude_from_gains: true } : {}),
-  }));
-  const total = round2(positions.reduce((s, p) => s + p.value, 0));
-  console.log(`${inst.name}: ${positions.length} positions, $${total.toLocaleString('en-US')}.`);
-  if (!basisKnown) console.warn(`${inst.name}: cost_basis missing in data/${inst.config}.`);
-  return {
-    name: inst.name,
-    date: today,
-    total,
-    cost_basis: basisKnown ? round2(counted.reduce((s, a) => s + a.cost_basis, 0)) : null,
-    // Value build.js leaves out of gains, so total − excluded is what the
-    // cost basis is measured against.
-    excluded: positions.filter((p) => p.exclude_from_gains).map((p) => ({ name: p.accounts[0], value: p.value })),
-    accounts: positions.map((p) => ({ name: p.accounts[0], type: p.accounts[0], value: p.value })),
-    positions,
-  };
-}
-
 async function plaidHoldings(inst) {
   const resp = await plaid.investmentsHoldingsGet({ access_token: inst.token });
   const { holdings = [], securities = [], accounts = [] } = resp.data;
   const secById = Object.fromEntries(securities.map((s) => [s.security_id, s]));
+  // Which account each holding sits in, so the page can tag it (Roth IRA,
+  // Brokerage). Cash is pooled, so it lists every account it came from.
+  const acctNames = Object.fromEntries(accounts.map((a) => [a.account_id, a.name]));
+  const label = (name) => inst.accountLabels?.[name] || name;
+  const isGrant = (h) => (inst.grantAccounts || []).includes(acctNames[h.account_id]);
+  for (const name of inst.grantAccounts || []) {
+    if (!accounts.some((a) => a.name === name)) {
+      console.warn(`${inst.name}: no account named "${name}", so any granted shares would count as missing a cost. Update institutions.js if it was renamed.`);
+    }
+  }
+  // Transactions are read only when a holding needs its cost rebuilt.
   let book = null;
-  try {
-    book = await rebuildCosts(inst);
-  } catch (err) {
-    console.warn(`${inst.name}: could not rebuild cost basis (${errCode(err)}) — gains per holding left out.`);
+  if (holdings.some((h) => !isCash(secById[h.security_id] || {}) && !(h.cost_basis > 0) && !isGrant(h))) {
+    try {
+      book = await rebuildCosts(inst);
+    } catch (err) {
+      console.warn(`${inst.name}: could not rebuild cost basis (${errCode(err)}) — gains per holding left out.`);
+    }
   }
   const used = new Set();
   const basisFrom = { plaid: 0, rebuilt: 0, none: 0 };
@@ -310,24 +237,25 @@ async function plaidHoldings(inst) {
   let cashBasis = 0;
   let basisKnown = true;
   const positions = [];
-  // Which account each holding sits in, so the page can tag it (Roth IRA,
-  // Brokerage). Cash is pooled, so it lists every account it came from.
-  const acctNames = Object.fromEntries(accounts.map((a) => [a.account_id, a.name]));
   const cashAccts = new Set();
   for (const h of holdings) {
     const sec = secById[h.security_id] || {};
     const value = round2(h.institution_value ?? (h.quantity ?? 0) * (h.institution_price ?? 0));
     if (!(value > 0)) continue;
     if (isCash(sec)) {
+      if (inst.sharesOnly) continue;
       cash += value;
       cashBasis += value; // cash has no gain of its own
-      if (acctNames[h.account_id]) cashAccts.add(acctNames[h.account_id]);
+      if (acctNames[h.account_id]) cashAccts.add(label(acctNames[h.account_id]));
       continue;
     }
-    const rebuilt = book && !(h.cost_basis > 0) ? rebuiltFor(book, h, used) : null;
-    const basis = h.cost_basis > 0 ? h.cost_basis : rebuilt && rebuilt.cost > 0 ? rebuilt.cost : null;
-    basisFrom[h.cost_basis > 0 ? 'plaid' : basis != null ? 'rebuilt' : 'none'] += 1;
-    if (basis == null) basisKnown = false;
+    const grant = isGrant(h);
+    const rebuilt = book && !grant && !(h.cost_basis > 0) ? rebuiltFor(book, h, used) : null;
+    const basis = grant ? null : h.cost_basis > 0 ? h.cost_basis : rebuilt && rebuilt.cost > 0 ? rebuilt.cost : null;
+    if (!grant) {
+      basisFrom[h.cost_basis > 0 ? 'plaid' : basis != null ? 'rebuilt' : 'none'] += 1;
+      if (basis == null) basisKnown = false;
+    }
     positions.push({
       ticker: sec.ticker_symbol || null,
       name: sec.name || 'Unknown holding',
@@ -336,7 +264,8 @@ async function plaidHoldings(inst) {
       // Public reports 0 here alongside a correct value and quantity.
       price: h.institution_price || (h.quantity ? round2(value / h.quantity) : null),
       cost_basis: basis != null ? round2(basis) : null,
-      accounts: acctNames[h.account_id] ? [acctNames[h.account_id]] : [],
+      accounts: acctNames[h.account_id] ? [label(acctNames[h.account_id])] : [],
+      ...(grant ? { exclude_from_gains: true } : {}),
     });
   }
   // Some institutions (Public) report part of an account's uninvested cash only
@@ -345,15 +274,16 @@ async function plaidHoldings(inst) {
   // balance below its holdings is more likely a stale balance than debt.
   const heldByAccount = {};
   for (const h of holdings) {
+    if (inst.sharesOnly && isCash(secById[h.security_id] || {})) continue;
     const v = h.institution_value ?? (h.quantity ?? 0) * (h.institution_price ?? 0);
     heldByAccount[h.account_id] = (heldByAccount[h.account_id] || 0) + (v > 0 ? v : 0);
   }
-  for (const a of accounts) {
+  for (const a of inst.sharesOnly ? [] : accounts) {
     const gap = round2((a.balances?.current ?? 0) - (heldByAccount[a.account_id] || 0));
     if (gap > 0.5) {
       cash += gap;
       cashBasis += gap;
-      cashAccts.add(a.name);
+      cashAccts.add(label(a.name));
       console.log(`${inst.name}: $${gap.toLocaleString('en-US')} of "${a.name}" balance not in holdings — counted as cash.`);
     }
   }
@@ -373,20 +303,25 @@ async function plaidHoldings(inst) {
   const priceDates = [...new Set(holdings.map((h) => h.institution_price_as_of).filter(Boolean))].sort();
   console.log(`${inst.name}: ${positions.length} positions, $${total.toLocaleString('en-US')}; prices as of ${priceDates.join(', ') || 'unreported'}.`);
   const acctTotal = round2(accounts.reduce((s, a) => s + (a.balances?.current || 0), 0));
-  if (Math.abs(acctTotal - total) > 1) {
+  if (!inst.sharesOnly && Math.abs(acctTotal - total) > 1) {
     console.warn(`${inst.name}: account balances total $${acctTotal.toLocaleString('en-US')} vs holdings $${total.toLocaleString('en-US')}.`);
   }
   console.log(`${inst.name}: cost basis from Plaid for ${basisFrom.plaid}, rebuilt from transactions for ${basisFrom.rebuilt}, missing for ${basisFrom.none}.`);
+  // Value build.js leaves out of gains, so total − excluded is what the cost
+  // basis is measured against.
+  const excluded = positions.filter((p) => p.exclude_from_gains).map((p) => ({ name: p.accounts[0], value: p.value }));
 
   return {
     name: inst.name,
     date: today,
     total,
     cost_basis: costBasis,
+    ...(excluded.length ? { excluded } : {}),
     accounts: accounts.map((a) => ({
-      name: a.name,
-      type: SUBTYPE_LABELS[(a.subtype || '').toLowerCase()] || a.subtype || a.type || 'Account',
-      value: round2(a.balances?.current || 0),
+      name: label(a.name),
+      type: inst.accountLabels?.[a.name] || SUBTYPE_LABELS[(a.subtype || '').toLowerCase()] || a.subtype || a.type || 'Account',
+      // A balance would include the cash a shares-only institution leaves out.
+      value: round2(inst.sharesOnly ? heldByAccount[a.account_id] || 0 : a.balances?.current || 0),
     })),
     positions,
   };
@@ -399,7 +334,7 @@ const latest = readJSON('latest.json', { institutions: {} });
 latest.institutions = latest.institutions || {};
 const fresh = [];
 
-const results = await Promise.allSettled(connected.map(fetchHoldings));
+const results = await Promise.allSettled(connected.map((inst) => plaidHoldings(inst)));
 results.forEach((r, i) => {
   const inst = connected[i];
   if (r.status === 'fulfilled') {
@@ -433,8 +368,8 @@ writeFileSync(dataPath('latest.json'), JSON.stringify(latest, null, 2));
 // cannot see; 0 when Plaid has the account's whole history) plus every money
 // movement Plaid reports after that, keyed by transaction id so the ledger
 // never double-counts or loses an entry as Plaid's window slides.
-// method "cost_basis" (the equity plan) uses the holdings' cost basis instead
-// and needs no ledger.
+// method "cost_basis" (Merrill) uses the holdings' cost basis instead and needs
+// no ledger.
 const deposits = readJSON('deposits.json', {});
 
 // What counts as money in or out, checked against every transaction Plaid
@@ -463,7 +398,7 @@ function classify(tx, secById) {
   return { counted: true, amount: round2(-tx.amount) };
 }
 
-for (const inst of fresh.filter((i) => i.token)) {
+for (const inst of fresh) {
   const dep = (deposits[inst.id] = deposits[inst.id] || { method: 'ledger', base: null, base_through: null, ledger: [] });
   if (dep.method === 'cost_basis') continue;
 
