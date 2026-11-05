@@ -3,13 +3,13 @@
     "public": {
       "name": "Public",
       "date": "2026-11-05",
-      "total": 21290.78,
+      "total": 21222.85,
       "cost_basis": 20875.84,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 10802.56
+          "value": 10744.31
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 10488.22
+          "value": 10478.54
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 6683.49,
+          "value": 6665.97,
           "quantity": 62.57362,
-          "price": 106.81002633378091,
+          "price": 106.53003613983017,
           "cost_basis": 5888.29,
           "accounts": [
             "Brokerage Account"
@@ -52,9 +52,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 5333,
+          "value": 5307.68,
           "quantity": 7.92398,
-          "price": 673.0203761241195,
+          "price": 669.8250121782236,
           "cost_basis": 5284.87,
           "accounts": [
             "Roth IRA"
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2042.68,
+          "value": 2030.32,
           "quantity": 7.67637,
-          "price": 266.0997320348029,
+          "price": 264.4895959939398,
           "cost_basis": 2360.9,
           "accounts": [
             "Roth IRA"
@@ -74,9 +74,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 1557.86,
+          "value": 1553.78,
           "quantity": 14.58538,
-          "price": 106.80969573641549,
+          "price": 106.52996356625607,
           "cost_basis": 1713.88,
           "accounts": [
             "Roth IRA"
@@ -96,9 +96,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 1060.26,
+          "value": 1051.73,
           "quantity": 24.37384,
-          "price": 43.49991630370922,
+          "price": 43.14995093099815,
           "cost_basis": 914.91,
           "accounts": [
             "Roth IRA"
@@ -120,9 +120,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 803.58,
+          "value": 814.32,
           "quantity": 2.35515,
-          "price": 341.2011973759633,
+          "price": 345.7614164702885,
           "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
@@ -131,9 +131,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 607.22,
+          "value": 604.32,
           "quantity": 0.90213,
-          "price": 673.095895270083,
+          "price": 669.8812809683749,
           "cost_basis": 630.79,
           "accounts": [
             "Brokerage Account"
@@ -142,9 +142,9 @@
         {
           "ticker": "GOOG",
           "name": "Alphabet Inc - Ordinary Shares - Class C",
-          "value": 560.8,
+          "value": 555.66,
           "quantity": 2,
-          "price": 280.4,
+          "price": 277.83,
           "cost_basis": 556.89,
           "accounts": [
             "Roth IRA"
@@ -153,9 +153,9 @@
         {
           "ticker": "SPCX",
           "name": "Space Exploration Technologies Corp. - Ordinary Shares - Class A",
-          "value": 246.88,
+          "value": 244.06,
           "quantity": 2,
-          "price": 123.44,
+          "price": 122.03,
           "cost_basis": 279.85,
           "accounts": [
             "Roth IRA"
@@ -262,5 +262,5 @@
     }
   },
   "date": "2026-11-05",
-  "total": 89591.62
+  "total": 89523.69
 }
