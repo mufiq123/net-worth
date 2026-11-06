@@ -289,6 +289,12 @@
         "amount": 0.59,
         "account": "Roth IRA",
         "reward": true
+      },
+      {
+        "id": "3a1jzrjdw1CwRwBegawaT8wA0rbOKbFPZVpgm",
+        "date": "2026-11-05",
+        "amount": 1000,
+        "account": "Brokerage"
       }
     ]
   },
