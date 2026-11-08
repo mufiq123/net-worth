@@ -9,6 +9,9 @@
 //
 // `kind: 'bank'` marks a bank account (Vio's HYSA): its value is the balance
 // and its deposits come from bank transactions, not investment data.
+//
+// `short` is the name in the header line and the allocation legend, where it
+// differs from `name` (which the Accounts card shows).
 export const INSTITUTIONS = [
   {
     id: 'public',
@@ -35,6 +38,7 @@ export const INSTITUTIONS = [
   {
     id: 'vio',
     name: 'Vio HYSA',
+    short: 'HYSA',
     secret: 'PLAID_TOKEN_VIO',
     kind: 'bank',
     products: ['transactions'],
