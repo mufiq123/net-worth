@@ -6,6 +6,9 @@
 // `afterTax` is what the page's after-tax toggle takes off, as the owner set it:
 // onTotal is a rate on the whole value, onGains a rate on gains only, and
 // onGainsByAccount the same per account type. Principal is never taxed.
+//
+// `kind: 'bank'` marks a bank account (Vio's HYSA): its value is the balance
+// and its deposits come from bank transactions, not investment data.
 export const INSTITUTIONS = [
   {
     id: 'public',
@@ -28,6 +31,16 @@ export const INSTITUTIONS = [
     sharesOnly: true,
     // Unvested grants are left out of the after-tax total altogether.
     afterTax: { onGains: 0.33 },
+  },
+  {
+    id: 'vio',
+    name: 'Vio',
+    secret: 'PLAID_TOKEN_VIO',
+    kind: 'bank',
+    products: ['transactions'],
+    linkHint: 'In Plaid\'s search, pick "Vio Bank". If your login isn\'t accepted there, try "Vio Bank - New". A failed login doesn\'t use up an Item.',
+    // Interest is the gain; deposits are never taxed.
+    afterTax: { onGains: 0.27 },
   },
 ];
 

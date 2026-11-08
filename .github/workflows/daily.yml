@@ -94,6 +94,7 @@ jobs:
           PLAID_TOKEN_PUBLIC: ${{ secrets.PLAID_TOKEN_PUBLIC }}
           PLAID_TOKEN_FIDELITY: ${{ secrets.PLAID_TOKEN_FIDELITY }}
           PLAID_TOKEN_MERRILL: ${{ secrets.PLAID_TOKEN_MERRILL }}
+          PLAID_TOKEN_VIO: ${{ secrets.PLAID_TOKEN_VIO }}
 
       - name: Rebuild the dashboard page
         run: node scripts/build.js

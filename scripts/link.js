@@ -152,7 +152,14 @@ try {
     country_codes: ['US'],
     language: 'en',
     // Update mode takes the existing token and no products list.
-    ...(update ? { access_token: existingToken } : { products: ['investments'] }),
+    ...(update
+      ? { access_token: existingToken }
+      : {
+          products: inst.products || ['investments'],
+          // Bank history is fetched once, at link time, and can't be extended
+          // later without a new link, so ask for Plaid's maximum.
+          ...((inst.products || []).includes('transactions') ? { transactions: { days_requested: 730 } } : {}),
+        }),
   });
   linkToken = linkResp.data.link_token;
 } catch (err) {

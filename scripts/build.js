@@ -137,11 +137,15 @@ function invested(inst) {
   const dep = depositsFile[inst.id];
   if (!dep) return null;
   if (dep.method === 'cost_basis') return Number.isFinite(inst.cost_basis) ? inst.cost_basis : null;
+  // A newly linked bank account: Plaid is still fetching its history.
+  if (dep.history_complete === false) return null;
   if (!Number.isFinite(dep.base)) return null;
   const ledger = Array.isArray(dep.ledger) ? dep.ledger : [];
   return round2(dep.base + ledger.reduce((s, e) => s + (Number(e.amount) || 0), 0));
 }
 insts.forEach((i) => { i.invested = invested(i); });
+// A bank account's one row is measured against what went in, so its gain is the interest.
+for (const i of insts) if (i.kind === 'bank') i.positions = i.positions.map((p) => ({ ...p, cost_basis: i.invested }));
 // Holdings with no cost basis by design (the Merrill equity grant) count in
 // the total and the chart but stay out of invested, gains and return.
 const excludedOf = (i) => round2((i.excluded || []).reduce((s, e) => s + e.value, 0));
@@ -196,13 +200,13 @@ if (allKnown) {
     <div class="excl">Gains exclude the ${excluded.map((e) => `<span class="money">${money(e.value)}</span> ${esc(e.name.toLowerCase())} grant`).join(' and ')}.</div>` : '');
 } else if (insts.length) {
   const missing = insts.filter((i) => i.invested == null).map((i) => i.name);
-  statsHTML = `<div class="fine" style="text-align:left;margin-top:14px">Gains appear once net deposits are set for ${missing.join(', ')}.</div>`;
+  statsHTML = `<div class="fine" style="text-align:left;margin-top:14px">Gains appear once net deposits are known for ${missing.join(', ')}.</div>`;
 }
 
 // ---- institutions ----
 // Each institution has one colour, used for its slice of the allocation bar,
 // its legend dot and the letter in its badge. Everything else stays neutral.
-const COLORS = ['var(--c1)', 'var(--c2)', 'var(--c3)'];
+const COLORS = ['var(--c1)', 'var(--c2)', 'var(--c3)', 'var(--c4)'];
 const CHEVRON = `<svg class="chev" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 // Plaid names accounts "Brokerage Account", "Roth IRA"; the suffix is noise.
 const cleanAcct = (name) => String(name).replace(/\s+account$/i, '');
@@ -395,14 +399,14 @@ const html = `<!DOCTYPE html>
     --warn-ink: #7a5312;
     --warn-border: #f0dcb4;
     --shadow: 0 1px 2px rgba(17,20,24,.04);
-    --c1: #4338ca; --c2: #368727; --c3: #d4a855;
+    --c1: #4338ca; --c2: #368727; --c3: #d4a855; --c4: #0284c7;
     --a1: #c23dff; --a2: #ffa13d; --a3: #14b8a6; --a4: #f0457a;
     /* Headline card: filled with the chart-line colour. */
     --hero-bg: linear-gradient(135deg, #6674e6 0%, #5262d6 55%, #4452c0 100%);
     --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.74);
     /* Institution colours as they appear on the headline card: lifted a
        little so each one stays distinct against the indigo. */
-    --hc1: #8f86ff; --hc2: #6fd35c; --hc3: #d4a855;
+    --hc1: #8f86ff; --hc2: #6fd35c; --hc3: #d4a855; --hc4: #7dd3fc;
   }
   /* Dark theme, following the OS / app appearance setting. */
   @media (prefers-color-scheme: dark) {
@@ -423,14 +427,14 @@ const html = `<!DOCTYPE html>
       --warn-ink: #edcd8d;
       --warn-border: #4d3c1d;
       --shadow: none;
-      --c1: #2c58ff; --c2: #5aa84a; --c3: #d4a855;
+      --c1: #2c58ff; --c2: #5aa84a; --c3: #d4a855; --c4: #38bdf8;
       --a1: #c23dff; --a2: #ffa13d; --a3: #2dd4bf; --a4: #ff5c8a;
       /* The dark-mode line colour is light, so the headline card flips to dark text. */
       /* A lighter indigo, close to the chart line, still deep enough for white text. */
       --hero-bg:     radial-gradient(120% 90% at 15% 0%, rgba(168,120,246,.16) 0%, rgba(168,120,246,0) 55%),     linear-gradient(135deg, #352a55 0%, #221a40 55%, #151823 100%);   --hero-glow: 0 8px 28px rgba(168,120,246,.16);
       --hero-ink: #ffffff; --hero-label: rgba(255,255,255,.72);
       /* Public's slice uses its chip colour exactly. */
-      --hc1: #2c58ff; --hc2: #6fd35c; --hc3: #d4a855;
+      --hc1: #2c58ff; --hc2: #6fd35c; --hc3: #d4a855; --hc4: #7dd3fc;
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -454,7 +458,7 @@ const html = `<!DOCTYPE html>
      var(--cN); redefining those here swaps in lifted versions (--hcN) that
      stay distinct on the indigo card, without touching the markup. */
   .hero-card { background: var(--hero-bg); box-shadow: var(--hero-glow, var(--shadow)); border-color: transparent; color: var(--hero-ink);
-    --c1: var(--hc1); --c2: var(--hc2); --c3: var(--hc3); }
+    --c1: var(--hc1); --c2: var(--hc2); --c3: var(--hc3); --c4: var(--hc4); }
   /* A dark inset track, so each slice reads against it rather than against
      the card's own blue-violet. */
   .hero-card .alloc { background: rgba(10,12,40,.35); border-radius: 99px; padding: 2px; height: 12px; }

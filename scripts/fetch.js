@@ -66,14 +66,16 @@ const today = chicagoDate();
 
 // Ask Plaid to pull straight from each institution before reading holdings,
 // otherwise /investments/holdings/get serves Plaid's own once-a-day cache.
-// Refresh is asynchronous, so all three are requested together and share one
-// grace period. PLAID_REFRESH=false turns it off (it is metered on paid plans).
+// Refresh is asynchronous, so the investment Items are requested together and
+// share one grace period. PLAID_REFRESH=false turns it off (it is metered on
+// paid plans). Bank accounts are not refreshed on demand: see bankHoldings.
 const REFRESH = (process.env.PLAID_REFRESH ?? 'true') !== 'false';
 const REFRESH_WAIT_MS = Number(process.env.PLAID_REFRESH_WAIT_MS ?? 30000);
 
-if (REFRESH) {
+const investmentItems = connected.filter((i) => i.kind !== 'bank');
+if (REFRESH && investmentItems.length) {
   await Promise.all(
-    connected.map((inst) =>
+    investmentItems.map((inst) =>
       plaid.investmentsRefresh({ access_token: inst.token }).catch((err) => {
         // Not fatal: the holdings read below falls back to Plaid's cache.
         console.warn(`${inst.name}: refresh request failed (${errCode(err)}) — using Plaid's cached holdings.`);
@@ -92,6 +94,7 @@ const isCash = (sec) => sec.type === 'cash' || sec.is_cash_equivalent === true;
 const SUBTYPE_LABELS = {
   brokerage: 'Brokerage', roth: 'Roth IRA', ira: 'IRA', '401k': '401(k)', '403b': '403(b)',
   'stock plan': 'Stock plan', 'non-taxable brokerage account': 'Brokerage', hsa: 'HSA',
+  savings: 'Savings', 'money market': 'Money market', cd: 'CD',
 };
 const acctType = (inst, a) => inst.accountLabels?.[a.name] || SUBTYPE_LABELS[(a.subtype || '').toLowerCase()] || a.subtype || a.type || 'Account';
 
@@ -330,6 +333,31 @@ async function plaidHoldings(inst) {
   };
 }
 
+// ---- bank accounts (Vio's HYSA) ----
+// A savings account has no holdings: its value is the balance. /accounts/get
+// serves the balance Plaid last fetched from the bank, which Plaid updates
+// roughly 1–4 times a day. That's plenty for savings and costs nothing extra,
+// so the separately billed on-demand refresh isn't used.
+async function bankHoldings(inst) {
+  const resp = await plaid.accountsGet({ access_token: inst.token });
+  const accounts = (resp.data.accounts || [])
+    .filter((a) => a.type === 'depository')
+    .map((a) => ({ name: a.name, type: acctType(inst, a), value: round2(a.balances?.current || 0) }));
+  const total = round2(accounts.reduce((s, a) => s + a.value, 0));
+  if (!(total > 0)) throw new Error('no balance yet');
+  console.log(`${inst.name}: ${accounts.length} account${accounts.length === 1 ? '' : 's'}, $${total.toLocaleString('en-US')}.`);
+  return {
+    name: inst.name,
+    date: today,
+    total,
+    cost_basis: null,
+    accounts,
+    // One holdings row. build.js measures it against what was deposited, so
+    // its gain is the interest.
+    positions: [{ ticker: 'HYSA', name: 'High-yield savings', value: total, quantity: null, price: null, cost_basis: null, accounts: accounts.filter((a) => a.value > 0).map((a) => a.name) }],
+  };
+}
+
 // Each institution is fetched independently. One that fails keeps its last
 // good snapshot (with its older date), rather than dropping out of the total —
 // otherwise a single Fidelity outage would draw a fake crash on the chart.
@@ -337,7 +365,7 @@ const latest = readJSON('latest.json', { institutions: {} });
 latest.institutions = latest.institutions || {};
 const fresh = [];
 
-const results = await Promise.allSettled(connected.map((inst) => plaidHoldings(inst)));
+const results = await Promise.allSettled(connected.map((inst) => (inst.kind === 'bank' ? bankHoldings(inst) : plaidHoldings(inst))));
 results.forEach((r, i) => {
   const inst = connected[i];
   if (r.status === 'fulfilled') {
@@ -403,7 +431,95 @@ function classify(tx, secById) {
   return { counted: true, amount: round2(-tx.amount), reward: /cash reward/i.test(tx.name || '') };
 }
 
+// ---- bank deposits (Vio) ----
+// From /transactions/sync, which hands over only what changed since the saved
+// cursor: added, modified and removed rows. Every page is read before
+// anything is kept, and the rows and the cursor are saved together in
+// deposits.json. Plaid signs money leaving the account positive.
+// - Deposits and withdrawals count. Pending rows don't: a pending row is
+//   removed and comes back with a new id once it posts.
+// - Interest is the account's gain, so it's left out, as are bank fees, which
+//   come off the gain.
+// A row is judged once, when Plaid first sends it. To re-judge everything
+// under a changed rule, set the cursor to null and the ledger to [] and the
+// next run replays Plaid's whole history.
+function classifyBank(tx) {
+  const pfc = `${tx.personal_finance_category?.primary || ''}/${tx.personal_finance_category?.detailed || ''}`;
+  if (/INTEREST/i.test(pfc) || (!tx.personal_finance_category && /\binterest\b/i.test(tx.name || ''))) return { counted: false, why: 'interest' };
+  if (/BANK_FEES/i.test(pfc)) return { counted: false, why: 'fee' };
+  if (!round2(tx.amount || 0)) return { counted: false, why: 'zero' };
+  return { counted: true, amount: round2(-tx.amount) };
+}
+async function syncBank(inst, start) {
+  for (let attempt = 1; ; attempt++) {
+    let cursor = start || undefined;
+    const out = { added: [], modified: [], removed: [], status: null };
+    try {
+      for (;;) {
+        const r = await plaid.transactionsSync({ access_token: inst.token, cursor, count: 500 });
+        out.added.push(...(r.data.added || []));
+        out.modified.push(...(r.data.modified || []));
+        out.removed.push(...(r.data.removed || []));
+        out.status = r.data.transactions_update_status;
+        cursor = r.data.next_cursor;
+        if (!r.data.has_more) break;
+      }
+      return { ...out, cursor };
+    } catch (err) {
+      // The data changed mid-read: start again from the same cursor.
+      if (errCode(err) === 'TRANSACTIONS_SYNC_MUTATION_DURING_PAGINATION' && attempt < 3) continue;
+      throw err;
+    }
+  }
+}
+async function updateBankLedger(inst, dep) {
+  try {
+    const sync = await syncBank(inst, dep.cursor);
+    const tally = { counted: 0, interest: 0, fee: 0, zero: 0, pending: 0, added: 0, removed: 0, changed: 0 };
+    const find = (id) => dep.ledger.findIndex((e) => e.id === id);
+    const drop = (id) => {
+      const at = find(id);
+      if (at !== -1) { dep.ledger.splice(at, 1); tally.removed += 1; }
+    };
+    for (const tx of [...sync.added, ...sync.modified]) {
+      if (tx.pending) { tally.pending += 1; drop(tx.transaction_id); continue; }
+      const c = classifyBank(tx);
+      if (!c.counted) { tally[c.why] += 1; drop(tx.transaction_id); continue; }
+      tally.counted += 1;
+      const entry = { id: tx.transaction_id, date: tx.date, amount: c.amount };
+      const at = find(entry.id);
+      if (at === -1) { dep.ledger.push(entry); tally.added += 1; }
+      else if (dep.ledger[at].amount !== entry.amount || dep.ledger[at].date !== entry.date) { dep.ledger[at] = entry; tally.changed += 1; }
+    }
+    for (const r of sync.removed) drop(r.transaction_id);
+    dep.ledger.sort((a, b) => (a.date < b.date ? -1 : 1));
+    dep.cursor = sync.cursor;
+    if (sync.status === 'HISTORICAL_UPDATE_COMPLETE') dep.history_complete = true;
+    // Aggregates only: this repository's Actions logs are public.
+    const sum = round2(dep.ledger.reduce((s, e) => s + (Number(e.amount) || 0), 0));
+    console.log(
+      `${inst.name}: net deposits $${sum.toLocaleString('en-US')}${dep.history_complete ? '' : ' (Plaid is still loading history)'}.` +
+        ` This run: ${tally.counted} money movements, ${tally.interest} interest, ${tally.fee} fees, ${tally.pending} pending;` +
+        ` ${tally.added} added, ${tally.removed} removed, ${tally.changed} changed.`
+    );
+  } catch (err) {
+    console.warn(`${inst.name}: could not update the deposits ledger (${errCode(err)}) — leaving it unchanged.`);
+  }
+}
+
 for (const inst of fresh) {
+  if (inst.kind === 'bank') {
+    const dep = (deposits[inst.id] ??= {
+      method: 'ledger',
+      note: 'Bank account: deposits come from /transactions/sync. base is 0 because Plaid fetches the account\'s history at link time.',
+      base: 0,
+      ledger: [],
+      cursor: null,
+      history_complete: false,
+    });
+    await updateBankLedger(inst, dep);
+    continue;
+  }
   const dep = (deposits[inst.id] = deposits[inst.id] || { method: 'ledger', base: null, base_through: null, ledger: [] });
   if (dep.method === 'cost_basis') continue;
 

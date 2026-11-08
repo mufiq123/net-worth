@@ -3,7 +3,7 @@
 A static dashboard on GitHub Pages (`https://mufiq123.github.io/net-worth/`). No server, no
 client-side API calls, no runtime secrets. A GitHub Action pulls from Plaid, rebuilds a single HTML file, commits the data it fetched, and deploys.
 The pipeline is the O.A. Investments one (`../oa-investments/app.md`), extended from one Plaid
-Item to three.
+Item to four.
 
 ```
 cron (6 entries) → gate job → fetch.js → build.js → dist/index.html → deploy-pages
@@ -15,12 +15,12 @@ cron (6 entries) → gate job → fetch.js → build.js → dist/index.html → 
 
 | Path | Role |
 |---|---|
-| `scripts/institutions.js` | The three institutions and the secret holding each access token. |
+| `scripts/institutions.js` | The four institutions, the secret holding each access token, and their after-tax rates. |
 | `scripts/fetch.js` | Plaid → `data/*.json`. The only thing that touches credentials. |
 | `scripts/build.js` | `data/*.json` → `dist/index.html`. Pure function of the data; no network. |
 | `scripts/link.js` | Local Plaid Link flow per institution; saves the token as a GitHub secret. |
 | `data/latest.json` | Per-institution snapshot: total, cost basis, accounts, positions. |
-| `data/history.json` | `[{date, value, by: {public, fidelity, merrill}}]`, one point per month. |
+| `data/history.json` | `[{date, value, by: {public, fidelity, merrill, vio}}]`, one point per month. |
 | `data/deposits.json` | Per-institution net-deposit method and ledger. See below. |
 | `.github/workflows/daily.yml` | Schedule, gate, fetch, build, commit, deploy. |
 
@@ -31,6 +31,7 @@ cron (6 entries) → gate job → fetch.js → build.js → dist/index.html → 
 | `public` | Brokerage, Roth IRA | `PLAID_TOKEN_PUBLIC` | ledger |
 | `fidelity` | 401(k) | `PLAID_TOKEN_FIDELITY` | ledger |
 | `merrill` | ESPP, Equity (Visa grant) | `PLAID_TOKEN_MERRILL` | cost basis (ESPP only) |
+| `vio` | High-yield savings (bank account) | `PLAID_TOKEN_VIO` | bank ledger |
 
 An institution whose secret isn't set is skipped, so the page works with any subset linked.
 One login is one Plaid Item, and Items aren't refunded on delete, so broken connections are
@@ -125,6 +126,18 @@ lost. Plaid's own `cost_basis` wins when present, as it does for Merrill's ESPP.
 institutions use the summed cost; the equity grant is left out, so the Visa row's gain is the
 ESPP's, and any other part without a cost blanks the row.
 
+**Bank accounts (Vio's HYSA).** `kind: 'bank'` in `institutions.js`. Link asks for
+`transactions` with 730 days of history, Plaid's maximum, because history is fetched only at
+link time. The value is the account balance from `/accounts/get`: Plaid's cached copy,
+updated by Plaid roughly 1–4 times a day. The separately billed on-demand refresh isn't used.
+Deposits come from `/transactions/sync`: the cursor is saved in `deposits.json` with the
+ledger, written only after every page is read, and a page that changes mid-read restarts from
+the same cursor. Posted deposits and withdrawals count; pending rows, interest and bank fees
+don't, so interest is the gain. A row is judged once, so after a rule change, set `cursor` to
+null and `ledger` to [] to replay Plaid's history. Until Plaid reports
+`HISTORICAL_UPDATE_COMPLETE`, the account's gains stay blank rather than counting the whole
+balance as gain. It's one holdings row, "High-yield savings", with the interest as its gain.
+
 **After-tax toggle.** The rates are the owner's, in `afterTax` in `institutions.js`, and
 `build.js` works out each institution's value when it builds the page:
 - *Public brokerage:* 27% on gains only. *Public Roth:* 40% on earnings only. Principal is what
@@ -133,6 +146,7 @@ ESPP's, and any other part without a cost blanks the row.
   `account` type, and rewards are marked `reward`.
 - *Fidelity:* 40% on the whole value.
 - *Merrill:* 33% on ESPP profit. The unvested equity grant is left out of the after-tax total.
+- *Vio:* 27% on interest. Deposits are never taxed.
 A loss earns no credit. If principal isn't known, the whole value is treated as gain, so the
 figure errs low.
 
