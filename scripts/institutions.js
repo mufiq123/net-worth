@@ -34,7 +34,7 @@ export const INSTITUTIONS = [
   },
   {
     id: 'vio',
-    name: 'Vio',
+    name: 'Vio HYSA',
     secret: 'PLAID_TOKEN_VIO',
     kind: 'bank',
     products: ['transactions'],

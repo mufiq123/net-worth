@@ -137,8 +137,10 @@ function invested(inst) {
   const dep = depositsFile[inst.id];
   if (!dep) return null;
   if (dep.method === 'cost_basis') return Number.isFinite(inst.cost_basis) ? inst.cost_basis : null;
-  // A newly linked bank account: Plaid is still fetching its history.
-  if (dep.history_complete === false) return null;
+  // A newly linked bank account while Plaid is still fetching its history:
+  // what went in is taken as its balance, so it shows no gain and adds none to
+  // the totals, rather than counting the whole balance as gain.
+  if (dep.history_complete === false) return round2(inst.total);
   if (!Number.isFinite(dep.base)) return null;
   const ledger = Array.isArray(dep.ledger) ? dep.ledger : [];
   return round2(dep.base + ledger.reduce((s, e) => s + (Number(e.amount) || 0), 0));
@@ -186,9 +188,10 @@ function afterTaxValue(i) {
 // The combined stats row needs every institution's figure: a total that
 // silently left one out would overstate the gain.
 let statsHTML = '';
-const allKnown = insts.length && insts.every((i) => i.invested != null && i.invested > 0);
-if (allKnown) {
-  const inv = round2(insts.reduce((s, i) => s + i.invested, 0));
+// An institution with nothing in it yet (a new savings account) counts as $0.
+const allKnown = insts.length && insts.every((i) => i.invested != null);
+const inv = allKnown ? round2(insts.reduce((s, i) => s + i.invested, 0)) : 0;
+if (allKnown && inv > 0) {
   const gains = round2(total - insts.reduce((s, i) => s + excludedOf(i), 0) - inv);
   const cls = gains >= 0 ? 'up' : 'down';
   statsHTML = `
@@ -222,13 +225,16 @@ let allocBar = '';
 let instRows = '';
 if (insts.length && total > 0) {
   allocBar = `<div class="alloc" id="alloc">` +
-    insts.map((i, n) => `<div style="width:${(i.total / total * 100).toFixed(2)}%;background:${COLORS[n % COLORS.length]}"></div>`).join('') +
+    // A $0 institution gets no slice, but keeps its place in the legend.
+    insts.map((i, n) => (i.total > 0 ? `<div style="width:${(i.total / total * 100).toFixed(2)}%;background:${COLORS[n % COLORS.length]}"></div>` : '')).join('') +
     `</div><div class="legend" id="legend">` +
     insts.map((i, n) => `<span><i style="background:${COLORS[n % COLORS.length]}"></i>${esc(i.name)} <b class="money">${(i.total / total * 100).toFixed(0)}%</b></span>`).join('') +
     `</div>`;
   instRows = insts.map((i, n) => {
-    // Plaid lists empty sub-accounts too (Public's Treasury, Bond, …).
-    const accts = (i.accounts || []).filter((a) => a.value > 0).sort((a, b) => b.value - a.value);
+    // Plaid lists empty sub-accounts too (Public's Treasury, Bond, …). An
+    // institution that's empty altogether still names its account.
+    const funded = (i.accounts || []).filter((a) => a.value > 0).sort((a, b) => b.value - a.value);
+    const accts = funded.length ? funded : (i.accounts || []).slice(0, 1);
     const types = [...new Set(accts.map((a) => a.type))].join(' · ');
     const gain = i.invested != null ? round2(i.total - excludedOf(i) - i.invested) : null;
     const gainLine = gain == null
@@ -546,7 +552,7 @@ const html = `<!DOCTYPE html>
   <div class="fine">${asOf ? `Updated ${prettyDate(asOf)}` : ''}</div>
 </div>
 <script>
-  var INST_TOTALS = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, round2(i.total)])))}; var INST_COLORS = ${JSON.stringify(COLORS)}; var AFTER_TAX = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, afterTaxValue(i)])))}; document.getElementById('eye').addEventListener('click', function () { var hidden = document.body.classList.toggle('hide-values'); this.classList.toggle('active', hidden); }); /* After-tax hero toggle: the values come from afterTaxValue() above. */ (function () { var btn = document.getElementById('taxbtn'); var alloc = document.getElementById('alloc'); var legend = document.getElementById('legend'); if (!btn || !alloc || !legend) return; var label = document.getElementById('hero-label'); var value = document.getElementById('hero-value'); var origLabel = label.textContent; var origValue = value.textContent; var origAlloc = alloc.innerHTML; var origLegend = legend.innerHTML; function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); } function money(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); } var afterTax = false; btn.addEventListener('click', function () { afterTax = !afterTax; btn.classList.toggle('active', afterTax); btn.setAttribute('aria-label', afterTax ? 'Show pre-tax values' : 'Show after-tax values'); if (!afterTax) { label.textContent = origLabel; value.textContent = origValue; alloc.innerHTML = origAlloc; legend.innerHTML = origLegend; return; } var names = Object.keys(INST_TOTALS); var adj = names.map(function (n) { return AFTER_TAX[n]; }); var t = adj.reduce(function (a, b) { return a + b; }, 0); if (!t) return; label.textContent = 'Total value after taxes'; value.textContent = money(t); alloc.innerHTML = names.map(function (n, i) { return '<div style="width:' + (adj[i] / t * 100).toFixed(2) + '%;background:' + INST_COLORS[i % INST_COLORS.length] + '"></div>'; }).join(''); legend.innerHTML = names.map(function (n, i) { return '<span><i style="background:' + INST_COLORS[i % INST_COLORS.length] + '"></i>' + esc(n) + ' <b class="money">' + (adj[i] / t * 100).toFixed(0) + '%</b></span>'; }).join(''); }); })();
+  var INST_TOTALS = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, round2(i.total)])))}; var INST_COLORS = ${JSON.stringify(COLORS)}; var AFTER_TAX = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, afterTaxValue(i)])))}; document.getElementById('eye').addEventListener('click', function () { var hidden = document.body.classList.toggle('hide-values'); this.classList.toggle('active', hidden); }); /* After-tax hero toggle: the values come from afterTaxValue() above. */ (function () { var btn = document.getElementById('taxbtn'); var alloc = document.getElementById('alloc'); var legend = document.getElementById('legend'); if (!btn || !alloc || !legend) return; var label = document.getElementById('hero-label'); var value = document.getElementById('hero-value'); var origLabel = label.textContent; var origValue = value.textContent; var origAlloc = alloc.innerHTML; var origLegend = legend.innerHTML; function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); } function money(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); } var afterTax = false; btn.addEventListener('click', function () { afterTax = !afterTax; btn.classList.toggle('active', afterTax); btn.setAttribute('aria-label', afterTax ? 'Show pre-tax values' : 'Show after-tax values'); if (!afterTax) { label.textContent = origLabel; value.textContent = origValue; alloc.innerHTML = origAlloc; legend.innerHTML = origLegend; return; } var names = Object.keys(INST_TOTALS); var adj = names.map(function (n) { return AFTER_TAX[n]; }); var t = adj.reduce(function (a, b) { return a + b; }, 0); if (!t) return; label.textContent = 'Total value after taxes'; value.textContent = money(t); alloc.innerHTML = names.map(function (n, i) { return adj[i] > 0 ? '<div style="width:' + (adj[i] / t * 100).toFixed(2) + '%;background:' + INST_COLORS[i % INST_COLORS.length] + '"></div>' : ''; }).join(''); legend.innerHTML = names.map(function (n, i) { return '<span><i style="background:' + INST_COLORS[i % INST_COLORS.length] + '"></i>' + esc(n) + ' <b class="money">' + (adj[i] / t * 100).toFixed(0) + '%</b></span>'; }).join(''); }); })();
 
   // Staleness is worked out in the browser, not at build time, so the warning
   // still appears if the daily workflow stops running and this page is never

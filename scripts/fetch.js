@@ -344,7 +344,7 @@ async function bankHoldings(inst) {
     .filter((a) => a.type === 'depository')
     .map((a) => ({ name: a.name, type: acctType(inst, a), value: round2(a.balances?.current || 0) }));
   const total = round2(accounts.reduce((s, a) => s + a.value, 0));
-  if (!(total > 0)) throw new Error('no balance yet');
+  // A new, still-empty account is shown at $0 rather than left out.
   console.log(`${inst.name}: ${accounts.length} account${accounts.length === 1 ? '' : 's'}, $${total.toLocaleString('en-US')}.`);
   return {
     name: inst.name,
@@ -354,7 +354,7 @@ async function bankHoldings(inst) {
     accounts,
     // One holdings row. build.js measures it against what was deposited, so
     // its gain is the interest.
-    positions: [{ ticker: 'HYSA', name: 'High-yield savings', value: total, quantity: null, price: null, cost_basis: null, accounts: accounts.filter((a) => a.value > 0).map((a) => a.name) }],
+    positions: total > 0 ? [{ ticker: 'HYSA', name: 'High-yield savings', value: total, quantity: null, price: null, cost_basis: null, accounts: accounts.filter((a) => a.value > 0).map((a) => a.name) }] : [],
   };
 }
 

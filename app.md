@@ -135,8 +135,10 @@ ledger, written only after every page is read, and a page that changes mid-read 
 the same cursor. Posted deposits and withdrawals count; pending rows, interest and bank fees
 don't, so interest is the gain. A row is judged once, so after a rule change, set `cursor` to
 null and `ledger` to [] to replay Plaid's history. Until Plaid reports
-`HISTORICAL_UPDATE_COMPLETE`, the account's gains stay blank rather than counting the whole
-balance as gain. It's one holdings row, "High-yield savings", with the interest as its gain.
+`HISTORICAL_UPDATE_COMPLETE`, what went in is taken as the balance, so the account shows no
+gain and adds none to the totals rather than counting the whole balance as gain. It's one
+holdings row, "High-yield savings", with the interest as its gain. At a $0 balance it still
+shows in Accounts and in the legend at 0%, with no holdings row and no slice in the bar.
 
 **After-tax toggle.** The rates are the owner's, in `afterTax` in `institutions.js`, and
 `build.js` works out each institution's value when it builds the page:
