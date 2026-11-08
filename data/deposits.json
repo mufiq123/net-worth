@@ -345,5 +345,13 @@
   "merrill": {
     "method": "cost_basis",
     "note": "ESPP + Visa equity plan. Uses Plaid's cost basis for the ESPP, so no base is needed. The equity plan is left out of gains."
+  },
+  "vio": {
+    "method": "ledger",
+    "note": "Bank account: deposits come from /transactions/sync. base is 0 because Plaid fetches the account's history at link time.",
+    "base": 0,
+    "ledger": [],
+    "cursor": "",
+    "history_complete": true
   }
 }

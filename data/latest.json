@@ -269,6 +269,20 @@
           ]
         }
       ]
+    },
+    "vio": {
+      "name": "Vio HYSA",
+      "date": "2026-11-08",
+      "total": 0,
+      "cost_basis": null,
+      "accounts": [
+        {
+          "name": "ONLINE SAVINGS",
+          "type": "Savings",
+          "value": 0
+        }
+      ],
+      "positions": []
     }
   },
   "date": "2026-11-08",
