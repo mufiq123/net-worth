@@ -2,14 +2,14 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-11-08",
-      "total": 21640.15,
+      "date": "2026-11-09",
+      "total": 22263.88,
       "cost_basis": 20875.46,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 10986.11
+          "value": 11305.51
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 10654.42
+          "value": 10958.75
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 6818.02,
+          "value": 7013.79,
           "quantity": 62.57362,
-          "price": 108.95997386758191,
+          "price": 112.08860858617417,
           "cost_basis": 5888.29,
           "accounts": [
             "Brokerage Account"
@@ -52,9 +52,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 5365.88,
+          "value": 5487.58,
           "quantity": 7.92398,
-          "price": 677.169806082297,
+          "price": 692.5282496927049,
           "cost_basis": 5284.87,
           "accounts": [
             "Roth IRA"
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2078.87,
+          "value": 2149.04,
           "quantity": 7.67637,
-          "price": 270.81419994085746,
+          "price": 279.95523926022327,
           "cost_basis": 2360.9,
           "accounts": [
             "Roth IRA"
@@ -74,9 +74,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 1589.22,
+          "value": 1634.85,
           "quantity": 14.58538,
-          "price": 108.9597939854841,
+          "price": 112.08826921204657,
           "cost_basis": 1713.88,
           "accounts": [
             "Roth IRA"
@@ -85,9 +85,9 @@
         {
           "ticker": "QQI",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco Nasdaq International Innovators 100 ETF",
-          "value": 1411.75,
+          "value": 1449.63,
           "quantity": 58.72506,
-          "price": 24.039992466589222,
+          "price": 24.685032250286337,
           "cost_basis": 1498,
           "accounts": [
             "Brokerage Account"
@@ -96,9 +96,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 1110.96,
+          "value": 1171.3,
           "quantity": 24.37384,
-          "price": 45.58001529508686,
+          "price": 48.05562028798088,
           "cost_basis": 914.91,
           "accounts": [
             "Roth IRA"
@@ -107,9 +107,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 1110,
+          "value": 1135.26,
           "quantity": 1.63918,
-          "price": 677.1678522187923,
+          "price": 692.5779963152307,
           "cost_basis": 1130.79,
           "accounts": [
             "Brokerage Account"
@@ -118,9 +118,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 803.65,
+          "value": 821.34,
           "quantity": 2.35515,
-          "price": 341.23091947434347,
+          "price": 348.7421183364117,
           "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
@@ -129,9 +129,9 @@
         {
           "ticker": "GOOG",
           "name": "Alphabet Inc - Ordinary Shares - Class C",
-          "value": 568.82,
+          "value": 576.88,
           "quantity": 2,
-          "price": 284.41,
+          "price": 288.44,
           "cost_basis": 556.89,
           "accounts": [
             "Roth IRA"
@@ -140,9 +140,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 510.62,
+          "value": 538.35,
           "quantity": 11.20272,
-          "price": 45.58000199951441,
+          "price": 48.05529371438365,
           "cost_basis": 500,
           "accounts": [
             "Brokerage Account"
@@ -151,9 +151,9 @@
         {
           "ticker": "SPCX",
           "name": "Space Exploration Technologies Corp. - Ordinary Shares - Class A",
-          "value": 271.28,
+          "value": 284.78,
           "quantity": 2,
-          "price": 135.64,
+          "price": 142.39,
           "cost_basis": 279.85,
           "accounts": [
             "Roth IRA"
@@ -175,7 +175,7 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-11-08",
+      "date": "2026-11-09",
       "total": 21540.2,
       "cost_basis": 21549.92,
       "accounts": [
@@ -223,8 +223,8 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-11-08",
-      "total": 44800.9,
+      "date": "2026-11-09",
+      "total": 44782.77,
       "cost_basis": 10789.7,
       "excluded": [
         {
@@ -236,7 +236,7 @@
         {
           "name": "ESPP",
           "type": "ESPP",
-          "value": 15638.05
+          "value": 15619.92
         },
         {
           "name": "Equity",
@@ -260,9 +260,9 @@
         {
           "ticker": "V",
           "name": "Visa Inc - Ordinary Shares - Class A",
-          "value": 15638.05,
+          "value": 15619.92,
           "quantity": 37,
-          "price": 422.65,
+          "price": 422.16,
           "cost_basis": 10789.7,
           "accounts": [
             "ESPP"
@@ -272,7 +272,7 @@
     },
     "vio": {
       "name": "Vio HYSA",
-      "date": "2026-11-08",
+      "date": "2026-11-09",
       "total": 0,
       "cost_basis": null,
       "accounts": [
@@ -285,6 +285,6 @@
       "positions": []
     }
   },
-  "date": "2026-11-08",
-  "total": 87981.25
+  "date": "2026-11-09",
+  "total": 88586.85
 }
