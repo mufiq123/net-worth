@@ -350,8 +350,14 @@
     "method": "ledger",
     "note": "Bank account: deposits come from /transactions/sync. base is 0 because Plaid fetches the account's history at link time.",
     "base": 0,
-    "ledger": [],
-    "cursor": "",
+    "ledger": [
+      {
+        "id": "ny1d9eEn7qsNbgYxKK6EhKgXj7R3zxCj69QXX",
+        "date": "2026-11-09",
+        "amount": 101
+      }
+    ],
+    "cursor": "CAESJW55MWQ5ZUVuN3FzTmJnWXhLSzZFaEtnWGo3UjN6eENqNjlRWFgaDAii5MvXBhC4iaG2AiIMCKLky9cGELiJobYCKgwIouTL1wYQuImhtgI=",
     "history_complete": true
   }
 }
