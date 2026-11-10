@@ -3,13 +3,13 @@
     "public": {
       "name": "Public",
       "date": "2026-11-09",
-      "total": 22273.79,
+      "total": 22272.82,
       "cost_basis": 20875.46,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 11291.92
+          "value": 11291
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 10982.25
+          "value": 10982.2
         },
         {
           "name": "RIA Asset Account",
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2144.16,
+          "value": 2143.24,
           "quantity": 7.67637,
-          "price": 279.319522117876,
+          "price": 279.19967380415477,
           "cost_basis": 2360.9,
           "accounts": [
             "Roth IRA"
@@ -118,9 +118,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 821.34,
+          "value": 821.29,
           "quantity": 2.35515,
-          "price": 348.7421183364117,
+          "price": 348.72088826614015,
           "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
@@ -286,5 +286,5 @@
     }
   },
   "date": "2026-11-09",
-  "total": 88596.76
+  "total": 88595.79
 }
