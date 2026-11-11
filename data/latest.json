@@ -3,13 +3,13 @@
     "public": {
       "name": "Public",
       "date": "2026-11-11",
-      "total": 22427.78,
+      "total": 22185.69,
       "cost_basis": 20875.46,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 11369.51
+          "value": 11279.41
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 11058.65
+          "value": 10906.66
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 7120.88,
+          "value": 7011.37,
           "quantity": 62.57362,
-          "price": 113.80003266552264,
+          "price": 112.04993414157596,
           "cost_basis": 5888.29,
           "accounts": [
             "Brokerage Account"
@@ -52,9 +52,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 5535.75,
+          "value": 5506.44,
           "quantity": 7.92398,
-          "price": 698.6072655408014,
+          "price": 694.9083667550901,
           "cost_basis": 5284.87,
           "accounts": [
             "Roth IRA"
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2181.16,
+          "value": 2161.28,
           "quantity": 7.67637,
-          "price": 284.1395086479677,
+          "price": 281.5497429123401,
           "cost_basis": 2360.9,
           "accounts": [
             "Roth IRA"
@@ -74,9 +74,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 1659.82,
+          "value": 1634.29,
           "quantity": 14.58538,
-          "price": 113.80025751814487,
+          "price": 112.04987460045606,
           "cost_basis": 1713.88,
           "accounts": [
             "Roth IRA"
@@ -85,9 +85,9 @@
         {
           "ticker": "QQI",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco Nasdaq International Innovators 100 ETF",
-          "value": 1449.92,
+          "value": 1421.15,
           "quantity": 58.72506,
-          "price": 24.68997051684579,
+          "price": 24.20006041713708,
           "cost_basis": 1498,
           "accounts": [
             "Brokerage Account"
@@ -96,9 +96,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 1145.14,
+          "value": 1139.1,
           "quantity": 1.63918,
-          "price": 698.6054002611062,
+          "price": 694.9206310472308,
           "cost_basis": 1130.79,
           "accounts": [
             "Brokerage Account"
@@ -107,9 +107,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 1130.14,
+          "value": 1121.2,
           "quantity": 24.37384,
-          "price": 46.3669245387678,
+          "price": 46.00013785271422,
           "cost_basis": 914.91,
           "accounts": [
             "Roth IRA"
@@ -118,9 +118,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 822.89,
+          "value": 819.33,
           "quantity": 2.35515,
-          "price": 349.40025051482917,
+          "price": 347.88866951149606,
           "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
@@ -129,9 +129,9 @@
         {
           "ticker": "GOOG",
           "name": "Alphabet Inc - Ordinary Shares - Class C",
-          "value": 580.82,
+          "value": 579.86,
           "quantity": 2,
-          "price": 290.41,
+          "price": 289.93,
           "cost_basis": 556.89,
           "accounts": [
             "Roth IRA"
@@ -140,9 +140,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 519.44,
+          "value": 515.33,
           "quantity": 11.20272,
-          "price": 46.367310795949564,
+          "price": 46.00043560849509,
           "cost_basis": 500,
           "accounts": [
             "Brokerage Account"
@@ -151,9 +151,9 @@
         {
           "ticker": "SPCX",
           "name": "Space Exploration Technologies Corp. - Ordinary Shares - Class A",
-          "value": 280.74,
+          "value": 275.26,
           "quantity": 2,
-          "price": 140.37,
+          "price": 137.63,
           "cost_basis": 279.85,
           "accounts": [
             "Roth IRA"
@@ -298,5 +298,5 @@
     }
   },
   "date": "2026-11-11",
-  "total": 89393.09
+  "total": 89151
 }
