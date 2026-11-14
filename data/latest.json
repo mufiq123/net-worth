@@ -2,14 +2,14 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-11-13",
-      "total": 23386.92,
+      "date": "2026-11-14",
+      "total": 23386.55,
       "cost_basis": 22333.91,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 11108.23
+          "value": 11107.06
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 12279.05
+          "value": 12279.85
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 6909.38,
+          "value": 6905,
           "quantity": 62.57362,
-          "price": 110.42001405704194,
+          "price": 110.35001650855425,
           "cost_basis": 5888.29,
           "accounts": [
             "Brokerage Account"
@@ -85,9 +85,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 1610.52,
+          "value": 1609.5,
           "quantity": 14.58538,
-          "price": 110.42016046205173,
+          "price": 110.35022741951187,
           "cost_basis": 1713.88,
           "accounts": [
             "Roth IRA"
@@ -118,9 +118,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 814.88,
+          "value": 820.06,
           "quantity": 2.35515,
-          "price": 345.9991932573297,
+          "price": 348.1986285374604,
           "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
@@ -140,9 +140,9 @@
         {
           "ticker": "GOOG",
           "name": "Alphabet Inc - Ordinary Shares - Class C",
-          "value": 581.7,
+          "value": 581.55,
           "quantity": 2,
-          "price": 290.85,
+          "price": 290.775,
           "cost_basis": 556.89,
           "accounts": [
             "Roth IRA"
@@ -186,23 +186,23 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-11-13",
-      "total": 22194.77,
+      "date": "2026-11-14",
+      "total": 22032.71,
       "cost_basis": 21549.92,
       "accounts": [
         {
           "name": "VISA 401K PLAN",
           "type": "401(k)",
-          "value": 22194.77
+          "value": 22032.71
         }
       ],
       "positions": [
         {
           "ticker": "SP.500.INDEX.PL.CL.D",
           "name": "SP 500 INDEX PL CL D - contribution",
-          "value": 11812.92,
+          "value": 11766.82,
           "quantity": 32.462,
-          "price": 363.9,
+          "price": 362.48,
           "cost_basis": 11071.38,
           "accounts": [
             "VISA 401K PLAN"
@@ -211,9 +211,9 @@
         {
           "ticker": "TRP.LRG.CAP.GR.TR.D",
           "name": "Trp Lrg Cap Gr Tr D",
-          "value": 10008.97,
+          "value": 9894.43,
           "quantity": 369.471,
-          "price": 27.09,
+          "price": 26.78,
           "cost_basis": 10102.98,
           "accounts": [
             "VISA 401K PLAN"
@@ -222,9 +222,9 @@
         {
           "ticker": "VG.TOT.STK.MKT.IDX.C",
           "name": "Vg Tot Stk Mkt Idx C",
-          "value": 372.88,
+          "value": 371.46,
           "quantity": 2.406,
-          "price": 154.98,
+          "price": 154.39,
           "cost_basis": 375.56,
           "accounts": [
             "VISA 401K PLAN"
@@ -234,13 +234,13 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-11-13",
-      "total": 44754.51,
+      "date": "2026-11-14",
+      "total": 45130.56,
       "cost_basis": 10789.7,
       "excluded": [
         {
           "name": "Equity",
-          "value": 29001.39
+          "value": 29377.44
         }
       ],
       "accounts": [
@@ -252,16 +252,16 @@
         {
           "name": "Equity",
           "type": "Equity",
-          "value": 29001.39
+          "value": 29377.44
         }
       ],
       "positions": [
         {
           "ticker": "V",
           "name": "Visa Inc - Ordinary Shares - Class A",
-          "value": 29001.39,
+          "value": 29377.44,
           "quantity": 69,
-          "price": 420.31,
+          "price": 425.76,
           "cost_basis": null,
           "accounts": [
             "Equity"
@@ -283,7 +283,7 @@
     },
     "vio": {
       "name": "Vio HYSA",
-      "date": "2026-11-13",
+      "date": "2026-11-14",
       "total": 101,
       "cost_basis": null,
       "accounts": [
@@ -308,6 +308,6 @@
       ]
     }
   },
-  "date": "2026-11-13",
-  "total": 90437.2
+  "date": "2026-11-14",
+  "total": 90650.82
 }
