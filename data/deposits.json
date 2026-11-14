@@ -295,6 +295,12 @@
         "date": "2026-11-05",
         "amount": 1000,
         "account": "Brokerage"
+      },
+      {
+        "id": "n051qB19p5CEJE5mPZKBSdnDZyRJ8kIBw4vdw",
+        "date": "2026-11-13",
+        "amount": 1500,
+        "account": "Brokerage"
       }
     ]
   },
