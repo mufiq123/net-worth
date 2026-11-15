@@ -2,7 +2,7 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-11-14",
+      "date": "2026-11-15",
       "total": 23386.55,
       "cost_basis": 22333.91,
       "accounts": [
@@ -186,7 +186,7 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-11-14",
+      "date": "2026-11-15",
       "total": 22032.71,
       "cost_basis": 21549.92,
       "accounts": [
@@ -234,7 +234,7 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-11-14",
+      "date": "2026-11-15",
       "total": 45130.56,
       "cost_basis": 10789.7,
       "excluded": [
@@ -283,7 +283,7 @@
     },
     "vio": {
       "name": "Vio HYSA",
-      "date": "2026-11-14",
+      "date": "2026-11-15",
       "total": 101,
       "cost_basis": null,
       "accounts": [
@@ -308,6 +308,6 @@
       ]
     }
   },
-  "date": "2026-11-14",
+  "date": "2026-11-15",
   "total": 90650.82
 }
