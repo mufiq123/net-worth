@@ -345,6 +345,18 @@
         "date": "2026-11-02",
         "amount": 533.07,
         "account": "401(k)"
+      },
+      {
+        "id": "Mgp83odLV6HbEdg366LqfN5ELe7L1DUXXzObX",
+        "date": "2026-11-16",
+        "amount": 145.55,
+        "account": "401(k)"
+      },
+      {
+        "id": "Ejpnw37M8vUJV3ywEELpTdvL40z4kmtQQX8Md",
+        "date": "2026-11-16",
+        "amount": 582.18,
+        "account": "401(k)"
       }
     ]
   },
@@ -361,9 +373,14 @@
         "id": "ny1d9eEn7qsNbgYxKK6EhKgXj7R3zxCj69QXX",
         "date": "2026-11-09",
         "amount": 101
+      },
+      {
+        "id": "JzakLVE0BZfxr4zXZZy8hd4yNV09yYHmranR3",
+        "date": "2026-11-16",
+        "amount": 5000
       }
     ],
-    "cursor": "CAESJW55MWQ5ZUVuN3FzTmJnWXhLSzZFaEtnWGo3UjN6eENqNjlRWFgaDAii5MvXBhC4iaG2AiIMCKLky9cGELiJobYCKgwIouTL1wYQuImhtgI=",
+    "cursor": "CAESJUp6YWtMVkUwQlpmeHI0elhaWnk4aGQ0eU5WMDl5WUhtcmFuUjMaCwj/oPDXBhDwiIhHIgsI/6Dw1wYQ8IiIRyoLCP+g8NcGEPCIiEc=",
     "history_complete": true
   }
 }
