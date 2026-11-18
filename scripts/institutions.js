@@ -19,7 +19,16 @@ export const INSTITUTIONS = [
     secret: 'PLAID_TOKEN_PUBLIC',
     afterTax: { onGainsByAccount: { 'Roth IRA': 0.35, Brokerage: 0.25 } },
   },
-  { id: 'fidelity', name: 'Fidelity', secret: 'PLAID_TOKEN_FIDELITY', afterTax: { onTotal: 0.35 } },
+  {
+    id: 'fidelity',
+    name: 'Fidelity',
+    secret: 'PLAID_TOKEN_FIDELITY',
+    afterTax: { onTotal: 0.35 },
+    // Visa adds $2 for every $1 the owner contributes (200% of their 5%), and
+    // Plaid's rows don't say which is which. Only the owner's third counts as
+    // invested; the match counts as gain.
+    employerMatch: 2,
+  },
   {
     id: 'merrill',
     name: 'Merrill',

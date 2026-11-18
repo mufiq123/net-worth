@@ -165,6 +165,12 @@ page and a class on `<body>` (`after-tax`) shows one or the other (`.pre-only` /
 - *Holdings:* hidden, with a note. Holdings carry Plaid's cost basis, which for Public differs
   from the deposits the account totals use, so per-holding after-tax figures wouldn't add up.
 
+**Fidelity's employer match.** Visa adds $2 for every $1 the owner contributes (200% of
+their 5%, unchanged since the account opened). Plaid's contribution rows don't say which part is
+whose (checked 2026-11-18), so `employerMatch: 2` in `institutions.js` makes "invested" a third
+of everything paid in (base + ledger); the match counts as gain in both views. Holdings still
+show Plaid's cost basis for the 401(k) funds, which includes the match.
+
 **Combined gains need every institution.** The stats row appears only when every linked
 institution has an invested figure. A total that silently left one out would overstate the
 gain. Per-institution gains show in the Accounts card as soon as each is known.

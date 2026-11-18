@@ -153,7 +153,11 @@ function invested(inst) {
   if (dep.history_complete === false) return round2(inst.total);
   if (!Number.isFinite(dep.base)) return null;
   const ledger = Array.isArray(dep.ledger) ? dep.ledger : [];
-  return round2(dep.base + ledger.reduce((s, e) => s + (Number(e.amount) || 0), 0));
+  const paidIn = dep.base + ledger.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+  // With an employer match, each contribution row holds the owner's dollar
+  // and the employer's `employerMatch` dollars together; only the owner's
+  // share is money they put in.
+  return round2(inst.employerMatch ? paidIn / (1 + inst.employerMatch) : paidIn);
 }
 insts.forEach((i) => { i.invested = invested(i); });
 // A bank account's one row is measured against what went in, so its gain is the interest.
@@ -250,9 +254,11 @@ if (allKnown && inv > 0) {
     </div>`;
   };
   const grants = excluded.map((e) => `<span class="money">${money(e.value)}</span> ${esc(e.name.toLowerCase())} grant`).join(' and ');
+  const matched = insts.filter((i) => i.employerMatch).map((i) => esc(i.name));
   statsHTML = statsRow('pre-only', gains, 'Total gains', 'Return') + statsRow('tax-only', atGains, 'Gains after tax', 'Return after tax') + (excluded.length ? `
     <div class="excl pre-only">Gains exclude the ${grants}.</div>
-    <div class="excl tax-only">After-tax values leave out the unvested ${grants}.</div>` : '');
+    <div class="excl tax-only">After-tax values leave out the unvested ${grants}.</div>` : '') + (matched.length ? `
+    <div class="excl">Net invested counts only your own ${matched.join(' and ')} contributions; the employer match counts as gain.</div>` : '');
 } else if (insts.length) {
   const missing = insts.filter((i) => i.invested == null).map((i) => i.name);
   statsHTML = `<div class="fine" style="text-align:left;margin-top:14px">Gains appear once net deposits are known for ${missing.join(', ')}.</div>`;
