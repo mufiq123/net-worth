@@ -17,9 +17,9 @@ export const INSTITUTIONS = [
     id: 'public',
     name: 'Public',
     secret: 'PLAID_TOKEN_PUBLIC',
-    afterTax: { onGainsByAccount: { 'Roth IRA': 0.4, Brokerage: 0.27 } },
+    afterTax: { onGainsByAccount: { 'Roth IRA': 0.35, Brokerage: 0.25 } },
   },
-  { id: 'fidelity', name: 'Fidelity', secret: 'PLAID_TOKEN_FIDELITY', afterTax: { onTotal: 0.4 } },
+  { id: 'fidelity', name: 'Fidelity', secret: 'PLAID_TOKEN_FIDELITY', afterTax: { onTotal: 0.35 } },
   {
     id: 'merrill',
     name: 'Merrill',
@@ -44,7 +44,7 @@ export const INSTITUTIONS = [
     products: ['transactions'],
     linkHint: 'In Plaid\'s search, pick "Vio Bank". If your login isn\'t accepted there, try "Vio Bank - New". A failed login doesn\'t use up an Item.',
     // Interest is the gain; deposits are never taxed.
-    afterTax: { onGains: 0.27 },
+    afterTax: { onGains: 0.25 },
   },
 ];
 

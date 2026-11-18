@@ -142,13 +142,13 @@ shows in Accounts and in the legend at 0%, with no holdings row and no slice in 
 
 **After-tax toggle.** The rates are the owner's, in `afterTax` in `institutions.js`, and
 `build.js` works out each institution's value when it builds the page:
-- *Public brokerage:* 27% on gains only. *Public Roth:* 40% on earnings only. Principal is what
+- *Public brokerage:* 25% on gains only. *Public Roth:* 35% on earnings only. Principal is what
   was deposited to that account type, including transfers. Public's cash rewards are earnings
   here, though "Net invested" still counts them as money in. Each ledger row records its
   `account` type, and rewards are marked `reward`.
-- *Fidelity:* 40% on the whole value.
+- *Fidelity:* 35% on the whole value.
 - *Merrill:* 33% on ESPP profit. The unvested equity grant is left out of the after-tax total.
-- *Vio:* 27% on interest. Deposits are never taxed.
+- *Vio:* 25% on interest. Deposits are never taxed.
 A loss earns no credit. If principal isn't known, the whole value is treated as gain, so the
 figure errs low.
 
