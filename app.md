@@ -152,6 +152,19 @@ shows in Accounts and in the legend at 0%, with no holdings row and no slice in 
 A loss earns no credit. If principal isn't known, the whole value is treated as gain, so the
 figure errs low.
 
+The toggle switches the whole page, not just the hero card. Both versions are built into the
+page and a class on `<body>` (`after-tax`) shows one or the other (`.pre-only` / `.tax-only`):
+- *Growth chart:* the same line scaled down by today's after-tax share (after-tax total ÷
+  pre-tax total) at every point, on the same axis so it visibly drops. Past after-tax values
+  aren't known, so this is an approximation. The scrubber reads the line that's showing.
+- *Stats:* Net invested is unchanged; gain is after-tax value − net invested, so the 401(k)'s
+  tax on its deposits shows as a loss. Return follows from that.
+- *Accounts:* each institution's after-tax value and gain, and each sub-account's where what
+  went into that account is known. Account gains add up to the stats-row gain. The unvested
+  grant's line reads "Unvested, not counted".
+- *Holdings:* hidden, with a note. Holdings carry Plaid's cost basis, which for Public differs
+  from the deposits the account totals use, so per-holding after-tax figures wouldn't add up.
+
 **Combined gains need every institution.** The stats row appears only when every linked
 institution has an invested figure. A total that silently left one out would overstate the
 gain. Per-institution gains show in the Accounts card as soon as each is known.

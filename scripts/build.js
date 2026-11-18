@@ -55,7 +55,10 @@ const signed = (n) => `${n >= 0 ? '+' : '−'}${money(Math.abs(n))}`; // a real 
 
 // ---- growth chart (SVG, time-scaled x axis, y from 0) ----
 // Colors are CSS custom properties, so the chart follows the active theme.
-function chartSVG(points) {
+// Two series are drawn on the same axis: the real one, and the after-tax one
+// (every point times `k`). The page shows one at a time, so toggling to
+// after-tax visibly lowers the line rather than just relabelling it.
+function chartSVG(points, k) {
   const W = 680, H = 400, PL = 56, PR = 20, PT = 30, PB = 42;
   // The viewBox starts above y=0 purely to give the scrubber's value label
   // somewhere to sit when the point being read is at the top of the plot.
@@ -68,8 +71,6 @@ function chartSVG(points) {
   const X = (tt) => PL + ((tt - t0) / Math.max(t1 - t0, 1)) * (W - PL - PR);
   const Y = (v) => PT + (1 - v / yMax) * (H - PT - PB);
 
-  const line = points.map((p) => `${X(t(p.date)).toFixed(1)},${Y(p.value).toFixed(1)}`).join(' ');
-  const area = `${PL},${Y(0).toFixed(1)} ${line} ${X(t1).toFixed(1)},${Y(0).toFixed(1)}`;
 
   const gridVals = [0, yMax / 2, yMax];
   const grid = gridVals.map((v) => `
@@ -91,32 +92,40 @@ function chartSVG(points) {
   }).join('');
 
   const last = points[n - 1];
-  const lx = X(t(last.date)), ly = Y(last.value);
+  const lx = X(t(last.date));
+  const series = (f, cls, suffix) => {
+    const line = points.map((p) => `${X(t(p.date)).toFixed(1)},${Y(p.value * f).toFixed(1)}`).join(' ');
+    const area = `${PL},${Y(0).toFixed(1)} ${line} ${X(t1).toFixed(1)},${Y(0).toFixed(1)}`;
+    const ly = Y(last.value * f);
+    return `
+    <g class="${cls}">
+      <polygon points="${area}" fill="url(#gg)"/>
+      <polyline points="${line}" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle id="endDot${suffix}" class="endmark" cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="7" fill="var(--surface)" stroke="var(--accent)" stroke-width="3.5"/>
+      <text id="endLabel${suffix}" class="endmark money" x="${(lx < W / 2 ? lx + 12 : lx - 12).toFixed(1)}" y="${(ly - 14).toFixed(1)}" text-anchor="${lx < W / 2 ? 'start' : 'end'}" font-size="16" font-weight="700" fill="var(--ink-soft)">${money(round2(last.value * f))}</text>
+    </g>`;
+  };
 
   // Only real history points are listed: the scrubber snaps to these rather
   // than interpolating, because a value read off the line between two points
   // is one the portfolio never held.
-  const scrubData = points.map((p) => ({
+  const scrubData = (f) => JSON.stringify(points.map((p) => ({
     x: +X(t(p.date)).toFixed(1),
-    y: +Y(p.value).toFixed(1),
-    v: money(p.value),
+    y: +Y(p.value * f).toFixed(1),
+    v: money(round2(p.value * f)),
     m: tickLabel(p.date),
-  }));
+  })));
 
   return `
   <svg class="chart" viewBox="0 ${VT} ${W} ${H - VT}" style="width:100%;height:auto;display:block" role="img" aria-label="Net worth growth chart"
-       data-points='${JSON.stringify(scrubData)}' data-w="${W}" data-pl="${PL}" data-pr="${PR}" data-top="${VT + 14}">
+       data-points='${scrubData(1)}' data-points-tax='${scrubData(k)}' data-w="${W}" data-pl="${PL}" data-pr="${PR}" data-top="${VT + 14}">
     <defs>
       <linearGradient id="gg" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="var(--chart-fill-top)"/>
         <stop offset="100%" stop-color="var(--chart-fill-bottom)"/>
       </linearGradient>
     </defs>
-    ${grid}
-    <polygon points="${area}" fill="url(#gg)"/>
-    <polyline points="${line}" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle id="endDot" cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="7" fill="var(--surface)" stroke="var(--accent)" stroke-width="3.5"/>
-    <text id="endLabel" class="money" x="${(lx < W / 2 ? lx + 12 : lx - 12).toFixed(1)}" y="${(ly - 14).toFixed(1)}" text-anchor="${lx < W / 2 ? 'start' : 'end'}" font-size="16" font-weight="700" fill="var(--ink-soft)">${money(last.value)}</text>
+    ${grid}${series(1, 'pre-only', '')}${series(k, 'tax-only', 'Tax')}
     <g id="xticks">${xticks}
     </g>
     <g id="scrub" opacity="0" pointer-events="none">
@@ -159,32 +168,67 @@ const excluded = insts.flatMap((i) => (i.excluded || []).filter((e) => e.value >
 // Principal is never taxed, a loss earns no credit, and excluded holdings (the
 // unvested grant) aren't counted at all. When principal isn't known the whole
 // value is treated as gain, so the figure errs low rather than high.
-function afterTaxValue(i) {
+//
+// Alongside the institution's figure, each funded account gets its share, for
+// the Accounts card: its after-tax value, and its after-tax gain where what
+// went into that one account is known (gain = after-tax value − what went in,
+// so the 401(k)'s tax on its deposits shows as a loss). An excluded account
+// is marked as such and counts for nothing.
+function afterTaxParts(i) {
   const t = i.afterTax;
-  if (!t) return round2(i.total);
-  if (t.onTotal != null) return round2(i.total * (1 - t.onTotal));
-  if (t.onGains != null) {
+  const isExcluded = (a) => (i.excluded || []).some((e) => e.name === a.name);
+  const funded = (i.accounts || []).filter((a) => a.value > 0);
+  const accounts = {};
+  let total;
+  if (t && t.onGainsByAccount) {
+    const ledger = depositsFile[i.id]?.ledger || [];
+    if (ledger.some((e) => !e.account)) console.warn(`${i.name}: some deposits have no account yet, so the after-tax toggle counts less principal.`);
+    const byType = {};
+    for (const a of i.accounts || []) byType[a.type] = (byType[a.type] || 0) + a.value;
+    const kept = {};
+    for (const [type, value] of Object.entries(byType)) {
+      const rate = t.onGainsByAccount[type];
+      if (rate == null) {
+        if (value > 0) console.warn(`${i.name}: no after-tax rate for "${type}", so the toggle leaves it untaxed.`);
+        kept[type] = value;
+        continue;
+      }
+      const principal = ledger.filter((e) => e.account === type && !e.reward).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+      kept[type] = value - Math.max(value - principal, 0) * rate;
+    }
+    total = round2(Object.values(kept).reduce((s, v) => s + v, 0));
+    for (const a of funded) {
+      const v = round2(kept[a.type] * (a.value / byType[a.type]));
+      // What went in counts rewards, as invested() does, so the account gains
+      // add up to the institution's.
+      const put = ledger.filter((e) => e.account === a.type).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+      const alone = funded.filter((b) => b.type === a.type).length === 1;
+      accounts[a.name] = { value: v, gain: alone ? round2(v - put) : null };
+    }
+    return { total, accounts };
+  }
+  if (!t) total = round2(i.total);
+  else if (t.onTotal != null) total = round2(i.total * (1 - t.onTotal));
+  else {
     const value = i.total - excludedOf(i);
     if (i.invested == null) console.warn(`${i.name}: no cost known, so the after-tax toggle treats its whole value as gain.`);
-    return round2(value - Math.max(value - (i.invested ?? 0), 0) * t.onGains);
+    total = round2(value - Math.max(value - (i.invested ?? 0), 0) * t.onGains);
   }
-  const ledger = depositsFile[i.id]?.ledger || [];
-  if (ledger.some((e) => !e.account)) console.warn(`${i.name}: some deposits have no account yet, so the after-tax toggle counts less principal.`);
-  const byType = {};
-  for (const a of i.accounts || []) byType[a.type] = (byType[a.type] || 0) + a.value;
-  let kept = 0;
-  for (const [type, value] of Object.entries(byType)) {
-    const rate = t.onGainsByAccount[type];
-    if (rate == null) {
-      if (value > 0) console.warn(`${i.name}: no after-tax rate for "${type}", so the toggle leaves it untaxed.`);
-      kept += value;
-      continue;
-    }
-    const principal = ledger.filter((e) => e.account === type && !e.reward).reduce((s, e) => s + (Number(e.amount) || 0), 0);
-    kept += value - Math.max(value - principal, 0) * rate;
+  const counted = funded.filter((a) => !isExcluded(a));
+  const countedValue = counted.reduce((s, a) => s + a.value, 0);
+  for (const a of funded) {
+    if (isExcluded(a)) { accounts[a.name] = { excluded: true }; continue; }
+    const v = round2(total * (a.value / countedValue));
+    accounts[a.name] = { value: v, gain: counted.length === 1 && i.invested != null ? round2(v - i.invested) : null };
   }
-  return round2(kept);
+  return { total, accounts };
 }
+const afterTaxValue = (i) => afterTaxParts(i).total;
+insts.forEach((i) => { i.at = afterTaxParts(i); });
+const atTotal = round2(insts.reduce((s, i) => s + i.at.total, 0));
+// The after-tax chart is the real one scaled down by today's after-tax share:
+// there's no after-tax figure for past dates, so every point keeps today's ratio.
+const atRatio = total > 0 ? atTotal / total : 1;
 
 // The combined stats row needs every institution's figure: a total that
 // silently left one out would overstate the gain.
@@ -194,14 +238,21 @@ const allKnown = insts.length && insts.every((i) => i.invested != null);
 const inv = allKnown ? round2(insts.reduce((s, i) => s + i.invested, 0)) : 0;
 if (allKnown && inv > 0) {
   const gains = round2(total - insts.reduce((s, i) => s + excludedOf(i), 0) - inv);
-  const cls = gains >= 0 ? 'up' : 'down';
-  statsHTML = `
-    <div class="stats">
+  // After tax: the same money in, measured against what would be kept.
+  const atGains = round2(atTotal - inv);
+  const statsRow = (cls, g, gainLabel, returnLabel) => {
+    const c = g >= 0 ? 'up' : 'down';
+    return `
+    <div class="stats ${cls}">
       <div><div class="label">Net invested</div><div class="v money">${money(inv)}</div></div>
-      <div><div class="label">Total gains</div><div class="v ${cls} money">${signed(gains)}</div></div>
-      <div><div class="label">Return</div><div class="v ${cls} money">${gains >= 0 ? '+' : '−'}${Math.abs((gains / inv) * 100).toFixed(1)}%</div></div>
-    </div>` + (excluded.length ? `
-    <div class="excl">Gains exclude the ${excluded.map((e) => `<span class="money">${money(e.value)}</span> ${esc(e.name.toLowerCase())} grant`).join(' and ')}.</div>` : '');
+      <div><div class="label">${gainLabel}</div><div class="v ${c} money">${signed(g)}</div></div>
+      <div><div class="label">${returnLabel}</div><div class="v ${c} money">${g >= 0 ? '+' : '−'}${Math.abs((g / inv) * 100).toFixed(1)}%</div></div>
+    </div>`;
+  };
+  const grants = excluded.map((e) => `<span class="money">${money(e.value)}</span> ${esc(e.name.toLowerCase())} grant`).join(' and ');
+  statsHTML = statsRow('pre-only', gains, 'Total gains', 'Return') + statsRow('tax-only', atGains, 'Gains after tax', 'Return after tax') + (excluded.length ? `
+    <div class="excl pre-only">Gains exclude the ${grants}.</div>
+    <div class="excl tax-only">After-tax values leave out the unvested ${grants}.</div>` : '');
 } else if (insts.length) {
   const missing = insts.filter((i) => i.invested == null).map((i) => i.name);
   statsHTML = `<div class="fine" style="text-align:left;margin-top:14px">Gains appear once net deposits are known for ${missing.join(', ')}.</div>`;
@@ -238,9 +289,10 @@ if (insts.length && total > 0) {
     const accts = funded.length ? funded : (i.accounts || []).slice(0, 1);
     const types = [...new Set(accts.map((a) => a.type))].join(' · ');
     const gain = i.invested != null ? round2(i.total - excludedOf(i) - i.invested) : null;
-    const gainLine = gain == null
+    const atGain = i.invested != null ? round2(i.at.total - i.invested) : null;
+    const gl = (g) => g == null
       ? `<span style="color:var(--ink-muted)">—</span>`
-      : `<span class="${gain >= 0 ? 'up' : 'down'} money">${signed(gain)}</span>`;
+      : `<span class="${g >= 0 ? 'up' : 'down'} money">${signed(g)}</span>`;
     const multi = accts.length > 1;
     const row = `
       <div class="badge" style="color:${COLORS[n % COLORS.length]}">${esc(i.name[0])}</div>
@@ -249,16 +301,24 @@ if (insts.length && total > 0) {
         <div class="r-sub">${esc(types)}</div>
       </div>
       <div class="r-right">
-        <div class="money r-val">${money(i.total)}</div>
-        <div style="font-size:12.5px">${gainLine}</div>
+        <div class="money r-val pre-only">${money(i.total)}</div>
+        <div class="pre-only" style="font-size:12.5px">${gl(gain)}</div>
+        <div class="money r-val tax-only">${money(i.at.total)}</div>
+        <div class="tax-only" style="font-size:12.5px">${gl(atGain)}</div>
       </div>`;
     if (!multi) return `
     <div class="row">${row}
     </div>`;
     // <details> opens and closes without any script, and the balances inside
     // carry .money so the privacy toggle still covers them.
-    const subs = accts.map((a) => `
-        <div class="acct-line"><span><i style="background:${acctColor(acctName(a))}"></i>${esc(acctName(a))}</span><span class="money">${money(a.value)}</span></div>`).join('');
+    const subs = accts.map((a) => {
+      const at = i.at.accounts[a.name] || {};
+      const taxSide = at.excluded
+        ? `<span class="tax-only note">Unvested, not counted</span>`
+        : `<span class="tax-only"><span class="money">${money(at.value ?? 0)}</span>${at.gain != null ? ` <span class="gl ${at.gain >= 0 ? 'up' : 'down'} money">${signed(at.gain)}</span>` : ''}</span>`;
+      return `
+        <div class="acct-line${at.excluded ? ' excl-line' : ''}"><span><i style="background:${acctColor(acctName(a))}"></i>${esc(acctName(a))}</span><span class="money pre-only">${money(a.value)}</span>${taxSide}</div>`;
+    }).join('');
     return `
     <details class="acct">
       <summary class="row">${row}
@@ -368,7 +428,7 @@ if (positions.length) {
 }
 
 const chartBlock = history.length
-  ? chartSVG(history)
+  ? chartSVG(history, atRatio)
   : `<div style="padding:40px 0;text-align:center;color:var(--ink-muted)">The chart starts with the first data refresh.</div>`;
 
 // Per-institution snapshot dates, for the browser-side staleness check.
@@ -519,6 +579,14 @@ const html = `<!DOCTYPE html>
   .hide-values text.money { opacity: 0; }
   .stale { display: flex; gap: 9px; align-items: flex-start; background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-border); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; font-size: 12.5px; line-height: 1.5; }
   .stale[hidden] { display: none; }
+  /* The after-tax toggle swaps these by a class on <body>; both versions are
+     built into the page, so nothing is recomputed in the browser. */
+  body:not(.after-tax) .tax-only, body.after-tax .pre-only { display: none !important; }
+  .acct-line .gl { font-size: 12.5px; font-weight: 700; margin-left: 8px; }
+  .acct-line .up { color: var(--gain); }
+  .acct-line .down { color: var(--loss); }
+  .acct-line .note { color: var(--ink-muted); font-weight: 600; }
+  body.after-tax .acct-line.excl-line { opacity: .6; }
   .stale b { font-weight: 800; }
 </style>
 </head>
@@ -547,13 +615,19 @@ const html = `<!DOCTYPE html>
   ${instRows ? `<div class="sect"><h2>Accounts</h2><span>${insts.length} institutions</span></div>
   <div class="card list">${instRows}</div>` : ''}
 
+  <div class="pre-only">
   <div class="sect"><h2>Holdings</h2><span>${positions.length} positions</span></div>
   <div class="card list">${rows}</div>
+  </div>
+  <div class="tax-only">
+  <div class="sect"><h2>Holdings</h2></div>
+  <div class="card"><div class="fine" style="margin:0;text-align:left">Holdings show pre-tax values. Turn off after-tax to see them.</div></div>
+  </div>
 
   <div class="fine">${asOf ? `Updated ${prettyDate(asOf)}` : ''}</div>
 </div>
 <script>
-  var INST_TOTALS = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, round2(i.total)])))}; var INST_COLORS = ${JSON.stringify(COLORS)}; var INST_SHORT = ${JSON.stringify(insts.map(shortName))}; var AFTER_TAX = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, afterTaxValue(i)])))}; document.getElementById('eye').addEventListener('click', function () { var hidden = document.body.classList.toggle('hide-values'); this.classList.toggle('active', hidden); }); /* After-tax hero toggle: the values come from afterTaxValue() above. */ (function () { var btn = document.getElementById('taxbtn'); var alloc = document.getElementById('alloc'); var legend = document.getElementById('legend'); if (!btn || !alloc || !legend) return; var label = document.getElementById('hero-label'); var value = document.getElementById('hero-value'); var origLabel = label.textContent; var origValue = value.textContent; var origAlloc = alloc.innerHTML; var origLegend = legend.innerHTML; function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); } function money(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); } var afterTax = false; btn.addEventListener('click', function () { afterTax = !afterTax; btn.classList.toggle('active', afterTax); btn.setAttribute('aria-label', afterTax ? 'Show pre-tax values' : 'Show after-tax values'); if (!afterTax) { label.textContent = origLabel; value.textContent = origValue; alloc.innerHTML = origAlloc; legend.innerHTML = origLegend; return; } var names = Object.keys(INST_TOTALS); var adj = names.map(function (n) { return AFTER_TAX[n]; }); var t = adj.reduce(function (a, b) { return a + b; }, 0); if (!t) return; label.textContent = 'Total value after taxes'; value.textContent = money(t); alloc.innerHTML = names.map(function (n, i) { return adj[i] > 0 ? '<div style="width:' + (adj[i] / t * 100).toFixed(2) + '%;background:' + INST_COLORS[i % INST_COLORS.length] + '"></div>' : ''; }).join(''); legend.innerHTML = names.map(function (n, i) { return '<span><i style="background:' + INST_COLORS[i % INST_COLORS.length] + '"></i>' + esc(INST_SHORT[i]) + ' <b class="money">' + (adj[i] / t * 100).toFixed(0) + '%</b></span>'; }).join(''); }); })();
+  var INST_TOTALS = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, round2(i.total)])))}; var INST_COLORS = ${JSON.stringify(COLORS)}; var INST_SHORT = ${JSON.stringify(insts.map(shortName))}; var AFTER_TAX = ${JSON.stringify(Object.fromEntries(insts.map((i) => [i.name, afterTaxValue(i)])))}; document.getElementById('eye').addEventListener('click', function () { var hidden = document.body.classList.toggle('hide-values'); this.classList.toggle('active', hidden); }); /* After-tax hero toggle: the values come from afterTaxValue() above. */ (function () { var btn = document.getElementById('taxbtn'); var alloc = document.getElementById('alloc'); var legend = document.getElementById('legend'); if (!btn || !alloc || !legend) return; var label = document.getElementById('hero-label'); var value = document.getElementById('hero-value'); var origLabel = label.textContent; var origValue = value.textContent; var origAlloc = alloc.innerHTML; var origLegend = legend.innerHTML; function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); } function money(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); } var afterTax = false; btn.addEventListener('click', function () { afterTax = !afterTax; btn.classList.toggle('active', afterTax); btn.setAttribute('aria-label', afterTax ? 'Show pre-tax values' : 'Show after-tax values'); if (document.body) document.body.classList.toggle('after-tax', afterTax); if (!afterTax) { label.textContent = origLabel; value.textContent = origValue; alloc.innerHTML = origAlloc; legend.innerHTML = origLegend; return; } var names = Object.keys(INST_TOTALS); var adj = names.map(function (n) { return AFTER_TAX[n]; }); var t = adj.reduce(function (a, b) { return a + b; }, 0); if (!t) return; label.textContent = 'Total value after taxes'; value.textContent = money(t); alloc.innerHTML = names.map(function (n, i) { return adj[i] > 0 ? '<div style="width:' + (adj[i] / t * 100).toFixed(2) + '%;background:' + INST_COLORS[i % INST_COLORS.length] + '"></div>' : ''; }).join(''); legend.innerHTML = names.map(function (n, i) { return '<span><i style="background:' + INST_COLORS[i % INST_COLORS.length] + '"></i>' + esc(INST_SHORT[i]) + ' <b class="money">' + (adj[i] / t * 100).toFixed(0) + '%</b></span>'; }).join(''); }); })();
 
   // Staleness is worked out in the browser, not at build time, so the warning
   // still appears if the daily workflow stops running and this page is never
@@ -582,9 +656,13 @@ const html = `<!DOCTYPE html>
   (function () {
     var svg = document.querySelector('svg.chart');
     if (!svg) return;
-    var pts;
-    try { pts = JSON.parse(svg.getAttribute('data-points') || '[]'); } catch (e) { return; }
-    if (!pts.length) return;
+    var prePts, taxPts;
+    try {
+      prePts = JSON.parse(svg.getAttribute('data-points') || '[]');
+      taxPts = JSON.parse(svg.getAttribute('data-points-tax') || '[]');
+    } catch (e) { return; }
+    if (!prePts.length) return;
+    var pts = prePts;
 
     var W = +svg.getAttribute('data-w');
     var PL = +svg.getAttribute('data-pl');
@@ -593,8 +671,9 @@ const html = `<!DOCTYPE html>
     var el = function (id) { return svg.querySelector('#' + id); };
     var scrub = el('scrub'), sLine = el('scrubLine'), sDot = el('scrubDot');
     var sVal = el('scrubVal'), sMon = el('scrubMonth');
-    var ticks = el('xticks'), endLabel = el('endLabel'), endDot = el('endDot');
+    var ticks = el('xticks'), ends = svg.querySelectorAll('.endmark');
     var active = false;
+    function setEnds(o) { for (var i = 0; i < ends.length; i++) ends[i].setAttribute('opacity', o); }
 
     function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
 
@@ -611,6 +690,8 @@ const html = `<!DOCTYPE html>
     }
 
     function show(clientX) {
+      // Read whichever line is showing: the after-tax one while the toggle is on.
+      pts = document.body.classList.contains('after-tax') && taxPts.length ? taxPts : prePts;
       var p = nearest(clientX);
       sLine.setAttribute('x1', p.x); sLine.setAttribute('x2', p.x);
       sDot.setAttribute('cx', p.x); sDot.setAttribute('cy', p.y);
@@ -623,8 +704,7 @@ const html = `<!DOCTYPE html>
       sMon.textContent = p.m;
       scrub.setAttribute('opacity', '1');
       ticks.setAttribute('opacity', '0');
-      endLabel.setAttribute('opacity', '0');
-      endDot.setAttribute('opacity', '0');
+      setEnds('0');
     }
 
     function hide() {
@@ -632,8 +712,7 @@ const html = `<!DOCTYPE html>
       active = false;
       scrub.setAttribute('opacity', '0');
       ticks.setAttribute('opacity', '1');
-      endLabel.setAttribute('opacity', '1');
-      endDot.setAttribute('opacity', '1');
+      setEnds('1');
     }
 
     svg.addEventListener('pointerdown', function (e) {
