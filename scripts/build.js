@@ -156,8 +156,12 @@ function invested(inst) {
   const paidIn = dep.base + ledger.reduce((s, e) => s + (Number(e.amount) || 0), 0);
   // With an employer match, each contribution row holds the owner's dollar
   // and the employer's `employerMatch` dollars together; only the owner's
-  // share is money they put in.
-  return round2(inst.employerMatch ? paidIn / (1 + inst.employerMatch) : paidIn);
+  // share is money they put in. The rest is kept as `match`, for the market
+  // return, which counts the match as money in rather than as gain.
+  if (!inst.employerMatch) return round2(paidIn);
+  const own = round2(paidIn / (1 + inst.employerMatch));
+  inst.match = round2(paidIn - own);
+  return own;
 }
 insts.forEach((i) => { i.invested = invested(i); });
 // A bank account's one row is measured against what went in, so its gain is the interest.
@@ -244,17 +248,24 @@ if (allKnown && inv > 0) {
   const gains = round2(total - insts.reduce((s, i) => s + excludedOf(i), 0) - inv);
   // After tax: the same money in, measured against what would be kept.
   const atGains = round2(atTotal - inv);
-  const statsRow = (cls, g, gainLabel, returnLabel) => {
+  // Market return: the same gain with the employer match counted as money in,
+  // so it shows how the investments did rather than how much the owner's own
+  // money grew. Only shown when there is a match to separate out.
+  const match = round2(insts.reduce((s, i) => s + (i.match || 0), 0));
+  const pct = (g, base) => `${g >= 0 ? '+' : '−'}${Math.abs((g / base) * 100).toFixed(1)}%`;
+  const statsRow = (cls, g, gainLabel, returnLabel, marketLabel) => {
     const c = g >= 0 ? 'up' : 'down';
+    const mg = round2(g - match);
     return `
     <div class="stats ${cls}">
       <div><div class="label">Net invested</div><div class="v money">${money(inv)}</div></div>
       <div><div class="label">${gainLabel}</div><div class="v ${c} money">${signed(g)}</div></div>
-      <div><div class="label">${returnLabel}</div><div class="v ${c} money">${g >= 0 ? '+' : '−'}${Math.abs((g / inv) * 100).toFixed(1)}%</div></div>
-    </div>`;
+      <div><div class="label">${returnLabel}</div><div class="v ${c} money">${pct(g, inv)}</div></div>
+    </div>` + (match > 0 ? `
+    <div class="mkt ${cls}">${marketLabel} <b class="${mg >= 0 ? 'up' : 'down'} money">${pct(mg, inv + match)}</b></div>` : '');
   };
   const grants = excluded.map((e) => `<span class="money">${money(e.value)}</span> ${esc(e.name.toLowerCase())} grant`).join(' and ');
-  statsHTML = statsRow('pre-only', gains, 'Total gains', 'Return') + statsRow('tax-only', atGains, 'Gains after tax', 'Return after tax') + (excluded.length ? `
+  statsHTML = statsRow('pre-only', gains, 'Total gains', 'Return', 'Market return') + statsRow('tax-only', atGains, 'Gains after tax', 'Return after tax', 'Market return') + (excluded.length ? `
     <div class="excl pre-only">Gains exclude the ${grants}.</div>
     <div class="excl tax-only">After-tax values leave out the unvested ${grants}.</div>` : '');
 } else if (insts.length) {
@@ -545,6 +556,9 @@ const html = `<!DOCTYPE html>
   .stats .label { font-size: 12.5px; line-height: 1.35; white-space: nowrap; }
   .stats .v { font-weight: 800; font-size: clamp(14px, 4.2vw, 16px); margin-top: 5px; white-space: nowrap; }
   .excl { font-size: 12px; color: var(--ink-muted); margin-top: 12px; }
+  /* Its own row, right-aligned under Return, so it can't widen that column. */
+  .mkt { font-size: 12px; color: var(--ink-muted); margin-top: 4px; text-align: right; }
+  .mkt b { font-weight: 700; }
   .up { color: var(--gain); }
   .down { color: var(--loss); }
   .sect { display: flex; align-items: baseline; justify-content: space-between; margin: 24px 4px 10px; }
