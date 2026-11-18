@@ -2,7 +2,7 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-11-17",
+      "date": "2026-11-18",
       "total": 22989.6,
       "cost_basis": 22333.91,
       "accounts": [
@@ -186,7 +186,7 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-11-17",
+      "date": "2026-11-18",
       "total": 22237.86,
       "cost_basis": 22277.65,
       "accounts": [
@@ -234,13 +234,13 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-11-17",
-      "total": 44846.23,
+      "date": "2026-11-18",
+      "total": 44177.62,
       "cost_basis": 10789.7,
       "excluded": [
         {
           "name": "Equity",
-          "value": 29425.74
+          "value": 28757.13
         }
       ],
       "accounts": [
@@ -252,16 +252,16 @@
         {
           "name": "Equity",
           "type": "Equity",
-          "value": 29425.74
+          "value": 28757.13
         }
       ],
       "positions": [
         {
           "ticker": "V",
           "name": "Visa Inc - Ordinary Shares - Class A",
-          "value": 29425.74,
+          "value": 28757.13,
           "quantity": 69,
-          "price": 426.46,
+          "price": 416.77,
           "cost_basis": null,
           "accounts": [
             "Equity"
@@ -283,7 +283,7 @@
     },
     "vio": {
       "name": "Vio HYSA",
-      "date": "2026-11-17",
+      "date": "2026-11-18",
       "total": 5101,
       "cost_basis": null,
       "accounts": [
@@ -308,6 +308,6 @@
       ]
     }
   },
-  "date": "2026-11-17",
-  "total": 95174.69
+  "date": "2026-11-18",
+  "total": 94506.08
 }
