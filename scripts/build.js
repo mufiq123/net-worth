@@ -169,7 +169,6 @@ for (const i of insts) if (i.kind === 'bank') i.positions = i.positions.map((p) 
 // Holdings with no cost basis by design (the Merrill equity grant) count in
 // the total and the chart but stay out of invested, gains and return.
 const excludedOf = (i) => round2((i.excluded || []).reduce((s, e) => s + e.value, 0));
-const excluded = insts.flatMap((i) => (i.excluded || []).filter((e) => e.value > 0));
 
 // ---- after-tax toggle ----
 // What each institution is worth after the owner's rates in institutions.js.
@@ -261,13 +260,11 @@ if (allKnown && inv > 0) {
       <div><div class="label">Net invested</div><div class="v money">${money(inv)}</div></div>
       <div><div class="label">${gainLabel}</div><div class="v ${c} money">${signed(g)}</div></div>
       <div><div class="label">${returnLabel}</div><div class="v ${c} money">${pct(g, inv)}</div></div>
-    </div>` + (match > 0 ? `
+    </div>` + (match > 0 && marketLabel ? `
     <div class="mkt ${cls}">${marketLabel} <b class="${mg >= 0 ? 'up' : 'down'} money">${pct(mg, inv + match)}</b></div>` : '');
   };
-  const grants = excluded.map((e) => `<span class="money">${money(e.value)}</span> ${esc(e.name.toLowerCase())} grant`).join(' and ');
-  statsHTML = statsRow('pre-only', gains, 'Total gains', 'Return', 'Market return') + statsRow('tax-only', atGains, 'Gains after tax', 'Return after tax', 'Market return') + (excluded.length ? `
-    <div class="excl pre-only">Gains exclude the ${grants}.</div>
-    <div class="excl tax-only">After-tax values leave out the unvested ${grants}.</div>` : '');
+  // The market line shows in the pre-tax view only, at the owner's request.
+  statsHTML = statsRow('pre-only', gains, 'Total gains', 'Return', 'Market return') + statsRow('tax-only', atGains, 'Gains after tax', 'Return after tax', null);
 } else if (insts.length) {
   const missing = insts.filter((i) => i.invested == null).map((i) => i.name);
   statsHTML = `<div class="fine" style="text-align:left;margin-top:14px">Gains appear once net deposits are known for ${missing.join(', ')}.</div>`;
@@ -555,7 +552,6 @@ const html = `<!DOCTYPE html>
   .stats > div:nth-child(3) { align-items: flex-end; text-align: right; }
   .stats .label { font-size: 12.5px; line-height: 1.35; white-space: nowrap; }
   .stats .v { font-weight: 800; font-size: clamp(14px, 4.2vw, 16px); margin-top: 5px; white-space: nowrap; }
-  .excl { font-size: 12px; color: var(--ink-muted); margin-top: 12px; }
   /* Its own row, right-aligned under Return, so it can't widen that column. */
   .mkt { font-size: 12px; color: var(--ink-muted); margin-top: 4px; text-align: right; }
   .mkt b { font-weight: 700; }
