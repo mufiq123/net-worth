@@ -3,13 +3,13 @@
     "public": {
       "name": "Public",
       "date": "2026-11-18",
-      "total": 22854.91,
+      "total": 22914.87,
       "cost_basis": 22333.95,
       "accounts": [
         {
           "name": "Roth IRA",
           "type": "Roth IRA",
-          "value": 10899.15
+          "value": 10926.59
         },
         {
           "name": "Treasury Account",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 11956.12
+          "value": 11988.64
         },
         {
           "name": "RIA Asset Account",
@@ -41,9 +41,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 6762.96,
+          "value": 6795.5,
           "quantity": 62.57362,
-          "price": 108.08005034709515,
+          "price": 108.60007779636211,
           "cost_basis": 5888.29,
           "accounts": [
             "Brokerage Account"
@@ -52,9 +52,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 5346.87,
+          "value": 5358.27,
           "quantity": 7.92398,
-          "price": 674.7707591387156,
+          "price": 676.2094301096166,
           "cost_basis": 5284.87,
           "accounts": [
             "Roth IRA"
@@ -63,9 +63,9 @@
         {
           "ticker": "QQQM",
           "name": "Invesco Exchange-Traded Fund Trust II - Invesco NASDAQ 100 ETF",
-          "value": 2104.95,
+          "value": 2113.78,
           "quantity": 7.67637,
-          "price": 274.211639095041,
+          "price": 275.3619223669521,
           "cost_basis": 2360.9,
           "accounts": [
             "Roth IRA"
@@ -74,9 +74,9 @@
         {
           "ticker": "VOO",
           "name": "Vanguard Index Funds - Vanguard S&P 500 ETF",
-          "value": 2084.42,
+          "value": 2088.86,
           "quantity": 3.08908,
-          "price": 674.7704818263043,
+          "price": 676.2078029704637,
           "cost_basis": 2130.79,
           "accounts": [
             "Brokerage Account"
@@ -85,9 +85,9 @@
         {
           "ticker": "VGT",
           "name": "Vanguard World Fund - Vanguard Information Technology ETF",
-          "value": 1576.39,
+          "value": 1583.97,
           "quantity": 14.58538,
-          "price": 108.08014600922293,
+          "price": 108.59984450182306,
           "cost_basis": 1713.88,
           "accounts": [
             "Roth IRA"
@@ -96,9 +96,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 1293.85,
+          "value": 1289.82,
           "quantity": 31.0425,
-          "price": 41.67995490053958,
+          "price": 41.55013288233873,
           "cost_basis": 1350,
           "accounts": [
             "Brokerage Account"
@@ -107,9 +107,9 @@
         {
           "ticker": "ARKG",
           "name": "ARK ETF Trust - ARK Genomic Revolution ETF",
-          "value": 1015.9,
+          "value": 1012.73,
           "quantity": 24.37384,
-          "price": 41.67993225523758,
+          "price": 41.54987478378458,
           "cost_basis": 914.91,
           "accounts": [
             "Roth IRA"
@@ -118,9 +118,9 @@
         {
           "ticker": "VHT",
           "name": "Vanguard World Fund - Vanguard Health Care ETF",
-          "value": 785.65,
+          "value": 785.75,
           "quantity": 2.35515,
-          "price": 333.5880941765917,
+          "price": 333.6305543171348,
           "cost_basis": 746,
           "accounts": [
             "Brokerage Account"
@@ -129,9 +129,9 @@
         {
           "ticker": "GOOG",
           "name": "Alphabet Inc - Ordinary Shares - Class C",
-          "value": 564.6,
+          "value": 566.62,
           "quantity": 2,
-          "price": 282.3,
+          "price": 283.31,
           "cost_basis": 556.89,
           "accounts": [
             "Roth IRA"
@@ -151,9 +151,9 @@
         {
           "ticker": "NVDA",
           "name": "NVIDIA Corp",
-          "value": 476.58,
+          "value": 476.05,
           "quantity": 3.13394,
-          "price": 152.07055655181657,
+          "price": 151.90144035941978,
           "cost_basis": 500,
           "accounts": [
             "Brokerage Account"
@@ -162,9 +162,9 @@
         {
           "ticker": "SPCX",
           "name": "Space Exploration Technologies Corp. - Ordinary Shares - Class A",
-          "value": 289.32,
+          "value": 290.1,
           "quantity": 2,
-          "price": 144.66,
+          "price": 145.05,
           "cost_basis": 279.85,
           "accounts": [
             "Roth IRA"
@@ -309,5 +309,5 @@
     }
   },
   "date": "2026-11-18",
-  "total": 94084.31
+  "total": 94144.27
 }
