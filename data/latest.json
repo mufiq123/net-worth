@@ -2,7 +2,7 @@
   "institutions": {
     "public": {
       "name": "Public",
-      "date": "2026-11-20",
+      "date": "2026-11-21",
       "total": 21331.15,
       "cost_basis": 22333.95,
       "accounts": [
@@ -186,23 +186,23 @@
     },
     "fidelity": {
       "name": "Fidelity",
-      "date": "2026-11-20",
-      "total": 21483.01,
+      "date": "2026-11-21",
+      "total": 20507.5,
       "cost_basis": 22277.65,
       "accounts": [
         {
           "name": "VISA 401K PLAN",
           "type": "401(k)",
-          "value": 21483.01
+          "value": 20507.5
         }
       ],
       "positions": [
         {
           "ticker": "SP.500.INDEX.PL.CL.D",
           "name": "SP 500 INDEX PL CL D - contribution",
-          "value": 11734.15,
+          "value": 11301.08,
           "quantity": 34.1,
-          "price": 344.11,
+          "price": 331.41,
           "cost_basis": 11653.56,
           "accounts": [
             "VISA 401K PLAN"
@@ -211,9 +211,9 @@
         {
           "ticker": "TRP.LRG.CAP.GR.TR.D",
           "name": "Trp Lrg Cap Gr Tr D",
-          "value": 9255.25,
+          "value": 8730.6,
           "quantity": 369.471,
-          "price": 25.05,
+          "price": 23.63,
           "cost_basis": 10102.98,
           "accounts": [
             "VISA 401K PLAN"
@@ -222,9 +222,9 @@
         {
           "ticker": "VG.TOT.STK.MKT.IDX.C",
           "name": "Vg Tot Stk Mkt Idx C",
-          "value": 493.61,
+          "value": 475.82,
           "quantity": 3.367,
-          "price": 146.6,
+          "price": 141.32,
           "cost_basis": 521.11,
           "accounts": [
             "VISA 401K PLAN"
@@ -234,13 +234,13 @@
     },
     "merrill": {
       "name": "Merrill",
-      "date": "2026-11-20",
-      "total": 38601.94,
+      "date": "2026-11-21",
+      "total": 38579.52,
       "cost_basis": 10789.7,
       "excluded": [
         {
           "name": "Equity",
-          "value": 23732.75
+          "value": 23710.33
         }
       ],
       "accounts": [
@@ -252,16 +252,16 @@
         {
           "name": "Equity",
           "type": "Equity",
-          "value": 23732.75
+          "value": 23710.33
         }
       ],
       "positions": [
         {
           "ticker": "V",
           "name": "Visa Inc - Ordinary Shares - Class A",
-          "value": 23732.75,
+          "value": 23710.33,
           "quantity": 59,
-          "price": 402.25,
+          "price": 401.87,
           "cost_basis": null,
           "accounts": [
             "Equity"
@@ -283,7 +283,7 @@
     },
     "vio": {
       "name": "Vio HYSA",
-      "date": "2026-11-20",
+      "date": "2026-11-21",
       "total": 5101,
       "cost_basis": null,
       "accounts": [
@@ -308,6 +308,6 @@
       ]
     }
   },
-  "date": "2026-11-20",
-  "total": 86517.1
+  "date": "2026-11-21",
+  "total": 85519.17
 }
