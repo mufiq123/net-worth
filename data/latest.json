@@ -235,12 +235,12 @@
     "merrill": {
       "name": "Merrill",
       "date": "2026-11-24",
-      "total": 39575.46,
+      "total": 40010.88,
       "cost_basis": 10789.7,
       "excluded": [
         {
           "name": "Equity",
-          "value": 24154.6
+          "value": 24590.02
         }
       ],
       "accounts": [
@@ -252,16 +252,16 @@
         {
           "name": "Equity",
           "type": "Equity",
-          "value": 24154.6
+          "value": 24590.02
         }
       ],
       "positions": [
         {
           "ticker": "V",
           "name": "Visa Inc - Ordinary Shares - Class A",
-          "value": 24154.6,
+          "value": 24590.02,
           "quantity": 59,
-          "price": 409.4,
+          "price": 416.78,
           "cost_basis": null,
           "accounts": [
             "Equity"
@@ -309,5 +309,5 @@
     }
   },
   "date": "2026-11-24",
-  "total": 88561.42
+  "total": 88996.84
 }
