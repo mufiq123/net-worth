@@ -3,8 +3,8 @@
     "public": {
       "name": "Public",
       "date": "2026-11-26",
-      "total": 22206.62,
-      "cost_basis": 22333.95,
+      "total": 25206.98,
+      "cost_basis": 25334.31,
       "accounts": [
         {
           "name": "Roth IRA",
@@ -24,7 +24,7 @@
         {
           "name": "Brokerage Account",
           "type": "Brokerage",
-          "value": 11626.14
+          "value": 14626.14
         },
         {
           "name": "RIA Asset Account",
@@ -58,6 +58,19 @@
           "cost_basis": 5284.87,
           "accounts": [
             "Roth IRA"
+          ]
+        },
+        {
+          "ticker": "CASH",
+          "name": "Cash",
+          "value": 3001.48,
+          "quantity": null,
+          "price": null,
+          "cost_basis": 3001.48,
+          "cash": true,
+          "accounts": [
+            "Roth IRA",
+            "Brokerage Account"
           ]
         },
         {
@@ -166,18 +179,6 @@
           "quantity": 2,
           "price": 128.96,
           "cost_basis": 279.85,
-          "accounts": [
-            "Roth IRA"
-          ]
-        },
-        {
-          "ticker": "CASH",
-          "name": "Cash",
-          "value": 1.12,
-          "quantity": null,
-          "price": null,
-          "cost_basis": 1.12,
-          "cash": true,
           "accounts": [
             "Roth IRA"
           ]
@@ -309,5 +310,5 @@
     }
   },
   "date": "2026-11-26",
-  "total": 89524.54
+  "total": 92524.9
 }
