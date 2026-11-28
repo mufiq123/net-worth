@@ -301,6 +301,12 @@
         "date": "2026-11-13",
         "amount": 1500,
         "account": "Brokerage"
+      },
+      {
+        "id": "y15gVag0p5Iymyjgr8PMHYjKx5Ydb7HRzvnda",
+        "date": "2026-11-27",
+        "amount": 3000,
+        "account": "Brokerage"
       }
     ]
   },

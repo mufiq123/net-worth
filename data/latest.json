@@ -4,7 +4,7 @@
       "name": "Public",
       "date": "2026-11-27",
       "total": 25583.37,
-      "cost_basis": null,
+      "cost_basis": 25333.95,
       "accounts": [
         {
           "name": "Roth IRA",
@@ -66,7 +66,7 @@
           "value": 4101.36,
           "quantity": 6.10058,
           "price": 672.2901756882133,
-          "cost_basis": null,
+          "cost_basis": 4130.79,
           "accounts": [
             "Brokerage Account"
           ]
@@ -121,7 +121,7 @@
           "value": 979.37,
           "quantity": 6.53743,
           "price": 149.80963467295254,
-          "cost_basis": null,
+          "cost_basis": 1000,
           "accounts": [
             "Brokerage Account"
           ]
@@ -165,7 +165,7 @@
           "value": 515.19,
           "quantity": 5.63599,
           "price": 91.41073706660234,
-          "cost_basis": null,
+          "cost_basis": 500,
           "accounts": [
             "Brokerage Account"
           ]
